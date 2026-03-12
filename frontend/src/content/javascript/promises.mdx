@@ -1,0 +1,44 @@
+# Promesas y async/await
+
+Las promesas son objetos que representan la **eventual** resolución (o fallo) de una operación asíncrona.
+
+## Crear una promesa
+
+<CodeRunner
+  language="javascript"
+  title="Promise básica"
+  initialCode={`
+function esperar(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function main() {
+  console.log('Iniciando...');
+  await esperar(100);
+  console.log('Listo después de esperar');
+}
+
+main();
+  `}
+/>
+
+## Promise.all
+
+<CodeRunner
+  language="javascript"
+  title="Promise.all en paralelo"
+  initialCode={`
+function fetchUser(id) {
+  return Promise.resolve({ id, nombre: \`Usuario \${id}\`, activo: id % 2 === 0 });
+}
+
+async function main() {
+  const ids = [1, 2, 3, 4, 5];
+  const usuarios = await Promise.all(ids.map(id => fetchUser(id)));
+  const activos = usuarios.filter(u => u.activo);
+  console.log('Activos:', activos.map(u => u.nombre));
+}
+
+main();
+  `}
+/>

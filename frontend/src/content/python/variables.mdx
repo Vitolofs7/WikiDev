@@ -1,0 +1,218 @@
+# Variables
+
+Las variables son uno de los conceptos más fundamentales en programación. En Python, trabajar con variables es especialmente sencillo e intuitivo comparado con otros lenguajes.
+
+## ¿Qué es una variable?
+
+Una variable es un **nombre que hace referencia a un valor almacenado en memoria**. En Python no necesitas declarar el tipo de la variable — Python lo infiere automáticamente según el valor que le asignes.
+
+A diferencia de otros lenguajes como Java o C++, en Python:
+- No se declara el tipo explícitamente
+- La misma variable puede referirse a valores de distinto tipo en distintos momentos
+- La memoria se gestiona automáticamente
+
+<CodeRunner language="python" title="Variables básicas" initialCode={`# Python infiere el tipo automáticamente
+nombre = "Ana"
+edad = 25
+altura = 1.68
+es_estudiante = True
+
+print(nombre, type(nombre))
+print(edad, type(edad))
+print(altura, type(altura))
+print(es_estudiante, type(es_estudiante))`} />
+
+### Tipado dinámico
+
+En Python el tipo no está ligado a la variable sino al valor. La misma variable puede apuntar a valores de distinto tipo a lo largo del programa.
+
+<CodeRunner language="python" title="Tipado dinámico" initialCode={`x = 10
+print(type(x))   # <class 'int'>
+
+x = "hola"
+print(type(x))   # <class 'str'>
+
+x = 3.14
+print(type(x))   # <class 'float'>
+
+x = [1, 2, 3]
+print(type(x))   # <class 'list'>`} />
+
+### Reglas para nombrar variables
+
+- Solo letras, números y guiones bajos `_`
+- No pueden empezar por un número
+- Son sensibles a mayúsculas: `nombre` y `Nombre` son variables distintas
+- No pueden ser palabras reservadas como `if`, `for`, `class`, etc.
+
+Usa siempre **nombres claros y descriptivos** — el código se lee muchas más veces de las que se escribe:
+```
+edad_usuario  ✔   → se entiende inmediatamente
+x             ✘   → no aporta contexto
+```
+
+<CodeRunner language="python" title="Nombres de variables" initialCode={`# Válidos
+nombre = "Ana"
+nombre_completo = "Ana García"
+_privado = 42
+contador1 = 0
+
+# Convención Python: snake_case para variables
+mi_variable = "correcto"
+miVariable = "funciona pero no es convención Python"
+
+# Sensibilidad a mayúsculas
+x = 10
+X = 20
+print(x, X)  # Son variables distintas`} />
+
+### Palabras reservadas
+
+Python tiene un conjunto de palabras reservadas que no puedes usar como nombres de variables. Puedes consultarlas en cualquier momento:
+
+<CodeRunner language="python" title="Palabras reservadas" initialCode={`import keyword
+print(keyword.kwlist)`} />
+
+## Asignación de valores
+
+La asignación se hace con el operador `=`. Python permite varias formas de asignar valores de manera concisa.
+
+### Asignación simple
+
+<CodeRunner language="python" title="Asignación simple" initialCode={`x = 10
+nombre = "Carlos"
+pi = 3.14159
+
+print(x)
+print(nombre)
+print(pi)`} />
+
+### Asignación múltiple
+
+Python permite varias formas de asignar valores de forma concisa.
+
+<CodeRunner language="python" title="Asignación múltiple" initialCode={`# Asignación encadenada: mismo valor a varias variables
+a = b = c = 0
+print(a, b, c)  # 0 0 0
+
+# Desempaquetado: valores distintos en una sola línea
+x, y, z = 1, 2, 3
+print(x, y, z)  # 1 2 3
+
+# Intercambiar valores sin variable temporal
+a = 5
+b = 10
+a, b = b, a
+print(a, b)  # 10 5`} />
+
+### Asignación con desempaquetado
+
+<CodeRunner language="python" title="Desempaquetado" initialCode={`# Desempaquetar una lista o tupla
+coordenadas = (40.4168, -3.7038)
+latitud, longitud = coordenadas
+print("Lat:", latitud)
+print("Lon:", longitud)
+
+# Con * para capturar el resto
+primero, *resto = [1, 2, 3, 4, 5]
+print("Primero:", primero)
+print("Resto:", resto)
+
+# Ignorar valores con _
+_, segundo, *_ = [10, 20, 30, 40]
+print("Segundo:", segundo)`} />
+
+## Asignación con operadores
+
+Los operadores de asignación compuesta combinan una operación aritmética con la asignación. Son un atajo muy común en Python.
+
+<CodeRunner language="python" title="Operadores de asignación compuesta" initialCode={`x = 10
+
+x += 5    # x = x + 5
+print("+=", x)    # 15
+
+x -= 3    # x = x - 3
+print("-=", x)    # 12
+
+x *= 2    # x = x * 2
+print("*=", x)    # 24
+
+x //= 5   # x = x // 5
+print("//=", x)   # 4
+
+x **= 3   # x = x ** 3
+print("**=", x)   # 64
+
+x %= 10   # x = x % 10
+print("%=", x)    # 4`} />
+
+### Uso práctico en acumuladores
+
+<CodeRunner language="python" title="Acumuladores" initialCode={`# Contar
+contador = 0
+for i in range(5):
+    contador += 1
+print("Contador:", contador)  # 5
+
+# Acumular suma
+total = 0
+numeros = [10, 20, 30, 40]
+for n in numeros:
+    total += n
+print("Total:", total)  # 100
+
+# Construir un string
+mensaje = ""
+palabras = ["Hola", "mundo", "desde", "Python"]
+for palabra in palabras:
+    mensaje += palabra + " "
+print(mensaje.strip())`} />
+
+## Inicialización de variables
+
+Inicializar una variable significa asignarle un valor antes de utilizarla. En Python es obligatorio — no puedes usar una variable sin haberle asignado un valor previamente.
+
+<CodeRunner language="python" title="Inicialización" initialCode={`# Correcto: variable inicializada antes de usarla
+contador = 0
+contador += 1
+print(contador)  # 1
+
+# Inicializar con None cuando aún no tienes un valor
+resultado = None
+print(resultado)        # None
+print(type(resultado))  # <class 'NoneType'>
+
+# Más tarde se puede asignar el valor real
+resultado = 42
+print(resultado)  # 42`} />
+
+### Valores de inicialización comunes
+
+<CodeRunner language="python" title="Valores iniciales típicos" initialCode={`# Entero: empezar a contar o acumular
+contador = 0
+suma = 0
+
+# String: construir texto
+texto = ""
+separador = ", "
+
+# Lista: recopilar elementos
+elementos = []
+resultados = []
+
+# Booleano: flags o interruptores
+encontrado = False
+completado = False
+
+# None: valor desconocido o pendiente
+usuario = None
+respuesta = None
+
+print("Todo inicializado correctamente")`} />
+
+> En Python, una variable no existe hasta que se le asigna un valor por primera vez. Intentar usar una variable no inicializada lanza un `NameError`.
+
+<CodeRunner language="python" title="NameError" initialCode={`try:
+    print(variable_no_definida)
+except NameError as e:
+    print("Error:", e)`} />

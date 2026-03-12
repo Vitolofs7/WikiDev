@@ -1,0 +1,68 @@
+# Arrays y métodos esenciales
+
+Los arrays en JavaScript son estructuras de datos ordenadas y mutables. Conocer sus métodos funcionales es clave para escribir código limpio y expresivo.
+
+## map()
+
+Transforma cada elemento del array y retorna un **nuevo array** con los resultados.
+
+<CodeRunner
+  language="javascript"
+  title="map() básico"
+  initialCode={`
+const numeros = [1, 2, 3, 4, 5];
+
+const dobles = numeros.map(n => n * 2);
+console.log(dobles);
+
+const personas = [
+  { nombre: 'Ana', edad: 25 },
+  { nombre: 'Luis', edad: 30 },
+];
+
+const nombres = personas.map(p => p.nombre);
+console.log(nombres);
+  `}
+/>
+
+## filter()
+
+Retorna un nuevo array con solo los elementos que **pasan la condición**.
+
+<CodeRunner
+  language="javascript"
+  title="filter() con condición"
+  initialCode={`
+const numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+const pares = numeros.filter(n => n % 2 === 0);
+console.log('Pares:', pares);
+
+const mayoresDe5 = numeros.filter(n => n > 5);
+console.log('Mayores de 5:', mayoresDe5);
+  `}
+/>
+
+## reduce()
+
+Acumula todos los elementos en un **único valor**.
+
+<CodeRunner
+  language="javascript"
+  title="reduce()"
+  initialCode={`
+const numeros = [1, 2, 3, 4, 5];
+
+const suma = numeros.reduce((acc, n) => acc + n, 0);
+console.log('Suma:', suma);
+
+const frutas = ['manzana', 'pera', 'manzana', 'uva', 'pera', 'pera'];
+
+const conteo = frutas.reduce((acc, fruta) => {
+  acc[fruta] = (acc[fruta] || 0) + 1;
+  return acc;
+}, {});
+
+console.log(conteo);
+  `}
+/>

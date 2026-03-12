@@ -1,0 +1,81 @@
+# ————————————————————————————
+# Next.js / Frontend
+# ————————————————————————————
+
+# dependencies
+/frontend/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+
+# next.js
+/frontend/.next/
+/frontend/out/
+
+# production
+/frontend/build
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# ————————————————————————————
+# Python / Backend
+# ————————————————————————————
+
+# python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# virtual environments
+venv/
+.venv/
+
+# database
+*.db
+*.sqlite3
+
+# user uploads
+note_images/
+
+# logs
+*.log
+
+# ————————————————————————————
+# Variables de entorno
+# ————————————————————————————
+.env
+.env.local
+.env*.local
+
+# ————————————————————————————
+# Sistema y editores
+# ————————————————————————————
+.DS_Store
+Thumbs.db
+*.pem
+.idea/
+.vscode/
+
+# ————————————————————————————
+# Extras recomendados
+# ————————————————————————————
+
+# pytest
+.pytest_cache/
+htmlcov/
+
+# mypy
+.mypy_cache/

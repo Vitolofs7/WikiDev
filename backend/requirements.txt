@@ -1,0 +1,15 @@
+fastapi==0.115.12
+uvicorn==0.41.0
+sqlalchemy==2.0.48
+pydantic==2.12.5
+pydantic-core==2.41.5
+python-multipart==0.0.22
+python-dotenv==1.2.1
+starlette==0.52.1
+h11==0.16.0
+httpcore==1.0.9
+httpx==0.28.1
+greenlet==3.3.2
+idna==3.11
+typing-extensions==4.15.0
+typing-inspection==0.4.2

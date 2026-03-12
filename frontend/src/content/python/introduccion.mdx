@@ -1,0 +1,112 @@
+# Introducción a Python
+
+Python es un lenguaje de programación moderno, versátil y fácil de aprender, creado por **Guido van Rossum** y publicado por primera vez en **1991**. Hoy en día es uno de los lenguajes más utilizados del mundo, gracias a su simplicidad, su enorme comunidad y la cantidad de librerías disponibles.
+
+Se utiliza en desarrollo web, automatización, ciencia de datos, inteligencia artificial, scripts y herramientas del sistema, entre muchos otros ámbitos.
+
+## ¿Qué es Python?
+
+### Lenguaje interpretado
+
+Python es un **lenguaje interpretado**, lo que significa que el código se ejecuta directamente línea por línea sin necesidad de un proceso de compilación manual previo. Esto hace que el ciclo de desarrollo sea más rápido y el proceso de depuración más sencillo.
+
+<CodeRunner language="python" title="Hola mundo" initialCode={`print("Hola, mundo")`} />
+
+También funciona en modo interactivo (REPL), lo que permite probar fragmentos de código al instante sin necesidad de crear un archivo.
+
+### Lenguaje de alto nivel y legible
+
+Python es de **alto nivel**, diseñado para que el código sea fácil de leer y entender, incluso para personas que no sean programadoras. Su sintaxis se asemeja al inglés natural.
+
+<CodeRunner language="python" title="Legibilidad" initialCode={`nombre = "Ana"
+edad = 20
+
+if edad >= 18:
+    print(nombre, "es mayor de edad")`} />
+
+Características que favorecen la legibilidad:
+
+- Sintaxis sencilla y clara
+- **Indentación** en lugar de llaves — los bloques de código (como los de `if`, funciones o bucles) se definen por el nivel de sangría
+- Menos código para realizar tareas comunes
+
+### Multiplataforma
+
+Python funciona en **Windows, Linux y macOS** sin necesidad de modificar el código. Un mismo programa puede ejecutarse en cualquier sistema operativo que tenga Python instalado.
+
+### Librería estándar
+
+Python incluye una **librería estándar** muy completa con módulos listos para usar: manejo de archivos, fechas, expresiones regulares, redes, matemáticas y mucho más, sin necesidad de instalar nada adicional.
+
+<CodeRunner language="python" title="Librería estándar" initialCode={`import math
+import datetime
+
+print("Raíz de 16:", math.sqrt(16))
+print("Pi:", math.pi)
+print("Hoy es:", datetime.date.today())`} />
+
+## ¿Dónde se usa Python?
+
+Python es extremadamente versátil. Algunos de sus usos más comunes:
+
+- **Desarrollo web** — frameworks como Django o FastAPI
+- **Automatización** — scripts para tareas repetitivas
+- **Ciencia de datos** — análisis con pandas, numpy
+- **Inteligencia artificial** — machine learning con TensorFlow, PyTorch
+- **Scripts y herramientas** — utilidades del sistema, procesamiento de archivos
+
+## Paradigmas de programación
+
+Python es **multiparadigma**, lo que permite programar con diferentes estilos según el problema que se quiera resolver.
+
+### Programación imperativa
+
+Consiste en dar instrucciones paso a paso.
+
+<CodeRunner language="python" title="Imperativa" initialCode={`x = 5
+x = x + 3
+print(x)`} />
+
+### Programación procedimental
+
+Organiza el código en funciones reutilizables.
+
+<CodeRunner language="python" title="Procedimental" initialCode={`def saludar(nombre):
+    print("Hola", nombre)
+
+saludar("Carlos")`} />
+
+### Programación orientada a objetos
+
+Agrupa datos y comportamiento en objetos.
+
+<CodeRunner language="python" title="POO" initialCode={`class Persona:
+    def __init__(self, nombre):
+        self.nombre = nombre
+
+    def saludar(self):
+        print("Hola, soy", self.nombre)
+
+persona = Persona("Lucía")
+persona.saludar()`} />
+
+## Filosofía de Python
+
+Python fue diseñado con el objetivo de que el código sea **claro, sencillo y fácil de mantener**. Esta filosofía se recoge en el **Zen de Python**, un conjunto de principios que describen el estilo y los valores del lenguaje. Puedes leerlos ejecutando:
+
+<CodeRunner language="python" title="Zen de Python" initialCode={`import this`} />
+
+Algunos de los principios más importantes:
+
+- Lo simple es mejor que lo complejo
+- Lo legible cuenta
+- Lo explícito es mejor que lo implícito
+- Debe haber una forma —y preferiblemente solo una— de hacer las cosas
+
+Un ejemplo de código claro y expresivo:
+
+<CodeRunner language="python" title="List comprehension" initialCode={`numeros = [1, 2, 3, 4, 5]
+cuadrados = [n**2 for n in numeros]
+print(cuadrados)`} />
+
+> El objetivo no es escribir el código más corto, sino el más **claro, comprensible y mantenible**.

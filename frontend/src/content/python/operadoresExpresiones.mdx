@@ -1,0 +1,403 @@
+# Expresiones y Operadores
+
+En Python, las expresiones combinan valores, variables y operadores para producir un resultado. Entender cómo Python evalúa estas expresiones es clave para escribir código correcto y predecible.
+
+## Jerarquía de operadores
+
+Cuando una expresión tiene varios operadores, Python los evalúa según su **precedencia**. Los operadores con mayor precedencia se evalúan primero.
+
+<table>
+  <thead>
+    <tr>
+      <th>Precedencia</th>
+      <th>Operador</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1 (mayor)</td>
+      <td>
+        <code>()</code>
+      </td>
+      <td>Paréntesis</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>
+        <code>**</code>
+      </td>
+      <td>Exponenciación</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>
+        <code>+x, -x</code>
+      </td>
+      <td>Unarios</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>
+        <code>*, /, //, %</code>
+      </td>
+      <td>Multiplicación y división</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>
+        <code>+, -</code>
+      </td>
+      <td>Suma y resta</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>
+        <code>==, !=, &lt;, &lt;=, &gt;, &gt;=</code>
+      </td>
+      <td>Comparación</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>
+        <code>not</code>
+      </td>
+      <td>Negación lógica</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>
+        <code>and</code>
+      </td>
+      <td>Y lógico</td>
+    </tr>
+    <tr>
+      <td>9 (menor)</td>
+      <td>
+        <code>or</code>
+      </td>
+      <td>O lógico</td>
+    </tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="Precedencia en acción" initialCode={`# Los operadores aritméticos tienen más precedencia que los de comparación
+print(2 + 3 > 4)        # True  → (2+3) > 4 → 5 > 4
+print(2 + 3 * 4 > 10)   # True  → (2+12) > 10 → 14 > 10
+
+# not tiene más precedencia que and y or
+
+print(not True and False) # False → (not True) and False
+print(not (True and False)) # True → not False
+
+# Usa paréntesis para mayor claridad
+
+x = 5
+print((x > 0) and (x < 10)) # True`} />
+
+## Operadores de comparación
+
+Los operadores de comparación comparan dos valores y devuelven **siempre un booleano**: `True` o `False`. Son la base de las condiciones y los bucles.
+
+### Igualdad y desigualdad
+
+<CodeRunner language="python" title="== y !=" initialCode={`# == compara si dos valores son iguales
+print(5 == 5)      # True
+print(5 == 5.0)  # True
+print(5 == 6)      # False
+print("hola" == "hola")  # True
+
+# != compara si dos valores son distintos
+
+print(5 != 3) # True
+print(5 != 5) # False
+
+# Cuidado: == compara valor, no identidad
+
+a = [1, 2, 3]
+b = [1, 2, 3]
+print(a == b) # True (mismo contenido)
+print(a is b) # False (diferente objeto en memoria)`} />
+
+### Menor y mayor que
+
+<CodeRunner language="python" title="< y >" initialCode={`print(3 < 5)       # True
+print(5 < 3)       # False
+print(5 > 3)       # True
+print(3 > 5)       # False
+
+# También funciona con strings (orden alfabético)
+
+print("abc" < "abd") # True
+print("z" > "a") # True
+
+# Y con listas (compara elemento a elemento)
+
+print([1, 2] < [1, 3]) # True`} />
+
+### Menor o igual y mayor o igual
+
+<CodeRunner language="python" title="<= y >=" initialCode={`x = 5
+
+print(x <= 5) # True (es igual, también cuenta)
+print(x <= 4) # False
+print(x >= 5) # True
+print(x >= 6) # False
+
+# Uso típico: comprobar rangos
+
+edad = 18
+print(edad >= 18) # True, es mayor de edad
+
+nota = 5
+print(nota >= 5 and nota <= 10) # True, nota válida`} />
+
+### Encadenamiento de comparaciones
+
+Python permite encadenar comparaciones de forma natural, algo que no existe en muchos otros lenguajes.
+
+<CodeRunner language="python" title="Comparaciones encadenadas" initialCode={`x = 7
+
+# En otros lenguajes necesitarías: x > 0 and x < 10
+
+print(0 < x < 10) # True, más limpio y legible
+
+# También funciona con más de dos comparaciones
+
+print(1 < 2 < 3 < 4) # True
+print(1 < 2 > 0 < 4) # True
+
+# Ejemplo práctico: validar un rango
+
+temperatura = 22
+es_confortable = 18 <= temperatura <= 26
+print("Temperatura confortable:", es_confortable) # True`} />
+
+## Operadores de resultado booleano
+
+Los operadores lógicos combinan expresiones booleanas y devuelven un resultado. En Python son `and`, `or` y `not`.
+
+### Operador `and`
+
+Devuelve `True` solo si **ambas** condiciones son verdaderas.
+
+<CodeRunner language="python" title="Operador and" initialCode={`print(True and True)    # True
+print(True and False)   # False
+print(False and True)   # False
+print(False and False)  # False
+
+# Ejemplo práctico
+
+edad = 20
+tiene_carnet = True
+puede_conducir = edad >= 18 and tiene_carnet
+print("Puede conducir:", puede_conducir) # True
+
+# Cortocircuito: si el primero es False, no evalúa el segundo
+
+x = 0
+print(x != 0 and 10 / x > 1) # False, no lanza ZeroDivisionError`} />
+
+### Operador `or`
+
+Devuelve `True` si **al menos una** condición es verdadera.
+
+<CodeRunner language="python" title="Operador or" initialCode={`print(True or True)     # True
+print(True or False)    # True
+print(False or True)    # True
+print(False or False)   # False
+
+# Ejemplo práctico
+
+es_fin_de_semana = False
+es_festivo = True
+print("Día libre:", es_fin_de_semana or es_festivo) # True
+
+# Cortocircuito: si el primero es True, no evalúa el segundo
+
+print(True or 1/0) # True, no lanza error`} />
+
+### Operador `not`
+
+Invierte el valor booleano de una expresión.
+
+<CodeRunner language="python" title="Operador not" initialCode={`print(not True)   # False
+print(not False)  # True
+
+# Ejemplo práctico
+
+esta_cerrado = False
+print("Está abierto:", not esta_cerrado) # True
+
+# not con comparaciones
+
+x = 5
+print(not x == 5) # False
+print(not x > 10) # True`} />
+
+### Valores truthy y falsy
+
+En Python, no solo `True` y `False` son booleanos. Cualquier valor puede evaluarse como verdadero o falso en un contexto booleano.
+
+<CodeRunner
+  language="python"
+  title="Truthy y falsy"
+  initialCode={`# Valores falsy: False, 0, "", [], {}, None
+print(bool(0))      # False
+print(bool(""))     # False
+print(bool([]))     # False
+print(bool(None))   # False
+
+# Valores truthy: cualquier otro valor
+print(bool(1))      # True
+print(bool("hola")) # True
+print(bool([1, 2])) # True
+
+# Uso práctico
+nombre = ""
+if not nombre:
+    print("El nombre está vacío")
+
+numeros = [1, 2, 3]
+if numeros:
+    print("La lista tiene elementos")
+`}
+/>
+
+> En Python, `and` y `or` no siempre devuelven `True` o `False` — devuelven uno de los operandos originales. Por ejemplo, `"hola" or "mundo"` devuelve `"hola"`, no `True`.
+
+## Tipo de dato booleano
+
+`bool` es un tipo de dato en Python, subclase de `int`. Internamente `True` equivale a `1` y `False` a `0`, lo que permite usarlos en operaciones aritméticas.
+
+<CodeRunner language="python" title="El tipo bool" initialCode={`print(type(True))   # <class 'bool'>
+print(type(False))  # <class 'bool'>
+
+# bool es subclase de int
+
+print(isinstance(True, int)) # True
+print(True == 1) # True
+print(False == 0) # True
+
+# Se pueden usar en operaciones aritméticas
+
+print(True + True) # 2
+print(True + False) # 1
+print(False * 5) # 0
+
+# Contar elementos con sum()
+
+resultados = [True, False, True, True, False]
+print("Verdaderos:", sum(resultados)) # 3`} />
+
+## Tablas de verdad
+
+Las tablas de verdad muestran todos los posibles resultados de los operadores lógicos.
+
+<table>
+  <thead>
+    <tr>
+      <th>Condición 1</th>
+      <th>Condición 2</th>
+      <th>and (las dos)</th>
+      <th>or (al menos una)</th>
+      <th>not (inverso)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style={{ color: "#06d6a0" }}>✓ True</td>
+      <td style={{ color: "#06d6a0" }}>✓ True</td>
+      <td style={{ color: "#06d6a0" }}>✓ True</td>
+      <td style={{ color: "#06d6a0" }}>✓ True</td>
+      <td style={{ color: "#f87171" }}>✗ False</td>
+    </tr>
+    <tr>
+      <td style={{ color: "#06d6a0" }}>✓ True</td>
+      <td style={{ color: "#f87171" }}>✗ False</td>
+      <td style={{ color: "#f87171" }}>✗ False</td>
+      <td style={{ color: "#06d6a0" }}>✓ True</td>
+      <td style={{ color: "#f87171" }}>✗ False</td>
+    </tr>
+    <tr>
+      <td style={{ color: "#f87171" }}>✗ False</td>
+      <td style={{ color: "#06d6a0" }}>✓ True</td>
+      <td style={{ color: "#f87171" }}>✗ False</td>
+      <td style={{ color: "#06d6a0" }}>✓ True</td>
+      <td style={{ color: "#06d6a0" }}>✓ True</td>
+    </tr>
+    <tr>
+      <td style={{ color: "#f87171" }}>✗ False</td>
+      <td style={{ color: "#f87171" }}>✗ False</td>
+      <td style={{ color: "#f87171" }}>✗ False</td>
+      <td style={{ color: "#f87171" }}>✗ False</td>
+      <td style={{ color: "#06d6a0" }}>✓ True</td>
+    </tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="Tabla de verdad en código" initialCode={`# Genera la tabla de verdad de and y or
+valores = [True, False]
+
+print(f"{'A':<8} {'B':<8} {'A and B':<10} {'A or B':<10} {'not A'}")
+print("-" * 45)
+for a in valores:
+  for b in valores:
+    print(f"{str(a):<8} {str(b):<8} {str(a and b):<10} {str(a or b):<10} {str(not a)}")`} />
+
+## Prioridad de operadores lógicos
+
+Cuando se combinan `not`, `and` y `or` en una misma expresión, Python los evalúa en este orden:
+
+<table>
+  <thead>
+    <tr>
+      <th>Precedencia</th>
+      <th>Operador</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1 (mayor)</td>
+      <td>
+        <code>not</code>
+      </td>
+      <td>Negación</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>
+        <code>and</code>
+      </td>
+      <td>Y lógico</td>
+    </tr>
+    <tr>
+      <td>3 (menor)</td>
+      <td>
+        <code>or</code>
+      </td>
+      <td>O lógico</td>
+    </tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="Prioridad de operadores lógicos" initialCode={`# not tiene más prioridad que and y or
+print(not True or False)     # False → (not True) or False → False or False
+print(not (True or False))   # False → not True → False
+
+# and tiene más prioridad que or
+
+print(True or False and False) # True → True or (False and False) → True or False
+print((True or False) and False) # False → True and False
+
+# Ejemplo complejo
+
+x = 5
+y = 0
+z = -1
+print(x > 0 and y == 0 or z < 0) # True → (True and True) or True
+print(x > 0 and (y == 0 or z < 0)) # True → True and (True or True)
+print(not x > 0 or y == 0 and z > 0) # False → False or (True and False)`} />
+
+> Aunque Python tiene reglas de precedencia, usa siempre **paréntesis** cuando combines `not`, `and` y `or`. Hacen el código mucho más legible y evitan errores difíciles de detectar.

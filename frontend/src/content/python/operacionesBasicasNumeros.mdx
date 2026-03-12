@@ -1,0 +1,214 @@
+# Operaciones Básicas con Números
+
+En Python, los números son uno de los tipos de datos más fundamentales. Python maneja internamente distintos tipos numéricos: enteros (`int`), decimales (`float`) y números complejos (`complex`). Para la mayoría de operaciones cotidianas trabajarás con `int` y `float`.
+
+Una **expresión** es cualquier combinación de valores, variables y operadores que Python puede evaluar para producir un resultado. Por ejemplo, `2 + 3` o `a * b` son expresiones.
+
+## Operaciones aritméticas
+
+Python incluye operadores matemáticos similares a los usados en matemáticas y en la mayoría de lenguajes de programación. Las operaciones aritméticas son la base de cualquier cálculo y el intérprete evalúa las expresiones devolviendo el resultado directamente.
+
+### Suma y resta
+
+La suma (`+`) y la resta (`-`) funcionan exactamente como en matemáticas. Puedes operar con variables, literales o mezclar ambos.
+
+<CodeRunner language="python" title="Suma y resta" initialCode={`a = 5
+b = 3
+
+resultado = a + b
+print("Suma:", resultado)       # 8
+
+resultado = a - b
+print("Resta:", resultado)      # 2
+
+# También puedes encadenar operaciones
+print("Encadenado:", 10 - 3 + 2)  # 9
+
+# También funciona con decimales
+print("Suma float:", 1.5 + 2.3)   # 3.8
+print("Resta float:", 5.7 - 2.2)  # 3.5`} />
+
+### Multiplicación y división
+
+La multiplicación usa `*` y la división usa `/`. Es importante saber que la división **siempre devuelve un float**, incluso si el resultado es un número entero.
+
+<CodeRunner language="python" title="Multiplicación y división" initialCode={`a = 5
+b = 3
+
+print("Multiplicación:", a * b)     # 15
+print("División:", a / b)           # 1.6666...
+
+# Aunque el resultado sea exacto, sigue siendo float
+print(type(10 / 2))                 # <class 'float'>
+print(10 / 2)                       # 5.0
+
+# Con decimales funciona igual
+print(2.5 * 4.0)                    # 10.0
+print(7.5 / 2.5)                    # 3.0`} />
+
+> La división `/` siempre devuelve un `float`. Si necesitas la parte entera del resultado, usa `//`.
+
+### Precisión de los decimales
+
+Los números `float` pueden tener pequeñas imprecisiones debido a cómo se representan internamente en binario en los ordenadores. Es algo a tener en cuenta cuando se comparan decimales.
+
+<CodeRunner language="python" title="Precisión float" initialCode={`# Imprecisión típica de float
+print(0.1 + 0.2)           # 0.30000000000000004, no 0.3
+
+# Para comparar floats, mejor usar round()
+resultado = 0.1 + 0.2
+print(round(resultado, 2)) # 0.3
+
+# O comparar con una tolerancia
+print(abs(resultado - 0.3) < 1e-9)  # True`} />
+
+### División entera y módulo
+
+Python ofrece dos operadores especiales muy útiles: la **división entera** (`//`) que elimina la parte decimal, y el **módulo** (`%`) que devuelve el resto de la división.
+
+<CodeRunner language="python" title="División entera y módulo" initialCode={`# División entera: solo la parte entera
+print(7 // 2)     # 3  (no 3.5)
+print(10 // 3)    # 3
+
+# Módulo: el resto de la división
+print(7 % 3)      # 1  (7 = 3*2 + 1)
+print(10 % 3)     # 1  (10 = 3*3 + 1)
+
+# Uso práctico: saber si un número es par o impar
+numero = 14
+if numero % 2 == 0:
+    print(numero, "es par")
+else:
+    print(numero, "es impar")`} />
+
+La relación entre `//` y `%` siempre cumple: `a == (a // b) * b + (a % b)`.
+
+### Exponenciación
+
+El operador `**` eleva un número a una potencia. Es más legible y eficiente que usar `pow()` para casos simples.
+
+<CodeRunner language="python" title="Exponenciación" initialCode={`# Potencias básicas
+print(2 ** 3)      # 8
+print(5 ** 2)      # 25
+
+# También funciona con floats
+print(9 ** 0.5)    # 3.0 (raíz cuadrada)
+print(8 ** (1/3))  # 2.0 (raíz cúbica)
+
+# Con variables
+base = 2
+for exp in range(1, 6):
+    print(f"2^{exp} = {base ** exp}")`} />
+
+### Valor absoluto
+
+La función `abs()` devuelve el valor absoluto de un número, es decir, su distancia al cero, siempre positiva.
+
+<CodeRunner language="python" title="Valor absoluto" initialCode={`print(abs(5))    # 5
+print(abs(-5))   # 5
+print(abs(-3.7)) # 3.7
+
+# Uso práctico: calcular diferencia entre dos valores
+temperatura_hoy = 22
+temperatura_ayer = 27
+diferencia = abs(temperatura_hoy - temperatura_ayer)
+print(f"La temperatura varió {diferencia} grados")`} />
+
+## Tipos numéricos
+
+Antes de hablar de prioridad, es útil entender cómo Python maneja los tipos cuando mezclas `int` y `float`.
+
+A diferencia de otros lenguajes, los enteros en Python tienen **precisión arbitraria** — no tienen un límite fijo de tamaño práctico, por lo que pueden representar números enormes sin desbordamiento (solo limitados por la memoria disponible).
+
+<CodeRunner language="python" title="Tipos numéricos" initialCode={`# int: número entero, sin límite de tamaño práctico
+x = 10
+print(type(x))          # <class 'int'>
+
+# Los enteros pueden ser enormes
+print(2 ** 100)         # 1267650600228229401496703205376
+
+# float: número decimal
+y = 3.14
+print(type(y))          # <class 'float'>
+
+# Al mezclar int y float, Python convierte a float
+resultado = x + y
+print(resultado)        # 13.14
+print(type(resultado))  # <class 'float'>
+
+# Conversión explícita
+print(int(3.9))         # 3 (elimina la parte decimal, no redondea)
+print(float(5))         # 5.0
+print(round(3.9))       # 4 (redondea al entero más cercano)`} />
+
+### Números complejos
+
+Python también soporta números complejos de forma nativa, usados en matemáticas y física.
+
+<CodeRunner language="python" title="Números complejos" initialCode={`z = 2 + 3j
+print(z)            # (2+3j)
+print(type(z))      # <class 'complex'>
+print(z.real)       # 2.0
+print(z.imag)       # 3.0`} />
+
+## Prioridad y asociatividad
+
+Cuando una expresión tiene varios operadores, Python los evalúa en un orden específico llamado **precedencia de operadores**. No es necesario memorizar la tabla completa — en la práctica, los paréntesis son la herramienta más útil para controlar el orden y hacer el código más claro.
+
+### Tabla de precedencia (de mayor a menor)
+
+<table>
+  <thead>
+    <tr>
+      <th>Operador</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>()</code></td><td>Paréntesis — mayor prioridad</td></tr>
+    <tr><td><code>**</code></td><td>Exponenciación</td></tr>
+    <tr><td><code>+x, -x</code></td><td>Unarios</td></tr>
+    <tr><td><code>*, /, //, %</code></td><td>Multiplicación y división</td></tr>
+    <tr><td><code>+, -</code></td><td>Suma y resta — menor prioridad</td></tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="Prioridad de operadores" initialCode={`# Sin paréntesis: primero * luego +
+print(2 + 3 * 4)        # 14, no 20
+
+# Con paréntesis: cambia el orden
+print((2 + 3) * 4)      # 20
+
+# Exponenciación es asociativa a la derecha
+print(2 ** 3 ** 2)      # 512 = 2**(3**2) = 2**9
+print((2 ** 3) ** 2)    # 64  = 8**2
+
+# Ejemplo complejo paso a paso:
+# 10 - 2 * 3 + 4 // 2
+# 2 * 3 = 6
+# 4 // 2 = 2
+# 10 - 6 + 2 = 6
+print(10 - 2 * 3 + 4 // 2)  # 6`} />
+
+> Cuando tengas dudas, usa paréntesis. Hacen el código más claro aunque no sean estrictamente necesarios.
+
+### Operadores de asignación compuesta
+
+Python ofrece atajos para operar y asignar en una sola instrucción. Son muy comunes en bucles y acumuladores.
+
+<CodeRunner language="python" title="Asignación compuesta" initialCode={`x = 10
+
+x += 5   # equivale a x = x + 5
+print(x)  # 15
+
+x -= 3   # equivale a x = x - 3
+print(x)  # 12
+
+x *= 2   # equivale a x = x * 2
+print(x)  # 24
+
+x //= 5  # equivale a x = x // 5
+print(x)  # 4
+
+x **= 3  # equivale a x = x ** 3
+print(x)  # 64`} />

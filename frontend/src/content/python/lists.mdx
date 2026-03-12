@@ -1,0 +1,55 @@
+# Listas y comprensiones en Python
+
+Las listas son la estructura de datos más usada en Python. Las **comprensiones de listas** son una forma concisa y pythónica de crearlas.
+
+## Comprensiones básicas
+
+<CodeRunner
+  language="python"
+  title="List comprehensions"
+  initialCode={`
+# Forma tradicional
+cuadrados_trad = []
+for n in range(1, 6):
+    cuadrados_trad.append(n ** 2)
+
+# Con comprensión
+cuadrados = [n ** 2 for n in range(1, 6)]
+
+print("Tradicional:", cuadrados_trad)
+print("Comprensión:", cuadrados)
+  `}
+/>
+
+## Con condición
+
+<CodeRunner
+  language="python"
+  title="Comprensión con filtro"
+  initialCode={`
+numeros = range(1, 21)
+
+pares = [n for n in numeros if n % 2 == 0]
+print("Pares:", pares)
+
+fizzbuzz = [n for n in range(1, 21) if n % 3 == 0 or n % 5 == 0]
+print("Div 3 o 5:", fizzbuzz)
+  `}
+/>
+
+## Comprensiones de diccionarios
+
+<CodeRunner
+  language="python"
+  title="Dict comprehensions"
+  initialCode={`
+palabras = ["hola", "mundo", "python", "programacion"]
+
+longitudes = {palabra: len(palabra) for palabra in palabras}
+print(longitudes)
+
+original = {"a": 1, "b": 2, "c": 3}
+invertido = {v: k for k, v in original.items()}
+print(invertido)
+  `}
+/>

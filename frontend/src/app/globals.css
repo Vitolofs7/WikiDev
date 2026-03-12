@@ -1,0 +1,211 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: #080810;
+    --bg-2: #0e0e1a;
+    --bg-3: #14141f;
+    --border: rgba(255, 255, 255, 0.06);
+    --border-hover: rgba(255, 255, 255, 0.12);
+    --accent: #7c6dfa;
+    --accent-2: #06d6a0;
+    --text: #e8e8f0;
+    --text-muted: #6e6e8a;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Outfit", sans-serif;
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2a2a3d;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3a3a55;
+  }
+
+  ::selection {
+    background: rgba(124, 109, 250, 0.25);
+  }
+}
+
+@layer components {
+  .glass {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+  }
+
+  .glass-hover {
+    transition:
+      background 0.2s,
+      border-color 0.2s;
+  }
+
+  .glass-hover:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--border-hover);
+  }
+
+  /* Prose styles */
+  .prose-docs {
+    @apply text-zinc-300 leading-relaxed;
+  }
+
+  .prose-docs h1 {
+    font-family: "Outfit", sans-serif;
+    @apply text-5xl font-bold text-white mb-2 mt-0 tracking-tight;
+  }
+
+  .prose-docs h1::after {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, #7c6dfa, #06d6a0);
+    border-radius: 999px;
+    margin-top: 12px;
+    margin-bottom: 24px;
+  }
+
+  .prose-docs h2 {
+    font-family: "Outfit", sans-serif;
+    @apply text-2xl font-semibold text-white mb-4 mt-10;
+    padding-left: 12px;
+    border-left: 2px solid #7c6dfa;
+  }
+
+  .prose-docs h3 {
+    font-family: "Outfit", sans-serif;
+    @apply text-xl font-semibold text-zinc-100 mb-3 mt-8;
+  }
+
+  .prose-docs p {
+    @apply leading-relaxed mb-4 text-zinc-400 text-lg;
+  }
+
+  .prose-docs ul {
+    @apply list-disc list-inside space-y-2 mb-4 text-zinc-400 text-lg;
+  }
+
+  .prose-docs a {
+    @apply text-violet-400 hover:text-violet-300 underline underline-offset-2 transition-colors;
+  }
+
+  .prose-docs strong {
+    @apply text-white font-semibold;
+  }
+
+  .prose-docs code:not(pre code) {
+    font-family: "JetBrains Mono", monospace;
+    @apply text-base bg-violet-500/10 text-violet-300 px-1.5 py-0.5 rounded-md border border-violet-500/20;
+  }
+
+  .prose-docs pre {
+    font-family: "JetBrains Mono", monospace;
+    @apply bg-[#0e0e1a] border border-white/5 rounded-xl p-4 overflow-x-auto mb-6 text-base;
+  }
+
+  .prose-docs blockquote {
+    @apply border-l-2 border-violet-500 pl-4 italic text-zinc-500 my-4 bg-violet-500/5 py-2 rounded-r-lg text-lg;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.4s ease both;
+}
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+/* Table styles */
+.prose-docs table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  font-family: "Outfit", sans-serif;
+}
+
+.prose-docs thead tr {
+  border-bottom: 1px solid rgba(124, 109, 250, 0.3);
+}
+
+.prose-docs th {
+  text-align: left;
+  padding: 0.875rem 1.25rem;
+  color: #a89cf7;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.prose-docs td {
+  padding: 0.875rem 1.25rem;
+  color: #a1a1aa;
+  font-size: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.prose-docs tr:last-child td {
+  border-bottom: none;
+}
+
+.prose-docs tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+  color: #e4e4e7;
+}
+
+.prose-docs code {
+  font-family: "JetBrains Mono", monospace;
+}
