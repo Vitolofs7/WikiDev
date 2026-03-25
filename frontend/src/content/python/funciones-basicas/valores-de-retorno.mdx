@@ -1,0 +1,238 @@
+# 3.5 Valores de retorno
+
+Las funciones pueden devolver resultados al código que las llamó. El valor de retorno es lo que convierte a las funciones en piezas reutilizables dentro de expresiones, cálculos y otros procesos.
+
+---
+
+## return
+
+La sentencia `return` hace dos cosas simultáneamente:
+
+1. **Devuelve un valor** al punto donde se llamó la función
+2. **Termina la ejecución** del cuerpo de la función inmediatamente
+
+<CodeRunner language="python" title="return básico" initialCode={`def doble(n):
+    return n * 2
+
+resultado = doble(5)
+print(resultado)   # 10
+
+# El valor de retorno se puede usar directamente en expresiones
+print(doble(3) + doble(4))   # 6 + 8 = 14`} />
+
+Todo lo que está después de `return` en el mismo bloque **no se ejecuta**:
+
+<CodeRunner language="python" title="return termina la función" initialCode={`def verificar_edad(edad):
+    if edad < 0:
+        return "Edad no válida"
+    if edad >= 18:
+        return "Mayor de edad"
+    return "Menor de edad"
+    print("Esta línea nunca se ejecuta")   # inalcanzable
+
+print(verificar_edad(25))
+print(verificar_edad(-3))
+print(verificar_edad(12))`} />
+
+> Cuando Python encuentra `return`, **sale inmediatamente** de la función. Cualquier código posterior dentro del mismo bloque es inalcanzable.
+
+---
+
+## Retorno de valores simples
+
+Una función puede devolver cualquier tipo de dato: números, cadenas, booleanos, listas, etc.
+
+<CodeRunner language="python" title="Retorno de distintos tipos" initialCode={`def cuadrado(n):
+    return n ** 2
+
+def es_par(n):
+    return n % 2 == 0
+
+def formato_precio(precio):
+    return f"{precio:.2f}€"
+
+print(cuadrado(7))           # 49
+print(es_par(4))             # True
+print(es_par(7))             # False
+print(formato_precio(29.5))  # 29.50€`} />
+
+<CodeRunner language="python" title="Retorno condicional" initialCode={`def clasificar_nota(nota):
+    if nota >= 9:
+        return "Sobresaliente"
+    elif nota >= 7:
+        return "Notable"
+    elif nota >= 5:
+        return "Aprobado"
+    else:
+        return "Suspenso"
+
+notas = [9.5, 7.2, 4.8, 6.0]
+for nota in notas:
+    print(f"{nota}: {clasificar_nota(nota)}")`} />
+
+---
+
+## Retorno múltiple
+
+Python permite devolver **varios valores** separados por comas. Internamente se empaquetan como una **tupla**:
+
+<CodeRunner language="python" title="Retorno múltiple" initialCode={`def dividir(dividendo, divisor):
+    cociente = dividendo // divisor
+    resto = dividendo % divisor
+    return cociente, resto
+
+# Se reciben como tupla
+resultado = dividir(17, 5)
+print(resultado)         # (3, 2)
+print(type(resultado))   # <class 'tuple'>
+
+# O se desempaquetan directamente en variables
+cociente, resto = dividir(17, 5)
+print(f"17 ÷ 5 = {cociente} con resto {resto}")`} />
+
+<CodeRunner language="python" title="Retorno múltiple: ejemplo práctico" initialCode={`def estadisticas(numeros):
+    menor = min(numeros)
+    mayor = max(numeros)
+    promedio = sum(numeros) / len(numeros)
+    return menor, mayor, round(promedio, 2)
+
+datos = [23, 45, 12, 67, 34, 89, 5]
+minimo, maximo, media = estadisticas(datos)
+
+print(f"Mínimo:   {minimo}")
+print(f"Máximo:   {maximo}")
+print(f"Promedio: {media}")`} />
+
+> El retorno múltiple es una forma cómoda de devolver datos relacionados sin necesidad de crear estructuras complejas.
+
+---
+
+## Funciones productivas vs nulas
+
+En Python, toda función devuelve algo. La diferencia está en **qué** devuelven:
+
+<table>
+  <thead>
+    <tr>
+      <th>Tipo</th>
+      <th>Descripción</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Productiva</strong> (<em>fruitful</em>)</td>
+      <td>Devuelve un valor útil con <code>return</code></td>
+      <td><code>abs()</code>, <code>len()</code>, <code>round()</code></td>
+    </tr>
+    <tr>
+      <td><strong>Nula</strong> (<em>void</em>)</td>
+      <td>Produce un efecto y devuelve <code>None</code></td>
+      <td><code>print()</code>, <code>list.sort()</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="Función productiva" initialCode={`def precio_con_iva(precio, iva=21):
+    return round(precio * (1 + iva / 100), 2)
+
+# El resultado se puede usar en expresiones, asignar, comparar...
+total = precio_con_iva(100) + precio_con_iva(50)
+print(f"Total: {total}€")   # 181.5€`} />
+
+<CodeRunner language="python" title="Función nula" initialCode={`def mostrar_factura(producto, precio):
+    precio_final = round(precio * 1.21, 2)
+    print(f"{'─' * 30}")
+    print(f"  Producto: {producto}")
+    print(f"  Precio:   {precio}€")
+    print(f"  IVA 21%:  {round(precio * 0.21, 2)}€")
+    print(f"  Total:    {precio_final}€")
+    print(f"{'─' * 30}")
+
+# La función produce un efecto (imprime) pero devuelve None
+resultado = mostrar_factura("Teclado", 45)
+print(f"Valor de retorno: {resultado}")   # None`} />
+
+Un error frecuente es intentar usar el resultado de una función nula como si fuera productiva:
+
+<CodeRunner language="python" title="Error con función nula" initialCode={`# ❌ sort() ordena la lista in-place, devuelve None
+numeros = [3, 1, 4, 1, 5]
+resultado = numeros.sort()
+print(resultado)   # None  ← no es la lista ordenada
+print(numeros)     # [1, 1, 3, 4, 5]  ← la lista original sí está ordenada
+
+# ✅ Para obtener una lista ordenada sin modificar la original, usa sorted()
+numeros2 = [3, 1, 4, 1, 5]
+resultado2 = sorted(numeros2)
+print(resultado2)  # [1, 1, 3, 4, 5]  ← copia ordenada
+print(numeros2)    # [3, 1, 4, 1, 5]  ← sin modificar`} />
+
+---
+
+## return sin valor
+
+Un `return` sin ningún valor devuelve `None` y termina la función. Es útil para salir de una función antes de tiempo:
+
+<CodeRunner language="python" title="return sin valor" initialCode={`def procesar_edad(edad):
+    if edad < 0:
+        print("Error: la edad no puede ser negativa")
+        return   # sale de la función sin devolver nada útil
+    
+    if edad >= 18:
+        print(f"{edad} años: acceso permitido")
+    else:
+        print(f"{edad} años: acceso denegado")
+
+procesar_edad(25)
+procesar_edad(-5)
+procesar_edad(12)
+
+# return sin valor devuelve None
+resultado = procesar_edad(20)
+print(f"Valor devuelto: {resultado}")`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Concepto</th>
+      <th>Descripción</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>return valor</code></td>
+      <td>Devuelve un valor y termina la función</td>
+      <td><code>return x * 2</code></td>
+    </tr>
+    <tr>
+      <td><code>return</code></td>
+      <td>Termina la función, devuelve <code>None</code></td>
+      <td><code>return</code></td>
+    </tr>
+    <tr>
+      <td>Sin <code>return</code></td>
+      <td>Al terminar el cuerpo, devuelve <code>None</code></td>
+      <td>Funciones que solo usan <code>print()</code></td>
+    </tr>
+    <tr>
+      <td>Retorno múltiple</td>
+      <td>Devuelve una tupla de valores</td>
+      <td><code>return a, b, c</code></td>
+    </tr>
+    <tr>
+      <td>Función productiva</td>
+      <td>Devuelve un valor útil</td>
+      <td><code>abs()</code>, <code>len()</code></td>
+    </tr>
+    <tr>
+      <td>Función nula</td>
+      <td>Devuelve <code>None</code></td>
+      <td><code>print()</code>, <code>.sort()</code></td>
+    </tr>
+  </tbody>
+</table>

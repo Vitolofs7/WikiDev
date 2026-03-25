@@ -1,0 +1,344 @@
+# 2.8 Comprensiones en Python
+
+Las **comprensiones** son una forma concisa y expresiva de crear estructuras de datos a partir de iterables en una sola línea. Son más legibles que los bucles equivalentes cuando la lógica es sencilla, y en general más eficientes en tiempo de ejecución.
+
+Python ofrece comprensiones para cuatro tipos de estructuras: listas, diccionarios, conjuntos y generadores.
+
+---
+
+## Comprensión de listas
+
+### Estructura y sintaxis
+```python
+[expresión for variable in iterable]
+[expresión for variable in iterable if condición]
+```
+
+- **expresión**: el valor que se añade a la lista en cada iteración
+- **variable**: nombre que toma cada elemento del iterable
+- **iterable**: cualquier secuencia: lista, `range`, cadena, etc.
+- **condición** (opcional): filtra qué elementos se incluyen
+
+### Sin condición
+
+<CodeRunner language="python" title="Comprensión básica" initialCode={`# Cuadrados del 0 al 9
+cuadrados = [x**2 for x in range(10)]
+print(cuadrados)
+
+# Caracteres en mayúscula
+mayusculas = [c.upper() for c in "python"]
+print(mayusculas)`} />
+
+### Con condición (filtrado)
+
+<CodeRunner language="python" title="Comprensión con filtro" initialCode={`# Solo los números pares del 0 al 10
+pares = [n for n in range(11) if n % 2 == 0]
+print(pares)
+
+# Solo palabras con más de 3 letras
+palabras = ["sol", "luna", "estrella", "mar"]
+largas = [p for p in palabras if len(p) > 3]
+print(largas)`} />
+
+### Con expresión condicional
+
+Cuando se quiere transformar los elementos de forma distinta según una condición, se usa el operador ternario dentro de la expresión:
+
+<CodeRunner language="python" title="Expresión condicional en comprensión" initialCode={`# Clasificar números como "par" o "impar"
+clasificacion = ["par" if n % 2 == 0 else "impar" for n in range(6)]
+print(clasificacion)
+
+# Multiplicar pares por 2 e impares por 3
+resultado = [n * 2 if n % 2 == 0 else n * 3 for n in range(8)]
+print(resultado)`} />
+
+> La condición con `if` al **final** filtra elementos (algunos no se incluyen). La expresión ternaria `a if cond else b` en la **expresión** transforma todos los elementos, ninguno se descarta.
+
+### Anidadas
+
+Las comprensiones anidadas permiten trabajar con estructuras bidimensionales como matrices:
+
+<CodeRunner language="python" title="Matriz con comprensión anidada" initialCode={`# Matriz 3x3: producto de índices
+matriz = [[i * j for j in range(1, 4)] for i in range(1, 4)]
+for fila in matriz:
+    print(fila)`} />
+
+<CodeRunner language="python" title="Aplanar una lista de listas (flatten)" initialCode={`lista_de_listas = [[1, 2], [3, 4], [5, 6]]
+
+# Con bucle tradicional
+plana = []
+for sublista in lista_de_listas:
+    for x in sublista:
+        plana.append(x)
+print(plana)
+
+# Con comprensión
+plana = [x for sublista in lista_de_listas for x in sublista]
+print(plana)`} />
+
+<CodeRunner language="python" title="Combinaciones de dos listas" initialCode={`A = [1, 2, 3]
+B = ["a", "b"]
+
+combinaciones = [(a, b) for a in A for b in B]
+print(combinaciones)`} />
+
+### Comprensiones con funciones integradas
+
+Las comprensiones se combinan frecuentemente con `sum()`, `min()`, `max()` y otras funciones integradas:
+
+<CodeRunner language="python" title="Comprensión con funciones integradas" initialCode={`# Suma de cuadrados pares del 0 al 19
+total = sum(x**2 for x in range(20) if x % 2 == 0)
+print("Suma:", total)
+
+# Máximo de valores transformados
+maximo = max(len(p) for p in ["hola", "python", "a", "mundo"])
+print("Longitud máxima:", maximo)`} />
+
+---
+
+## Comprensión de diccionarios
+
+### Estructura y sintaxis
+```python
+{clave: valor for variable in iterable}
+{clave: valor for variable in iterable if condición}
+```
+
+<CodeRunner language="python" title="Dict comprehension básica" initialCode={`# Número → su cuadrado
+cuadrados = {x: x**2 for x in range(6)}
+print(cuadrados)
+
+# Solo para números pares
+pares = {x: x**2 for x in range(10) if x % 2 == 0}
+print(pares)`} />
+
+### Casos de uso habituales
+
+<CodeRunner language="python" title="Invertir claves y valores" initialCode={`original = {"a": 1, "b": 2, "c": 3}
+invertido = {v: k for k, v in original.items()}
+print(invertido)`} />
+
+<CodeRunner language="python" title="Contar apariciones de caracteres" initialCode={`texto = "banana"
+contador = {c: texto.count(c) for c in set(texto)}
+print(contador)`} />
+
+<CodeRunner language="python" title="Construir diccionario desde dos listas" initialCode={`nombres  = ["Ana", "Luis", "Marta"]
+edades   = [25, 30, 22]
+
+diccionario = {nombre: edad for nombre, edad in zip(nombres, edades)}
+print(diccionario)`} />
+
+<CodeRunner language="python" title="Transformar valores de un diccionario" initialCode={`precios = {"manzana": 1.2, "pera": 0.8, "uva": 2.5}
+
+# Aplicar un descuento del 10%
+con_descuento = {fruta: round(precio * 0.9, 2) for fruta, precio in precios.items()}
+print(con_descuento)`} />
+
+---
+
+## Comprensión de conjuntos
+
+### Estructura y sintaxis
+```python
+{expresión for variable in iterable}
+{expresión for variable in iterable if condición}
+```
+
+Los conjuntos eliminan duplicados automáticamente, por lo que las comprensiones de conjuntos son útiles cuando se necesitan valores únicos:
+
+<CodeRunner language="python" title="Set comprehension básica" initialCode={`# Cuadrados únicos
+cuadrados = {x**2 for x in range(-5, 6)}
+print(cuadrados)   # sin duplicados: (-3)**2 y (3)**2 son el mismo valor`} />
+
+<CodeRunner language="python" title="Caracteres únicos de una cadena" initialCode={`unicos = {c for c in "abracadabra" if c.isalpha()}
+print(unicos)`} />
+
+<CodeRunner language="python" title="Longitudes únicas de palabras" initialCode={`palabras = ["hola", "python", "a", "mundo", "sol"]
+longitudes = {len(p) for p in palabras}
+print(longitudes)`} />
+
+> Para crear un conjunto vacío usa `set()`, no `{}`. Las llaves vacías crean un diccionario vacío.
+
+---
+
+## Comprensiones de generadores
+
+### Estructura y sintaxis
+```python
+(expresión for variable in iterable)
+(expresión for variable in iterable if condición)
+```
+
+La diferencia clave respecto a las comprensiones de listas es que un generador **no almacena todos los valores en memoria**: los produce uno a uno bajo demanda. Es la opción más eficiente cuando se trabaja con secuencias muy grandes o cuando solo se necesita recorrer los valores una vez:
+
+<CodeRunner language="python" title="Generador básico" initialCode={`gen = (x**2 for x in range(5))
+
+print(next(gen))   # 0  ← produce el primer valor
+print(next(gen))   # 1
+print(next(gen))   # 4
+
+# También puede recorrerse con for
+gen2 = (x**2 for x in range(5))
+for valor in gen2:
+    print(valor, end=" ")`} />
+
+<CodeRunner language="python" title="Generador con función integrada" initialCode={`# sum() consume el generador sin crear una lista intermedia
+total = sum(x**2 for x in range(1000) if x % 2 == 0)
+print("Suma:", total)`} />
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>Lista <code>[...]</code></th>
+      <th>Generador <code>(...)</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Almacenamiento</strong></td>
+      <td>Todos los valores en memoria</td>
+      <td>Un valor a la vez</td>
+    </tr>
+    <tr>
+      <td><strong>Reutilizable</strong></td>
+      <td>Sí</td>
+      <td>No (se agota al recorrerse)</td>
+    </tr>
+    <tr>
+      <td><strong>Acceso por índice</strong></td>
+      <td>Sí (<code>lista[0]</code>)</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><strong>Uso ideal</strong></td>
+      <td>Cuando se necesita la lista completa</td>
+      <td>Cuando solo se recorre una vez o es muy grande</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## Comprensiones vs bucles tradicionales
+
+Las comprensiones son equivalentes a sus bucles correspondientes, pero más concisas:
+
+<CodeRunner language="python" title="Bucle tradicional vs comprensión" initialCode={`# Bucle tradicional
+resultado = []
+for x in range(10):
+    if x % 2 == 0:
+        resultado.append(x**2)
+print(resultado)
+
+# Comprensión equivalente
+resultado = [x**2 for x in range(10) if x % 2 == 0]
+print(resultado)`} />
+
+La elección entre uno y otro depende de la legibilidad. Una comprensión que requiere más de dos segundos para entenderse es mejor expresarla como bucle:
+
+<CodeRunner language="python" title="Cuándo usar bucle en lugar de comprensión" initialCode={`# ❌ Difícil de leer como comprensión
+resultado = [x * y for x in range(1, 4) for y in range(1, 4) if x != y and (x + y) % 2 == 0]
+
+# ✅ Más claro como bucle
+resultado = []
+for x in range(1, 4):
+    for y in range(1, 4):
+        if x != y and (x + y) % 2 == 0:
+            resultado.append(x * y)
+
+print(resultado)`} />
+
+---
+
+## Buenas prácticas y errores comunes
+
+<CodeRunner language="python" title="Confundir {} vacío con set vacío" initialCode={`# {} crea un diccionario vacío, no un conjunto
+vacio_dict = {}
+print(type(vacio_dict))   # <class 'dict'>
+
+# Para crear un conjunto vacío:
+vacio_set = set()
+print(type(vacio_set))    # <class 'set'>`} />
+
+<CodeRunner language="python" title="Olvidar paréntesis en generador dentro de función" initialCode={`# ❌ Doble paréntesis innecesario pero no incorrecto
+total = sum((x**2 for x in range(10)))
+
+# ✅ Cuando el generador es el único argumento, los paréntesis son opcionales
+total = sum(x**2 for x in range(10))
+print(total)`} />
+
+<CodeRunner language="python" title="Comprensión demasiado compleja" initialCode={`# ❌ Muy difícil de leer
+matriz = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+transpuesta = [[fila[i] for fila in matriz] for i in range(len(matriz[0]))]
+
+# ✅ Con comentario que explica la intención
+# Transponer la matriz: filas se convierten en columnas
+transpuesta = [
+    [fila[i] for fila in matriz]
+    for i in range(len(matriz[0]))
+]
+print(transpuesta)`} />
+
+<CodeRunner language="python" title="Efectos secundarios en comprensiones" initialCode={`# ❌ Las comprensiones no deben tener efectos secundarios
+# (modificar variables externas, imprimir, etc.)
+resultados = []
+total = 0
+# Incorrecto: mezcla creación de lista con efecto secundario
+# [resultados.append(x) or total + x for x in range(5)]  # confuso y frágil
+
+# ✅ Separa la lógica
+valores = [x**2 for x in range(5)]
+total = sum(valores)
+print(valores, total)`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Tipo</th>
+      <th>Sintaxis</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Lista</td>
+      <td><code>[expr for x in it]</code></td>
+      <td><code>[x**2 for x in range(5)]</code></td>
+    </tr>
+    <tr>
+      <td>Lista filtrada</td>
+      <td><code>[expr for x in it if cond]</code></td>
+      <td><code>[x for x in range(10) if x % 2 == 0]</code></td>
+    </tr>
+    <tr>
+      <td>Lista con ternario</td>
+      <td><code>[a if cond else b for x in it]</code></td>
+      <td><code>["par" if x%2==0 else "impar" for x in range(5)]</code></td>
+    </tr>
+    <tr>
+      <td>Lista anidada</td>
+      <td><code>[expr for x in A for y in B]</code></td>
+      <td><code>[(x,y) for x in A for y in B]</code></td>
+    </tr>
+    <tr>
+      <td>Diccionario</td>
+      <td><code>&#123;k: v for x in it&#125;</code></td>
+      <td><code>&#123;x: x**2 for x in range(5)&#125;</code></td>
+    </tr>
+    <tr>
+      <td>Conjunto</td>
+      <td><code>&#123;expr for x in it&#125;</code></td>
+      <td><code>&#123;x**2 for x in range(5)&#125;</code></td>
+    </tr>
+    <tr>
+      <td>Generador</td>
+      <td><code>(expr for x in it)</code></td>
+      <td><code>sum(x**2 for x in range(5))</code></td>
+    </tr>
+  </tbody>
+</table>

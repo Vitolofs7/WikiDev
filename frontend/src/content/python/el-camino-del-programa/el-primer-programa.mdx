@@ -1,0 +1,159 @@
+# 1.3 El primer programa
+
+Por convención, el primer programa que se escribe en un nuevo lenguaje de programación muestra el mensaje "Hola, mundo". Aunque su funcionamiento es simple, ilustra los elementos sintácticos más básicos de Python.
+
+## La función print()
+
+La función `print()` envía valores a la salida estándar, que por defecto es la pantalla. Es la forma principal de generar salida visible en un programa Python.
+
+<CodeRunner language="python" title="Hola, mundo" initialCode={`print("Hola, mundo")`} />
+
+Los tres elementos que componen esta instrucción son:
+
+<table>
+  <thead>
+    <tr>
+      <th>Elemento</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>print</code></td>
+      <td>Nombre de la función incorporada que genera salida</td>
+    </tr>
+    <tr>
+      <td><code>()</code></td>
+      <td>Paréntesis que delimitan los argumentos de la función</td>
+    </tr>
+    <tr>
+      <td><code>"Hola, mundo"</code></td>
+      <td>Cadena de texto que se pasa como argumento y se escribe en la salida</td>
+    </tr>
+  </tbody>
+</table>
+
+Las comillas delimitan el inicio y el fin de la cadena de texto. No forman parte del valor y no aparecen en la salida.
+
+## Comillas simples y dobles
+
+Python acepta tanto comillas dobles `"..."` como simples `'...'` para delimitar cadenas de texto. Ambas son equivalentes en comportamiento. El tipo de comilla utilizado es relevante cuando la propia cadena contiene comillas: en ese caso, se emplea el tipo contrario para evitar un error de sintaxis:
+
+<CodeRunner language="python" title="Comillas dentro del texto" initialCode={`print('Python dice "Hola"')    # comillas dobles dentro de simples
+print("It's working!")         # apóstrofe dentro de comillas dobles`} />
+
+## Imprimir varios valores
+
+`print()` acepta múltiples argumentos separados por comas. Los valores se escriben en la misma línea, separados por un espacio por defecto:
+
+<CodeRunner language="python" title="Varios valores en una llamada a print()" initialCode={`print("Hola,", "mundo")            # Hola, mundo
+print("La respuesta es", 42)       # texto y valor numérico
+print("Suma:", 3 + 4)              # la expresión se evalúa antes de pasarse a print()`} />
+
+Los parámetros `sep` y `end` permiten controlar el separador entre valores y el carácter final de la salida, respectivamente:
+
+<CodeRunner language="python" title="Parámetros sep y end" initialCode={`# sep define el separador entre argumentos (por defecto es un espacio)
+print("uno", "dos", "tres", sep="-")   # uno-dos-tres
+
+# end define el carácter al final de la salida (por defecto es un salto de línea)
+print("Sin salto", end=" ")
+print("en la misma línea")             # Sin salto en la misma línea`} />
+
+## Saltos de línea
+
+Por defecto, cada llamada a `print()` añade un salto de línea al final de la salida. Para incluir saltos de línea dentro de una misma cadena, se utiliza la secuencia de escape `\n`:
+
+<CodeRunner language="python" title="Saltos de línea" initialCode={`# Tres llamadas independientes producen tres líneas
+print("Línea 1")
+print("Línea 2")
+print("Línea 3")
+
+# Una sola cadena con \n produce el mismo resultado
+print("Línea 1\nLínea 2\nLínea 3")`} />
+
+## Comentarios
+
+Un comentario es texto que el intérprete ignora durante la ejecución. Se introduce con el carácter `#` y se extiende hasta el final de la línea:
+
+<CodeRunner language="python" title="Sintaxis de comentarios" initialCode={`# Comentario en línea propia
+print("Esto sí se ejecuta")
+
+print("Hola")  # Comentario al final de una instrucción`} />
+
+Los comentarios son más útiles cuando documentan decisiones de diseño o contexto que no puede deducirse del código. Un comentario que simplemente describe lo que hace el código visible aporta poco valor:
+
+<CodeRunner language="python" title="Buenas prácticas en comentarios" initialCode={`x = 10
+y = 5
+
+# Innecesario: el código ya expresa esto directamente
+# suma x e y
+resultado = x + y
+
+# Útil: explica el contexto o la razón detrás de la instrucción
+# sumamos el precio base más el IVA calculado previamente
+total = x + y`} />
+
+> Un buen comentario explica el **porqué** de una decisión, no el **qué** hace el código. Si el nombre de la variable es suficientemente descriptivo, el comentario puede ser innecesario.
+
+## Errores comunes
+
+<CodeRunner language="python" title="Comillas sin cerrar o mezcladas" initialCode={`# Comilla de cierre faltante → SyntaxError
+# print("Hola)
+
+# Tipo de comillas inconsistente → SyntaxError
+# print("Hola')
+
+# Sintaxis correcta
+print("Hola")
+print('Hola')`} />
+
+## Ejercicio integrador
+
+El siguiente bloque combina `print()` con operaciones aritméticas simples. Modifica los valores y observa cómo cambia la salida:
+
+<CodeRunner language="python" title="print() con operaciones aritméticas" initialCode={`print("Suma:", 10 + 5)
+print("Resta:", 10 - 5)
+print("Multiplicación:", 10 * 5)
+print("División:", 10 / 5)
+print("Resultado combinado:", 2 + 3 * 4)`} />
+
+> El último resultado puede no ser el esperado. El orden en que Python evalúa los operadores se explica en detalle en la sección **1.5 Operadores aritméticos**.
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Uso</th>
+      <th>Ejemplo</th>
+      <th>Salida</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Cadena de texto</td>
+      <td><code>print("Hola")</code></td>
+      <td><code>Hola</code></td>
+    </tr>
+    <tr>
+      <td>Varios valores</td>
+      <td><code>print("Res:", 42)</code></td>
+      <td><code>Res: 42</code></td>
+    </tr>
+    <tr>
+      <td>Separador personalizado</td>
+      <td><code>print("a", "b", sep="-")</code></td>
+      <td><code>a-b</code></td>
+    </tr>
+    <tr>
+      <td>Sin salto de línea al final</td>
+      <td><code>print("Hola", end=" ")</code></td>
+      <td><code>Hola </code> (sin <code>\n</code>)</td>
+    </tr>
+    <tr>
+      <td>Salto de línea dentro del texto</td>
+      <td><code>print("a\nb")</code></td>
+      <td><code>a</code> / <code>b</code></td>
+    </tr>
+  </tbody>
+</table>

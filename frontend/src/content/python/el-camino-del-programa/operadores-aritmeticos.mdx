@@ -1,0 +1,244 @@
+# 1.5 Operadores aritméticos
+
+Ahora que conocemos los tipos de datos básicos, podemos ver cómo operan entre sí. Python incluye un conjunto de operadores aritméticos que permiten realizar cálculos sobre valores numéricos. Esta sección los presenta en orden de complejidad creciente, comenzando por los más directos.
+
+---
+
+## Suma y resta
+
+Los operadores `+` y `-` se comportan igual que en matemáticas, tanto con enteros como con decimales:
+
+<CodeRunner language="python" title="Suma y resta" initialCode={`a = 5
+b = 3
+
+print(a + b)   # 8
+print(a - b)   # 2`} />
+
+Cuando se mezclan `int` y `float` en una misma operación, el resultado es siempre `float`. Python convierte automáticamente el entero al tipo más general:
+
+<CodeRunner language="python" title="Mezcla de int y float" initialCode={`print(5 + 2.3)         # 7.3
+print(type(5 + 2.3))   # <class 'float'>`} />
+
+> Esta conversión automática se aplica a todos los operadores aritméticos: siempre que un operando sea `float`, el resultado será `float`.
+
+Las operaciones encadenadas se evalúan de izquierda a derecha:
+
+<CodeRunner language="python" title="Encadenamiento" initialCode={`print(10 - 3 + 2)   # 9  →  (10 - 3) + 2`} />
+
+---
+
+## Multiplicación y división
+
+La multiplicación usa `*` y la división usa `/`:
+
+<CodeRunner language="python" title="Multiplicación y división" initialCode={`print(4 * 3)    # 12
+print(10 / 4)   # 2.5`} />
+
+> La división `/` **siempre devuelve un `float`**, incluso cuando el resultado es un número exacto:
+
+<CodeRunner language="python" title="División siempre devuelve float" initialCode={`print(10 / 2)           # 5.0, no 5
+print(type(10 / 2))     # <class 'float'>`} />
+
+---
+
+## División entera y módulo
+
+Cuando se necesita el cociente sin decimales o el resto de una división, Python proporciona dos operadores específicos:
+
+- `//` — **división entera**: devuelve el cociente descartando la parte decimal
+- `%` — **módulo**: devuelve el resto de la división
+
+Por ejemplo, al dividir 7 entre 3: el cociente es 2 (`7 // 3`) y el resto es 1 (`7 % 3`).
+
+<CodeRunner language="python" title="División entera y módulo" initialCode={`print(7 // 3)   # 2
+print(7 % 3)    # 1`} />
+
+Estos dos operadores siempre cumplen la relación: `a == (a // b) * b + (a % b)`.
+
+### Comportamiento con negativos
+
+Con operandos negativos, `//` redondea hacia menos infinito (no hacia cero):
+
+<CodeRunner language="python" title="División entera con negativos" initialCode={`print(-7 // 2)   # -4  (no -3)
+print(-7 % 2)    #  1  (el resto conserva el signo del divisor)`} />
+
+### Casos de uso habituales
+
+<CodeRunner language="python" title="Comprobar si un número es par" initialCode={`numero = 14
+if numero % 2 == 0:
+    print("par")
+else:
+    print("impar")`} />
+
+<CodeRunner language="python" title="Convertir segundos a minutos y segundos" initialCode={`segundos_totales = 137
+minutos = segundos_totales // 60
+segundos = segundos_totales % 60
+print(f"{minutos}m {segundos}s")   # 2m 17s`} />
+
+<CodeRunner language="python" title="Extraer dígitos de un número" initialCode={`n = 1234
+print(n % 100)    # 34  (últimas dos cifras)
+print(n // 100)   # 12  (primeras dos cifras)`} />
+
+---
+
+## Exponenciación
+
+El operador `**` eleva un número a una potencia. Con exponentes fraccionarios permite calcular raíces:
+
+<CodeRunner language="python" title="Potencias básicas" initialCode={`print(2 ** 3)    # 8
+print(5 ** 2)    # 25
+print(99 ** 0)   # 1  (cualquier número elevado a 0 es 1)
+print(99 ** 1)   # 99`} />
+
+<CodeRunner language="python" title="Raíces con exponentes fraccionarios" initialCode={`print(9 ** 0.5)     # 3.0  (raíz cuadrada)
+print(8 ** (1/3))   # 2.0  (raíz cúbica)
+print(16 ** 0.25)   # 2.0  (raíz cuarta)`} />
+
+> Los paréntesis son necesarios en los exponentes fraccionarios. Sin ellos, `8 ** 1/3` se evalúa como `(8 ** 1) / 3 = 2.666...`, no como la raíz cúbica.
+
+---
+
+## Valor absoluto
+
+La función `abs()` devuelve el valor de un número sin su signo. Es útil cuando importa la magnitud de una diferencia, no su dirección:
+
+<CodeRunner language="python" title="Valor absoluto" initialCode={`print(abs(5))     # 5
+print(abs(-5))    # 5
+print(abs(-3.7))  # 3.7`} />
+
+<CodeRunner language="python" title="Diferencia entre dos valores" initialCode={`temperatura_hoy  = 22
+temperatura_ayer = 27
+
+diferencia = abs(temperatura_hoy - temperatura_ayer)
+print(f"La temperatura varió {diferencia} grados")   # 5`} />
+
+---
+
+## Conversión de tipos
+
+### int(), float() y round()
+
+Estas tres funciones convierten valores numéricos entre tipos, pero se comportan de forma diferente:
+
+<CodeRunner language="python" title="int() trunca hacia cero" initialCode={`print(int(3.9))    # 3  (no redondea)
+print(int(-3.9))   # -3 (trunca hacia cero, no hacia abajo)`} />
+
+<CodeRunner language="python" title="float() y round()" initialCode={`print(float(5))          # 5.0
+print(round(3.5))        # 4  (redondea al entero más cercano)
+print(round(3.75, 1))    # 3.8 (con un decimal)`} />
+
+> Usa `round()` para redondear. Usa `int()` solo cuando la intención sea truncar deliberadamente.
+
+### Imprecisión de punto flotante
+
+Los números `float` se representan en binario con 64 bits. Algunos decimales, como `0.1`, no tienen representación exacta en ese formato, lo que puede producir resultados inesperados:
+
+<CodeRunner language="python" title="Imprecisión de float" initialCode={`print(0.1 + 0.2)           # 0.30000000000000004
+print(0.1 + 0.2 == 0.3)    # False`} />
+
+<CodeRunner language="python" title="Soluciones" initialCode={`resultado = 0.1 + 0.2
+
+# Comparar con tolerancia
+print(abs(resultado - 0.3) < 1e-9)     # True
+
+# Redondear antes de comparar
+print(round(resultado, 2) == 0.3)      # True
+
+# Usar Decimal para precisión exacta
+from decimal import Decimal
+print(Decimal("0.1") + Decimal("0.2")) # 0.3`} />
+
+---
+
+## Precedencia y asociatividad
+
+Cuando una expresión contiene varios operadores, Python los evalúa según su **precedencia**. Los paréntesis permiten controlar el orden explícitamente.
+
+### Tabla de precedencia (de mayor a menor)
+
+<table>
+  <thead>
+    <tr>
+      <th>Operador</th>
+      <th>Descripción</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>()</code></td><td>Paréntesis</td><td><code>(2 + 3) * 4 → 20</code></td></tr>
+    <tr><td><code>**</code></td><td>Exponenciación</td><td><code>2 ** 3 ** 2 → 512</code></td></tr>
+    <tr><td><code>+x, -x</code></td><td>Unarios (signo)</td><td><code>-3 ** 2 → -9</code></td></tr>
+    <tr><td><code>*, /, //, %</code></td><td>Multiplicación y división</td><td><code>2 + 3 * 4 → 14</code></td></tr>
+    <tr><td><code>+, -</code></td><td>Suma y resta</td><td><code>10 - 3 + 2 → 9</code></td></tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="Precedencia habitual" initialCode={`print(2 + 3 * 4)    # 14  (* antes que +)
+print((2 + 3) * 4)  # 20  (paréntesis primero)`} />
+
+<CodeRunner language="python" title="Asociatividad de **" initialCode={`# ** se evalúa de derecha a izquierda
+print(2 ** 3 ** 2)      # 512  →  2 ** (3**2)
+print((2 ** 3) ** 2)    # 64   →  (2**3) ** 2`} />
+
+### Asignación compuesta
+
+Los operadores de asignación compuesta combinan una operación aritmética con la reasignación en una sola instrucción:
+
+<CodeRunner language="python" title="Asignación compuesta" initialCode={`x = 10
+x += 5    # x = x + 5  →  15
+x -= 3    # x = x - 3  →  12
+x *= 2    # x = x * 2  →  24
+x //= 5   # x = x // 5 →  4
+x **= 3   # x = x ** 3 →  64
+print(x)`} />
+
+---
+
+## Errores comunes
+
+<CodeRunner language="python" title="División entre cero" initialCode={`try:
+    print(10 / 0)
+except ZeroDivisionError:
+    print("Error: división entre cero")`} />
+
+<CodeRunner language="python" title="Confundir int() con round()" initialCode={`print(int(2.9))    # 2  (trunca, no redondea)
+print(round(2.9))  # 3`} />
+
+<CodeRunner language="python" title="Signo negativo con potencias" initialCode={`print(-2 ** 2)     # -4  →  -(2**2)
+print((-2) ** 2)   # 4   →  (-2)**2`} />
+
+<CodeRunner language="python" title="Comparar floats directamente" initialCode={`print(0.1 + 0.2 == 0.3)                # False
+print(abs((0.1 + 0.2) - 0.3) < 1e-9)  # True`} />
+
+<CodeRunner language="python" title="Operar con cadenas numéricas" initialCode={`edad = "25"
+try:
+    print(edad + 5)
+except TypeError as e:
+    print(f"Error: {e}")
+
+print(int(edad) + 5)   # 30`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Operador</th>
+      <th>Nombre</th>
+      <th>Ejemplo</th>
+      <th>Resultado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>+</code></td><td>Suma</td><td><code>3 + 2</code></td><td><code>5</code></td></tr>
+    <tr><td><code>-</code></td><td>Resta</td><td><code>3 - 2</code></td><td><code>1</code></td></tr>
+    <tr><td><code>*</code></td><td>Multiplicación</td><td><code>3 * 2</code></td><td><code>6</code></td></tr>
+    <tr><td><code>/</code></td><td>División</td><td><code>7 / 2</code></td><td><code>3.5</code> (siempre <code>float</code>)</td></tr>
+    <tr><td><code>//</code></td><td>División entera</td><td><code>7 // 2</code></td><td><code>3</code></td></tr>
+    <tr><td><code>%</code></td><td>Módulo</td><td><code>7 % 2</code></td><td><code>1</code></td></tr>
+    <tr><td><code>**</code></td><td>Exponenciación</td><td><code>2 ** 8</code></td><td><code>256</code></td></tr>
+    <tr><td><code>abs()</code></td><td>Valor absoluto</td><td><code>abs(-5)</code></td><td><code>5</code></td></tr>
+  </tbody>
+</table>

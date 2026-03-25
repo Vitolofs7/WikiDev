@@ -1,0 +1,219 @@
+# 3.10 Flujo de ejecución
+
+Cuando un programa contiene funciones, el código no se ejecuta simplemente de arriba abajo. Python sigue un flujo específico que **salta** entre la definición y las llamadas. Entender este flujo es esencial para leer y depurar programas con funciones.
+
+---
+
+## Orden del programa
+
+Python ejecuta las instrucciones de un programa **de arriba abajo**, una por una. Sin embargo, las definiciones de función (`def`) **no ejecutan el cuerpo**: solo registran la función para usarla después:
+
+<CodeRunner language="python" title="Orden de ejecución" initialCode={`print("1 — Inicio del programa")
+
+def primera():
+    print("   → primera()")
+
+def segunda():
+    print("   → segunda()")
+
+print("2 — Las funciones están definidas, pero no ejecutadas")
+
+primera()
+print("3 — Después de primera()")
+
+segunda()
+print("4 — Fin del programa")`} />
+
+El orden de salida es: `1 → 2 → primera() → 3 → segunda() → 4`. Las definiciones (`def`) se procesan sin ejecutar nada; las llamadas son las que disparan la ejecución del cuerpo.
+
+---
+
+## Definición vs ejecución
+
+Esta distinción es fundamental y fuente de confusión para principiantes:
+
+<table>
+  <thead>
+    <tr>
+      <th>Fase</th>
+      <th>Qué ocurre</th>
+      <th>Cuándo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Definición</strong></td>
+      <td>Python lee el <code>def</code> y registra la función en memoria</td>
+      <td>Cuando Python encuentra la línea <code>def</code></td>
+    </tr>
+    <tr>
+      <td><strong>Ejecución</strong></td>
+      <td>Python salta al cuerpo, ejecuta las instrucciones y regresa</td>
+      <td>Cuando se llama a la función con <code>()</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="La definición no ejecuta" initialCode={`# El cuerpo de esta función contiene un error
+def funcion_con_error():
+    print(1 / 0)   # ¡División por cero!
+
+print("El programa sigue sin problemas")
+print("Porque la función no se ha ejecutado")
+
+# El error solo aparece cuando se LLAMA a la función
+try:
+    funcion_con_error()
+except ZeroDivisionError as e:
+    print(f"Error al ejecutar: {e}")`} />
+
+Esto significa que el orden de las **definiciones** importa solo en relación a las **llamadas**: una función debe estar definida **antes** de ser llamada:
+
+<CodeRunner language="python" title="Orden de definiciones" initialCode={`# ❌ Llamar antes de definir
+try:
+    saludar()
+except NameError as e:
+    print(f"NameError: {e}")
+
+# ✅ Definir antes de llamar
+def saludar():
+    print("Hola")
+
+saludar()   # ahora sí funciona`} />
+
+Sin embargo, una función **puede llamar a otra función** que se define más adelante, siempre que la llamada no ocurra hasta que ambas estén definidas:
+
+<CodeRunner language="python" title="Referencias cruzadas entre funciones" initialCode={`def principal():
+    # auxiliar() se llama aquí, pero se define después
+    auxiliar()
+
+def auxiliar():
+    print("Función auxiliar ejecutada")
+
+# Cuando se llama a principal(), auxiliar() ya está definida
+principal()`} />
+
+---
+
+## Llamadas anidadas
+
+Una función puede llamar a otra función, que a su vez puede llamar a otra. Python mantiene una **pila de llamadas** (*call stack*): cada llamada se apila encima de la anterior, y al terminar, regresa a donde estaba:
+
+<CodeRunner language="python" title="Llamadas anidadas" initialCode={`def paso_1():
+    print("  Inicio paso 1")
+    paso_2()
+    print("  Fin paso 1")
+
+def paso_2():
+    print("    Inicio paso 2")
+    paso_3()
+    print("    Fin paso 2")
+
+def paso_3():
+    print("      Inicio paso 3")
+    print("      Fin paso 3")
+
+print("Inicio del programa")
+paso_1()
+print("Fin del programa")`} />
+
+El flujo completo es:
+1. `programa` → llama a `paso_1()`
+2. `paso_1()` → llama a `paso_2()`
+3. `paso_2()` → llama a `paso_3()`
+4. `paso_3()` termina → regresa a `paso_2()`
+5. `paso_2()` termina → regresa a `paso_1()`
+6. `paso_1()` termina → regresa al programa principal
+
+<CodeRunner language="python" title="Ejemplo práctico: cálculo en capas" initialCode={`def calcular_descuento(precio, porcentaje):
+    descuento = precio * (porcentaje / 100)
+    print(f"    Descuento: {round(descuento, 2)}€")
+    return descuento
+
+def aplicar_iva(precio, iva=21):
+    impuesto = precio * (iva / 100)
+    print(f"    IVA: {round(impuesto, 2)}€")
+    return precio + impuesto
+
+def precio_final(precio, descuento_pct=0):
+    print(f"  Precio base: {precio}€")
+    
+    # Llamada anidada 1: calcular descuento
+    descuento = calcular_descuento(precio, descuento_pct)
+    precio_neto = precio - descuento
+    
+    # Llamada anidada 2: aplicar IVA
+    total = aplicar_iva(precio_neto)
+    
+    return round(total, 2)
+
+print("Procesando compra:")
+total = precio_final(100, 15)
+print(f"  Total: {total}€")`} />
+
+### Visualizar la pila de llamadas
+
+Cuando ocurre un error dentro de funciones anidadas, Python muestra el **traceback**: la secuencia completa de llamadas que llevaron al error, de más externa a más interna:
+
+<CodeRunner language="python" title="Traceback en funciones anidadas" initialCode={`def funcion_a():
+    print("En funcion_a, llamando a funcion_b...")
+    funcion_b()
+
+def funcion_b():
+    print("En funcion_b, llamando a funcion_c...")
+    funcion_c()
+
+def funcion_c():
+    print("En funcion_c, provocando un error...")
+    resultado = 1 / 0   # ZeroDivisionError
+
+try:
+    funcion_a()
+except ZeroDivisionError:
+    import traceback
+    traceback.print_exc()`} />
+
+> El traceback se lee **de abajo hacia arriba**: la última línea muestra el error, y las anteriores muestran la cadena de llamadas que lo provocaron. Esta es una de las herramientas más importantes para depurar programas con funciones.
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Concepto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Flujo normal</td>
+      <td>Instrucciones se ejecutan de arriba abajo</td>
+    </tr>
+    <tr>
+      <td><code>def</code></td>
+      <td>Registra la función, <strong>no ejecuta</strong> el cuerpo</td>
+    </tr>
+    <tr>
+      <td>Llamada <code>f()</code></td>
+      <td>Salta al cuerpo, lo ejecuta y regresa</td>
+    </tr>
+    <tr>
+      <td>Orden requerido</td>
+      <td>La función debe estar definida antes de ser <strong>llamada</strong></td>
+    </tr>
+    <tr>
+      <td>Llamadas anidadas</td>
+      <td>Una función puede llamar a otra, formando una pila</td>
+    </tr>
+    <tr>
+      <td>Pila de llamadas</td>
+      <td>Python apila las llamadas y las resuelve al regresar</td>
+    </tr>
+    <tr>
+      <td>Traceback</td>
+      <td>Muestra la cadena de llamadas cuando ocurre un error</td>
+    </tr>
+  </tbody>
+</table>

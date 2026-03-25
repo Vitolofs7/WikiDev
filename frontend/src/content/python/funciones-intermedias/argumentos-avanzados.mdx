@@ -1,0 +1,159 @@
+# 4.2 Argumentos avanzados
+
+Python ofrece mecanismos para que las funciones acepten un número **variable** de argumentos. Esto es útil cuando no se sabe de antemano cuántos datos recibirá la función, o cuando se necesita máxima flexibilidad.
+
+---
+
+## *args
+
+El parámetro `*args` permite que una función reciba **cualquier número de argumentos posicionales**. Dentro de la función, `args` es una **tupla** con todos los valores pasados:
+
+<CodeRunner language="python" title="*args básico" initialCode={`def sumar(*args):
+    print(f"Argumentos recibidos: {args}")
+    print(f"Tipo: {type(args)}")
+    return sum(args)
+
+print(sumar(1, 2, 3))           # 6
+print(sumar(10, 20))            # 30
+print(sumar(5))                 # 5
+print(sumar())                  # 0`} />
+
+Se pueden combinar parámetros normales con `*args`. Los parámetros normales se asignan primero y el resto se captura en `args`:
+
+<CodeRunner language="python" title="Parámetros normales + *args" initialCode={`def describir(nombre, *notas):
+    print(f"Alumno: {nombre}")
+    print(f"Notas: {notas}")
+    if notas:
+        media = round(sum(notas) / len(notas), 2)
+        print(f"Media: {media}")
+    print()
+
+describir("Ana", 8.5, 7.2, 9.0)
+describir("Carlos", 6.0, 5.5)
+describir("Lucía")`} />
+
+<CodeRunner language="python" title="Ejemplo práctico: registro de eventos" initialCode={`def registrar(evento, *detalles):
+    print(f"[EVENTO] {evento}")
+    for i, detalle in enumerate(detalles, 1):
+        print(f"  {i}. {detalle}")
+    print()
+
+registrar("Login", "usuario: ana", "IP: 192.168.1.1", "hora: 10:30")
+registrar("Error", "código: 404", "página: /inicio")
+registrar("Logout")`} />
+
+### Desempaquetar listas con *
+
+El operador `*` también funciona al **llamar** a una función, desempaquetando una lista o tupla en argumentos posicionales:
+
+<CodeRunner language="python" title="Desempaquetar con *" initialCode={`def sumar(a, b, c):
+    return a + b + c
+
+numeros = [10, 20, 30]
+
+# ❌ Esto pasa la lista como un solo argumento
+# sumar(numeros)  → TypeError
+
+# ✅ * desempaqueta la lista en tres argumentos
+print(sumar(*numeros))   # 60
+
+# Equivale a: sumar(10, 20, 30)`} />
+
+---
+
+## **kwargs
+
+El parámetro `**kwargs` permite que una función reciba **cualquier número de argumentos nombrados**. Dentro de la función, `kwargs` es un **diccionario** con los nombres como claves y los valores como valores:
+
+<CodeRunner language="python" title="**kwargs básico" initialCode={`def mostrar_info(**kwargs):
+    print(f"Argumentos recibidos: {kwargs}")
+    print(f"Tipo: {type(kwargs)}")
+    for clave, valor in kwargs.items():
+        print(f"  {clave}: {valor}")
+    print()
+
+mostrar_info(nombre="Ana", edad=28, ciudad="Madrid")
+mostrar_info(producto="Teclado", precio=45.99)
+mostrar_info()`} />
+
+Se pueden combinar parámetros normales, `*args` y `**kwargs`. El orden obligatorio es: **normales → *args → **kwargs**:
+
+<CodeRunner language="python" title="Combinando todo" initialCode={`def crear_perfil(nombre, *hobbies, **datos):
+    print(f"Nombre: {nombre}")
+    if hobbies:
+        print(f"Hobbies: {', '.join(hobbies)}")
+    for clave, valor in datos.items():
+        print(f"{clave}: {valor}")
+    print()
+
+crear_perfil("Ana", "leer", "cocinar", edad=28, ciudad="Madrid")
+crear_perfil("Carlos", rol="admin", activo=True)`} />
+
+<CodeRunner language="python" title="Ejemplo práctico: configuración flexible" initialCode={`def conectar_bd(host, puerto=5432, **opciones):
+    print(f"Conectando a {host}:{puerto}")
+    for opcion, valor in opciones.items():
+        print(f"  {opcion} = {valor}")
+    print()
+
+conectar_bd("localhost")
+conectar_bd("servidor.com", 3306, usuario="admin", ssl=True, timeout=30)`} />
+
+### Desempaquetar diccionarios con **
+
+El operador `**` desempaqueta un diccionario en argumentos nombrados al **llamar** a una función:
+
+<CodeRunner language="python" title="Desempaquetar con **" initialCode={`def crear_usuario(nombre, edad, ciudad):
+    print(f"{nombre}, {edad} años, {ciudad}")
+
+datos = {"nombre": "Ana", "edad": 28, "ciudad": "Madrid"}
+
+# ❌ Esto pasa el diccionario como un solo argumento
+# crear_usuario(datos)  → TypeError
+
+# ✅ ** desempaqueta el diccionario en argumentos nombrados
+crear_usuario(**datos)
+
+# Equivale a: crear_usuario(nombre="Ana", edad=28, ciudad="Madrid")`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Sintaxis</th>
+      <th>Dónde</th>
+      <th>Tipo interno</th>
+      <th>Captura</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>*args</code></td>
+      <td>Definición</td>
+      <td>Tupla</td>
+      <td>Argumentos posicionales extra</td>
+    </tr>
+    <tr>
+      <td><code>**kwargs</code></td>
+      <td>Definición</td>
+      <td>Diccionario</td>
+      <td>Argumentos nombrados extra</td>
+    </tr>
+    <tr>
+      <td><code>*lista</code></td>
+      <td>Llamada</td>
+      <td>—</td>
+      <td>Desempaqueta en posicionales</td>
+    </tr>
+    <tr>
+      <td><code>**dict</code></td>
+      <td>Llamada</td>
+      <td>—</td>
+      <td>Desempaqueta en nombrados</td>
+    </tr>
+  </tbody>
+</table>
+
+> El orden en la definición siempre es: **parámetros normales → `*args` → parámetros con defecto → `**kwargs`**.

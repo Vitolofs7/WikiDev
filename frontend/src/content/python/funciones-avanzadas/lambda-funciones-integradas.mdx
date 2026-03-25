@@ -1,0 +1,173 @@
+# 5.8 Lambda con funciones integradas
+
+Las funciones lambda muestran todo su potencial cuando se combinan con las funciones integradas de Python que aceptan funciones como argumento: `map()`, `filter()`, `sorted()` y `reduce()`.
+
+---
+
+## map()
+
+`map()` aplica una función a **cada elemento** de un iterable y devuelve un iterador con los resultados:
+
+<CodeRunner language="python" title="map() con lambda" initialCode={`numeros = [1, 2, 3, 4, 5]
+
+# Elevar al cuadrado cada número
+cuadrados = list(map(lambda x: x ** 2, numeros))
+print(cuadrados)   # [1, 4, 9, 16, 25]
+
+# Convertir a string con formato
+precios = [29.99, 15.50, 42.00]
+formateados = list(map(lambda p: f"{p:.2f}€", precios))
+print(formateados)   # ['29.99€', '15.50€', '42.00€']
+
+# Con dos iterables
+nombres = ["ana", "carlos", "lucía"]
+edades = [28, 35, 22]
+perfiles = list(map(lambda n, e: f"{n.title()} ({e})", nombres, edades))
+print(perfiles)   # ['Ana (28)', 'Carlos (35)', 'Lucía (22)']`} />
+
+---
+
+## filter()
+
+`filter()` selecciona los elementos que cumplen una condición (la función devuelve `True`):
+
+<CodeRunner language="python" title="filter() con lambda" initialCode={`numeros = [12, 5, 23, 8, 17, 3, 30, 9]
+
+# Filtrar mayores que 10
+mayores = list(filter(lambda x: x > 10, numeros))
+print(f"Mayores que 10: {mayores}")
+
+# Filtrar pares
+pares = list(filter(lambda x: x % 2 == 0, numeros))
+print(f"Pares: {pares}")
+
+# Filtrar cadenas no vacías
+campos = ["Ana", "", "28", "", "Madrid", ""]
+no_vacios = list(filter(lambda s: s != "", campos))
+print(f"No vacíos: {no_vacios}")
+
+# Equivalente más pythónico (filter con None)
+no_vacios2 = list(filter(None, campos))
+print(f"Truthy: {no_vacios2}")`} />
+
+---
+
+## sorted()
+
+`sorted()` ordena un iterable. El parámetro `key` acepta una función que define el **criterio de ordenación**:
+
+<CodeRunner language="python" title="sorted() con lambda" initialCode={`# Ordenar por longitud
+frutas = ["manzana", "kiwi", "uva", "naranja", "pera"]
+por_longitud = sorted(frutas, key=lambda f: len(f))
+print(por_longitud)
+
+# Ordenar por segunda letra
+por_segunda = sorted(frutas, key=lambda f: f[1])
+print(por_segunda)
+
+# Ordenar diccionarios por un campo
+alumnos = [
+    {"nombre": "Ana", "nota": 8.5},
+    {"nombre": "Carlos", "nota": 6.2},
+    {"nombre": "Lucía", "nota": 9.1},
+    {"nombre": "Pedro", "nota": 7.0},
+]
+
+por_nota = sorted(alumnos, key=lambda a: a["nota"], reverse=True)
+for a in por_nota:
+    print(f"  {a['nombre']}: {a['nota']}")`} />
+
+<CodeRunner language="python" title="sorted() con criterios complejos" initialCode={`# Ordenar por múltiples criterios
+productos = [
+    ("Teclado", 45, 4.5),
+    ("Ratón", 25, 4.8),
+    ("Monitor", 300, 4.5),
+    ("USB", 10, 4.2),
+    ("Auriculares", 45, 4.7),
+]
+
+# Ordenar por precio, y si empatan, por valoración descendente
+ordenados = sorted(productos, key=lambda p: (p[1], -p[2]))
+for nombre, precio, val in ordenados:
+    print(f"  {nombre}: {precio}€ (★{val})")`} />
+
+---
+
+## reduce()
+
+`reduce()` aplica una función **acumulativa** que combina los elementos de izquierda a derecha, reduciendo el iterable a un solo valor. Requiere importarla de `functools`:
+
+<CodeRunner language="python" title="reduce() con lambda" initialCode={`from functools import reduce
+
+numeros = [1, 2, 3, 4, 5]
+
+# Producto de todos los elementos
+producto = reduce(lambda a, b: a * b, numeros)
+print(f"Producto: {producto}")   # 120
+
+# Equivalente paso a paso:
+# 1 * 2 = 2
+# 2 * 3 = 6
+# 6 * 4 = 24
+# 24 * 5 = 120
+
+# Concatenar cadenas
+palabras = ["Hola", " ", "mundo", "!"]
+frase = reduce(lambda a, b: a + b, palabras)
+print(f"Frase: {frase}")
+
+# Encontrar el mayor (equivalente a max())
+mayor = reduce(lambda a, b: a if a > b else b, numeros)
+print(f"Mayor: {mayor}")`} />
+
+<CodeRunner language="python" title="reduce() con valor inicial" initialCode={`from functools import reduce
+
+# Con valor inicial (tercer argumento)
+numeros = [10, 20, 30]
+
+# Empezar la suma desde 100
+total = reduce(lambda a, b: a + b, numeros, 100)
+print(f"Total: {total}")   # 160 (100 + 10 + 20 + 30)
+
+# Esto es útil para evitar errores con listas vacías
+vacia = []
+total_seguro = reduce(lambda a, b: a + b, vacia, 0)
+print(f"Total vacío: {total_seguro}")   # 0`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Función</th>
+      <th>Lambda típica</th>
+      <th>Resultado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>map(f, iter)</code></td>
+      <td><code>map(lambda x: x*2, nums)</code></td>
+      <td>Transforma cada elemento</td>
+    </tr>
+    <tr>
+      <td><code>filter(f, iter)</code></td>
+      <td><code>filter(lambda x: x>0, nums)</code></td>
+      <td>Filtra por condición</td>
+    </tr>
+    <tr>
+      <td><code>sorted(iter, key=f)</code></td>
+      <td><code>sorted(lst, key=lambda x: x[1])</code></td>
+      <td>Ordena por criterio</td>
+    </tr>
+    <tr>
+      <td><code>reduce(f, iter)</code></td>
+      <td><code>reduce(lambda a,b: a*b, nums)</code></td>
+      <td>Acumula en un solo valor</td>
+    </tr>
+  </tbody>
+</table>
+
+> Para operaciones simples, `map` y `filter` con lambda son claros. Para operaciones complejas, las **comprensiones de listas** suelen ser más legibles: `[x*2 for x in nums]` en lugar de `list(map(lambda x: x*2, nums))`.

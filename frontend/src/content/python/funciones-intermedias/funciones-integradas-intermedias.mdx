@@ -1,0 +1,130 @@
+# 4.3 Funciones integradas intermedias
+
+A medida que los programas crecen, necesitamos formas más robustas de verificar tipos y relaciones entre objetos. Python incluye funciones integradas específicas para estas tareas.
+
+---
+
+## Validación y tipos
+
+### isinstance()
+
+`isinstance()` comprueba si un objeto es de un tipo determinado (o de cualquiera de varios tipos). Es la forma **recomendada** de verificar tipos en Python, superior a `type() ==`:
+
+<CodeRunner language="python" title="isinstance() básico" initialCode={`# Verificar un solo tipo
+print(isinstance(42, int))          # True
+print(isinstance(3.14, float))      # True
+print(isinstance("Hola", str))      # True
+print(isinstance(True, bool))       # True
+
+# Verificar contra varios tipos a la vez (con tupla)
+print(isinstance(42, (int, float)))      # True
+print(isinstance(3.14, (int, float)))    # True
+print(isinstance("Hola", (int, float)))  # False`} />
+
+La ventaja clave de `isinstance()` sobre `type()` es que respeta la **herencia**. En Python, `bool` es un subtipo de `int`:
+
+<CodeRunner language="python" title="isinstance() vs type()" initialCode={`valor = True
+
+# isinstance() reconoce la herencia: bool hereda de int
+print(isinstance(valor, int))    # True  ← correcto
+print(isinstance(valor, bool))   # True
+
+# type() solo coincide con el tipo exacto
+print(type(valor) == int)        # False ← puede dar sorpresas
+print(type(valor) == bool)       # True`} />
+
+<CodeRunner language="python" title="Ejemplo práctico: validación de datos" initialCode={`def procesar_valor(valor):
+    """Procesa un valor según su tipo."""
+    if isinstance(valor, bool):
+        # Comprobar bool ANTES que int (bool hereda de int)
+        return f"Booleano: {'Sí' if valor else 'No'}"
+    elif isinstance(valor, (int, float)):
+        return f"Número: {valor}"
+    elif isinstance(valor, str):
+        return f"Texto: '{valor}' ({len(valor)} caracteres)"
+    elif isinstance(valor, (list, tuple)):
+        return f"Colección: {len(valor)} elementos"
+    else:
+        return f"Tipo desconocido: {type(valor).__name__}"
+
+datos = [42, 3.14, "Python", True, [1, 2, 3], None]
+for dato in datos:
+    print(procesar_valor(dato))`} />
+
+<CodeRunner language="python" title="Validación de parámetros con isinstance()" initialCode={`def calcular_precio(precio, cantidad=1):
+    """Calcula el total validando los tipos de entrada."""
+    if not isinstance(precio, (int, float)):
+        raise TypeError(f"precio debe ser numérico, recibido: {type(precio).__name__}")
+    if not isinstance(cantidad, int):
+        raise TypeError(f"cantidad debe ser entero, recibido: {type(cantidad).__name__}")
+    if precio < 0 or cantidad < 0:
+        raise ValueError("precio y cantidad deben ser positivos")
+    
+    return round(precio * cantidad, 2)
+
+# ✅ Uso correcto
+print(calcular_precio(29.99, 3))
+
+# ❌ Tipo incorrecto
+try:
+    calcular_precio("29.99", 3)
+except TypeError as e:
+    print(f"Error: {e}")`} />
+
+### issubclass()
+
+`issubclass()` comprueba si una **clase** es subclase de otra. A diferencia de `isinstance()`, trabaja con clases, no con instancias:
+
+<CodeRunner language="python" title="issubclass() básico" initialCode={`# bool es subclase de int
+print(issubclass(bool, int))       # True
+
+# int NO es subclase de bool
+print(issubclass(int, bool))       # False
+
+# Toda clase es subclase de sí misma
+print(issubclass(int, int))        # True
+
+# Toda clase es subclase de object
+print(issubclass(str, object))     # True
+print(issubclass(list, object))    # True`} />
+
+<CodeRunner language="python" title="issubclass() con tipos numéricos" initialCode={`# La jerarquía de tipos numéricos en Python
+print(issubclass(bool, int))       # True  — bool hereda de int
+print(issubclass(int, float))      # False — int NO hereda de float
+
+# Verificar contra varios tipos
+print(issubclass(bool, (int, str)))    # True  — bool es subclase de int
+print(issubclass(float, (int, str)))   # False — float no es subclase de ninguno`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Función</th>
+      <th>Descripción</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>isinstance(obj, tipo)</code></td>
+      <td>¿El objeto es del tipo indicado?</td>
+      <td><code>isinstance(42, int) → True</code></td>
+    </tr>
+    <tr>
+      <td><code>isinstance(obj, (t1, t2))</code></td>
+      <td>¿El objeto es de alguno de los tipos?</td>
+      <td><code>isinstance(3.14, (int, float)) → True</code></td>
+    </tr>
+    <tr>
+      <td><code>issubclass(cls, tipo)</code></td>
+      <td>¿La clase hereda del tipo indicado?</td>
+      <td><code>issubclass(bool, int) → True</code></td>
+    </tr>
+  </tbody>
+</table>
+
+> Usa `isinstance()` en lugar de `type() ==` para verificar tipos. Es más robusto, más legible y respeta la herencia de clases.

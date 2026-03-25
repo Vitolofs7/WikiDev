@@ -1,0 +1,151 @@
+# 5.12 Lambda — Casos reales
+
+Las funciones lambda son herramientas del día a día en proyectos reales. Esta sección muestra patrones profesionales con APIs, validación, ordenación y transformación de datos.
+
+---
+
+## APIs
+
+<CodeRunner language="python" title="Transformar respuestas de API" initialCode={`# Simulación de respuesta de una API
+respuesta_api = [
+    {"id": 1, "name": "Ana García", "email": "ana@mail.com", "active": True},
+    {"id": 2, "name": "Carlos López", "email": "carlos@mail.com", "active": False},
+    {"id": 3, "name": "Lucía Pérez", "email": "lucia@mail.com", "active": True},
+    {"id": 4, "name": "Pedro Ruiz", "email": "pedro@mail.com", "active": True},
+]
+
+# Extraer solo los campos necesarios
+usuarios_activos = list(map(
+    lambda u: {"nombre": u["name"], "email": u["email"]},
+    filter(lambda u: u["active"], respuesta_api)
+))
+
+print("Usuarios activos:")
+for u in usuarios_activos:
+    print(f"  {u['nombre']} ({u['email']})")`} />
+
+<CodeRunner language="python" title="Normalizar datos de API" initialCode={`# Datos con formatos inconsistentes
+datos_crudos = [
+    {"nombre": "ANA", "precio": "29.99", "stock": "5"},
+    {"nombre": "carlos", "precio": "15.50", "stock": "0"},
+    {"nombre": "LUCÍA", "precio": "42", "stock": "12"},
+]
+
+# Normalizar con map + lambda
+normalizar = lambda d: {
+    "nombre": d["nombre"].title(),
+    "precio": float(d["precio"]),
+    "stock": int(d["stock"]),
+    "disponible": int(d["stock"]) > 0
+}
+
+normalizados = list(map(normalizar, datos_crudos))
+for item in normalizados:
+    estado = "✅" if item["disponible"] else "❌"
+    print(f"  {estado} {item['nombre']}: {item['precio']}€ ({item['stock']} uds)")`} />
+
+---
+
+## Validación
+
+<CodeRunner language="python" title="Validación de formularios" initialCode={`def validar_formulario(datos, reglas):
+    """Valida datos contra un diccionario de reglas (funciones lambda)."""
+    errores = []
+    for campo, regla in reglas.items():
+        valor = datos.get(campo, "")
+        if not regla(valor):
+            errores.append(campo)
+    return errores
+
+# Definir reglas con lambdas
+reglas = {
+    "nombre": lambda v: isinstance(v, str) and len(v) >= 2,
+    "email": lambda v: isinstance(v, str) and "@" in v and "." in v,
+    "edad": lambda v: isinstance(v, int) and 0 < v < 120,
+    "password": lambda v: isinstance(v, str) and len(v) >= 8,
+}
+
+form_ok = {"nombre": "Ana", "email": "ana@mail.com", "edad": 28, "password": "MiClave123"}
+form_mal = {"nombre": "A", "email": "sin-arroba", "edad": -5, "password": "abc"}
+
+errores1 = validar_formulario(form_ok, reglas)
+errores2 = validar_formulario(form_mal, reglas)
+
+print(f"Form OK — Errores: {errores1 or 'ninguno'}")
+print(f"Form mal — Errores: {errores2}")`} />
+
+---
+
+## Ordenación
+
+<CodeRunner language="python" title="Ordenación avanzada de datos" initialCode={`# Tabla de productos
+productos = [
+    {"nombre": "Laptop", "precio": 999, "rating": 4.5, "ventas": 120},
+    {"nombre": "Tablet", "precio": 449, "rating": 4.8, "ventas": 85},
+    {"nombre": "Teléfono", "precio": 699, "rating": 4.2, "ventas": 250},
+    {"nombre": "Auriculares", "precio": 149, "rating": 4.9, "ventas": 500},
+    {"nombre": "Smartwatch", "precio": 299, "rating": 4.1, "ventas": 180},
+]
+
+# Más vendidos
+print("🏆 Más vendidos:")
+for p in sorted(productos, key=lambda p: p["ventas"], reverse=True)[:3]:
+    print(f"  {p['nombre']}: {p['ventas']} ventas")
+
+# Mejor relación calidad/precio (rating / precio normalizado)
+print("\\n💎 Mejor relación calidad/precio:")
+for p in sorted(productos, key=lambda p: p["rating"] / p["precio"], reverse=True)[:3]:
+    ratio = round(p["rating"] / p["precio"] * 100, 2)
+    print(f"  {p['nombre']}: ★{p['rating']} / {p['precio']}€ (ratio: {ratio})")`} />
+
+---
+
+## Transformación de datos
+
+<CodeRunner language="python" title="Pipeline de transformación" initialCode={`# Datos de ventas mensuales
+ventas_raw = [
+    ("2024-01", 15000), ("2024-02", 18000), ("2024-03", 12000),
+    ("2024-04", 22000), ("2024-05", 19500), ("2024-06", 25000),
+]
+
+meses_nombre = {
+    "01": "Enero", "02": "Febrero", "03": "Marzo",
+    "04": "Abril", "05": "Mayo", "06": "Junio",
+}
+
+# Transformar a formato legible
+transformadas = list(map(
+    lambda v: {
+        "mes": meses_nombre[v[0].split("-")[1]],
+        "ventas": v[1],
+        "formateado": f"{v[1]:,}€".replace(",", "."),
+    },
+    ventas_raw
+))
+
+# Agregar indicador de rendimiento
+media = sum(v[1] for v in ventas_raw) / len(ventas_raw)
+for v in transformadas:
+    icono = "📈" if v["ventas"] >= media else "📉"
+    print(f"  {icono} {v['mes']}: {v['formateado']}")
+
+print(f"\\n  Media: {round(media):,}€".replace(",", "."))`} />
+
+<CodeRunner language="python" title="Agrupar y resumir datos" initialCode={`from functools import reduce
+
+transacciones = [
+    {"tipo": "ingreso", "monto": 3000},
+    {"tipo": "gasto", "monto": 150},
+    {"tipo": "ingreso", "monto": 500},
+    {"tipo": "gasto", "monto": 80},
+    {"tipo": "gasto", "monto": 200},
+    {"tipo": "ingreso", "monto": 1200},
+]
+
+# Separar por tipo
+ingresos = sum(map(lambda t: t["monto"], filter(lambda t: t["tipo"] == "ingreso", transacciones)))
+gastos = sum(map(lambda t: t["monto"], filter(lambda t: t["tipo"] == "gasto", transacciones)))
+
+print(f"Ingresos: {ingresos}€")
+print(f"Gastos:   {gastos}€")
+print(f"Balance:  {ingresos - gastos}€")`} />

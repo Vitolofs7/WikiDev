@@ -1,0 +1,254 @@
+# 1.7 Depuración
+
+Todo programador comete errores. Es parte inevitable del proceso, no una señal de incompetencia. Lo que distingue a un programador con experiencia no es que no cometa errores, sino que sabe identificarlos y corregirlos con eficiencia.
+
+> El término **bug** para referirse a un error de programación se popularizó en 1947, cuando la ingeniera Grace Hopper encontró una polilla real atrapada en un relé del ordenador Mark II. El proceso de encontrar y eliminar bugs se llama **debugging** o **depuración**.
+
+---
+
+## Los tres tipos de error
+
+Python clasifica los errores en tres categorías según cuándo ocurren y qué los provoca:
+
+<table>
+  <thead>
+    <tr>
+      <th>Tipo</th>
+      <th>Cuándo ocurre</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Sintaxis</strong></td>
+      <td>Antes de ejecutar. Python no puede leer el código.</td>
+      <td>Paréntesis sin cerrar, comilla faltante</td>
+    </tr>
+    <tr>
+      <td><strong>Ejecución</strong></td>
+      <td>Durante la ejecución. El código es válido pero algo falla al correr.</td>
+      <td>División entre cero, variable no definida</td>
+    </tr>
+    <tr>
+      <td><strong>Semántico</strong></td>
+      <td>El programa corre sin errores pero produce un resultado incorrecto.</td>
+      <td>Fórmula incorrecta, precedencia inesperada</td>
+    </tr>
+  </tbody>
+</table>
+
+### Errores de sintaxis
+
+Son los más fáciles de detectar: Python se niega a ejecutar el programa y señala dónde encontró el problema. Los errores de comillas y paréntesis vistos en 1.3 son ejemplos directos:
+
+<CodeRunner language="python" title="Errores de sintaxis" initialCode={`# Cada línea comentada produce un SyntaxError si se descomenta.
+# Descomenta una a una para ver el mensaje de error:
+
+# print("Hola)        # comilla de cierre faltante
+# print("Hola')       # tipo de comillas inconsistente
+# if True             # dos puntos faltantes
+#     print("ok")
+
+# Versiones correctas:
+print("Hola")
+if True:
+    print("ok")`} />
+
+> Cuando Python lanza un `SyntaxError`, señala la línea del problema con una flecha `^`. En ocasiones el error real está una línea antes: si falta cerrar un paréntesis en la línea 3, Python puede no detectarlo hasta la línea 4.
+
+### Errores de ejecución
+
+El código tiene sintaxis válida, pero algo falla durante la ejecución. Estos errores producen un **traceback**: un mensaje que indica qué instrucción falló y por qué. Los errores de tipo vistos en 1.4, como operar con cadenas numéricas, pertenecen a esta categoría:
+
+<CodeRunner language="python" title="Errores de ejecución" initialCode={`# NameError: variable no definida
+try:
+    print(resultado)
+except NameError as e:
+    print(f"NameError: {e}")
+
+# ZeroDivisionError: división entre cero
+try:
+    print(10 / 0)
+except ZeroDivisionError as e:
+    print(f"ZeroDivisionError: {e}")
+
+# TypeError: operación entre tipos incompatibles
+try:
+    print("5" + 3)
+except TypeError as e:
+    print(f"TypeError: {e}")`} />
+
+### Errores semánticos
+
+Son los más peligrosos: el programa se ejecuta sin ningún mensaje de error, pero el resultado es incorrecto. El error de precedencia del ejercicio integrador de 1.3 es un ejemplo típico:
+
+<CodeRunner language="python" title="Error semántico: precedencia inesperada" initialCode={`# La intención era calcular el promedio de tres notas
+nota1 = 8
+nota2 = 6
+nota3 = 9
+
+# Sin paréntesis: / tiene mayor precedencia que +
+promedio_incorrecto = nota1 + nota2 + nota3 / 3
+print("Incorrecto:", promedio_incorrecto)   # 17.0
+
+# Con paréntesis: la suma se evalúa primero
+promedio_correcto = (nota1 + nota2 + nota3) / 3
+print("Correcto:", promedio_correcto)       # 7.666...`} />
+
+<CodeRunner language="python" title="Error semántico: tipo incorrecto" initialCode={`# La imprecisión de float vista en 1.5 produce errores semánticos
+# al comparar directamente
+print(0.1 + 0.2 == 0.3)                # False  ← resultado inesperado
+print(abs((0.1 + 0.2) - 0.3) < 1e-9)  # True   ← comparación correcta`} />
+
+---
+
+## Cómo leer un traceback
+
+Cuando Python encuentra un error de ejecución, muestra un **traceback**: la cadena de llamadas que llevó al error.
+```
+Traceback (most recent call last):
+  File "programa.py", line 4, in <module>
+    print(10 / divisor)
+ZeroDivisionError: division by zero
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Parte del traceback</th>
+      <th>Qué significa</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Traceback (most recent call last)</code></td>
+      <td>Encabezado estándar. El error relevante está al final.</td>
+    </tr>
+    <tr>
+      <td><code>File "programa.py", line 4</code></td>
+      <td>El archivo y la línea donde ocurrió el error.</td>
+    </tr>
+    <tr>
+      <td><code>print(10 / divisor)</code></td>
+      <td>La línea de código exacta que falló.</td>
+    </tr>
+    <tr>
+      <td><code>ZeroDivisionError: division by zero</code></td>
+      <td>El tipo de error y una descripción. Empieza siempre por aquí.</td>
+    </tr>
+  </tbody>
+</table>
+
+> Lee el traceback **de abajo hacia arriba**. La última línea indica el tipo de error. Las líneas anteriores muestran el camino que llevó hasta él.
+
+---
+
+## Estrategias de depuración
+
+### 1. Lee el mensaje de error completo
+
+El mensaje de error contiene el tipo de error, la línea donde ocurrió y una descripción. La mayoría de los errores se resuelven leyendo ese mensaje con atención antes de hacer cualquier otra cosa.
+
+### 2. Usa print() para inspeccionar valores
+
+Cuando el resultado de un cálculo no es el esperado, añade `print()` en puntos clave para ver el valor de las variables en cada paso. Esta técnica es especialmente útil para detectar los errores semánticos vistos en esta sección:
+
+<CodeRunner language="python" title="Depurar con print()" initialCode={`precio = 100
+porcentaje = 20
+
+# Inspeccionamos cada paso para localizar el error
+print("precio:", precio)
+print("porcentaje:", porcentaje)
+
+descuento = precio * porcentaje   # error: falta dividir entre 100
+print("descuento calculado:", descuento)   # revela 2000, no 20
+
+precio_final = precio - descuento
+print("precio final:", precio_final)       # -1900 ← claramente incorrecto
+
+# Corrección:
+descuento_correcto = precio * porcentaje / 100
+print("descuento correcto:", descuento_correcto)   # 20.0`} />
+
+### 3. Aísla el problema
+
+Si un programa largo produce un error, extrae únicamente la parte problemática y pruébala de forma aislada. Cuanto más pequeño sea el ejemplo, más fácil es localizar el fallo:
+
+<CodeRunner language="python" title="Aislar el problema" initialCode={`# En lugar de buscar el error en todo el programa,
+# probamos la parte sospechosa por separado
+
+precio = 100
+porcentaje = 20
+
+descuento = precio * porcentaje / 100
+print(descuento)   # 20.0 ← correcto
+
+print(type(precio))      # <class 'int'>
+print(type(porcentaje))  # <class 'int'>`} />
+
+### 4. Verifica que el error está donde Python lo señala
+
+Python a veces señala una línea que no es exactamente donde está el problema, sino donde las consecuencias del error se hacen visibles:
+
+<CodeRunner language="python" title="El error puede estar antes de donde Python lo señala" initialCode={`x = "10"   # el problema real está aquí: debería ser int
+
+try:
+    resultado = x + 5   # Python señala esta línea
+except TypeError as e:
+    print(f"Error: {e}")
+    print("El problema está en la definición de x, no en la suma")`} />
+
+---
+
+## La actitud ante los errores
+
+**Los errores son información, no fracasos.** Cada mensaje de error indica exactamente qué salió mal y dónde.
+
+**El programa hace lo que se le dice, no lo que se quiere.** Si el resultado no es el esperado, el problema está en las instrucciones, no en el intérprete.
+
+**Alejarse y volver con perspectiva fresca** suele ser más eficaz que seguir mirando el mismo código durante mucho tiempo.
+
+**Explicar el código en voz alta**, incluso a un objeto inanimado, a menudo revela el error. Esta técnica se conoce como *rubber duck debugging*.
+
+> La depuración es una habilidad que se desarrolla con la práctica. Cada error encontrado y corregido contribuye a reconocer patrones y a localizar fallos con mayor rapidez.
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Tipo de error</th>
+      <th>Cuándo aparece</th>
+      <th>Cómo encontrarlo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>SyntaxError</strong></td>
+      <td>Al intentar ejecutar</td>
+      <td>Sigue la flecha <code>^</code> del mensaje</td>
+    </tr>
+    <tr>
+      <td><strong>NameError</strong></td>
+      <td>Al ejecutar</td>
+      <td>Busca dónde debería definirse esa variable</td>
+    </tr>
+    <tr>
+      <td><strong>TypeError</strong></td>
+      <td>Al ejecutar</td>
+      <td>Comprueba los tipos con <code>type()</code></td>
+    </tr>
+    <tr>
+      <td><strong>ZeroDivisionError</strong></td>
+      <td>Al ejecutar</td>
+      <td>Verifica que el divisor no sea cero</td>
+    </tr>
+    <tr>
+      <td><strong>Error semántico</strong></td>
+      <td>El programa corre sin fallos</td>
+      <td>Usa <code>print()</code> para inspeccionar valores intermedios</td>
+    </tr>
+  </tbody>
+</table>

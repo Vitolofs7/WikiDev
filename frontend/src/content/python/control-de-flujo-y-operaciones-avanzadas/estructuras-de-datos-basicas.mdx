@@ -1,0 +1,441 @@
+# 2.6 Estructuras de datos básicas
+
+Hasta ahora hemos trabajado con valores individuales: un número, una cadena, un booleano. Las **estructuras de datos** permiten agrupar múltiples valores bajo un mismo nombre y trabajar con ellos de forma organizada.
+
+Python incluye cuatro estructuras de datos fundamentales: listas, tuplas, diccionarios y conjuntos. Cada una tiene características propias que la hacen más adecuada para distintos casos de uso.
+
+---
+
+## Listas
+
+Una **lista** es una secuencia ordenada y mutable de valores. Puede contener elementos de cualquier tipo, incluso mezclados.
+
+### Creación e indexación
+
+<CodeRunner language="python" title="Crear y acceder a listas" initialCode={`frutas = ["manzana", "pera", "uva"]
+numeros = [10, 20, 30, 40, 50]
+mixta = [1, "hola", True, 3.14]
+
+print(frutas[0])     # manzana  (primer elemento)
+print(frutas[-1])    # uva      (último elemento)
+print(numeros[2])    # 30`} />
+
+### Slicing
+
+El slicing en listas funciona igual que en cadenas: `lista[inicio:fin:paso]`:
+
+<CodeRunner language="python" title="Slicing en listas" initialCode={`numeros = [10, 20, 30, 40, 50]
+
+print(numeros[1:4])    # [20, 30, 40]
+print(numeros[:3])     # [10, 20, 30]
+print(numeros[2:])     # [30, 40, 50]
+print(numeros[::2])    # [10, 30, 50]  (de dos en dos)
+print(numeros[::-1])   # [50, 40, 30, 20, 10]  (invertida)`} />
+
+### Mutabilidad
+
+A diferencia de las cadenas, las listas son **mutables**: sus elementos pueden modificarse directamente:
+
+<CodeRunner language="python" title="Modificar elementos" initialCode={`frutas = ["manzana", "pera", "uva"]
+frutas[1] = "naranja"
+print(frutas)   # ['manzana', 'naranja', 'uva']`} />
+
+### Métodos principales
+
+<CodeRunner language="python" title="Añadir y eliminar elementos" initialCode={`frutas = ["manzana", "pera"]
+
+frutas.append("uva")         # añade al final
+print(frutas)                # ['manzana', 'pera', 'uva']
+
+frutas.insert(1, "naranja")  # inserta en posición 1
+print(frutas)                # ['manzana', 'naranja', 'pera', 'uva']
+
+frutas.remove("pera")        # elimina la primera aparición del valor
+print(frutas)                # ['manzana', 'naranja', 'uva']
+
+ultimo = frutas.pop()        # elimina y devuelve el último elemento
+print(ultimo)                # uva
+print(frutas)                # ['manzana', 'naranja']`} />
+
+<CodeRunner language="python" title="Ordenar y buscar" initialCode={`numeros = [3, 1, 4, 1, 5, 9, 2, 6]
+
+numeros.sort()               # ordena en su lugar (modifica la lista)
+print(numeros)
+
+numeros.sort(reverse=True)   # orden descendente
+print(numeros)
+
+print(numeros.index(5))      # índice del valor 5
+print(numeros.count(1))      # número de apariciones del valor 1
+print(len(numeros))          # número de elementos`} />
+
+<CodeRunner language="python" title="Otras operaciones útiles" initialCode={`a = [1, 2, 3]
+b = [4, 5, 6]
+
+print(a + b)          # [1, 2, 3, 4, 5, 6]  (concatenación)
+print(a * 2)          # [1, 2, 3, 1, 2, 3]  (repetición)
+print(3 in a)         # True  (pertenencia)
+print(7 in a)         # False
+
+a.extend(b)           # añade todos los elementos de b a a
+print(a)`} />
+
+### Iterar sobre listas
+
+<CodeRunner language="python" title="Iterar con for" initialCode={`frutas = ["manzana", "pera", "uva"]
+
+for fruta in frutas:
+    print(fruta)`} />
+
+<CodeRunner language="python" title="Iterar con enumerate" initialCode={`frutas = ["manzana", "pera", "uva"]
+
+for i, fruta in enumerate(frutas, start=1):
+    print(f"{i}. {fruta}")`} />
+
+### Listas anidadas
+
+Una lista puede contener otras listas, lo que permite representar estructuras bidimensionales como matrices:
+
+<CodeRunner language="python" title="Listas anidadas" initialCode={`matriz = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
+
+print(matriz[0])       # [1, 2, 3]  (primera fila)
+print(matriz[1][2])    # 6          (fila 1, columna 2)
+
+for fila in matriz:
+    for elemento in fila:
+        print(elemento, end=" ")
+    print()`} />
+
+---
+
+## Tuplas
+
+Una **tupla** es una secuencia ordenada e **inmutable** de valores. Se define con paréntesis o simplemente con comas:
+
+<CodeRunner language="python" title="Crear tuplas" initialCode={`coordenadas = (40.4168, -3.7038)
+colores_rgb = (255, 128, 0)
+un_elemento = (42,)        # la coma es obligatoria para tuplas de un elemento
+
+print(coordenadas[0])      # 40.4168
+print(type(coordenadas))   # <class 'tuple'>`} />
+
+### Inmutabilidad
+
+A diferencia de las listas, las tuplas no pueden modificarse una vez creadas:
+
+<CodeRunner language="python" title="Inmutabilidad de las tuplas" initialCode={`punto = (3, 5)
+
+try:
+    punto[0] = 10
+except TypeError as e:
+    print(f"TypeError: {e}")`} />
+
+### Desempaquetado
+
+Las tuplas permiten asignar sus valores a varias variables en una sola instrucción. Esta es la misma mecánica que vimos en la asignación múltiple de 2.1:
+
+<CodeRunner language="python" title="Desempaquetado de tuplas" initialCode={`coordenadas = (40.4168, -3.7038)
+latitud, longitud = coordenadas
+
+print("Latitud:", latitud)
+print("Longitud:", longitud)
+
+# También funciona en bucles
+puntos = [(1, 2), (3, 4), (5, 6)]
+for x, y in puntos:
+    print(f"x={x}, y={y}")`} />
+
+### Cuándo usar tuplas
+
+<table>
+  <thead>
+    <tr>
+      <th>Usa lista cuando...</th>
+      <th>Usa tupla cuando...</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>El contenido puede cambiar</td>
+      <td>El contenido no debe cambiar</td>
+    </tr>
+    <tr>
+      <td>Necesitas añadir o eliminar elementos</td>
+      <td>Los datos son fijos (coordenadas, colores, fechas)</td>
+    </tr>
+    <tr>
+      <td>El orden de los elementos es arbitrario</td>
+      <td>Cada posición tiene un significado específico</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## Diccionarios
+
+Un **diccionario** asocia claves únicas a valores. Es la estructura más adecuada cuando los datos tienen un nombre o etiqueta:
+
+### Creación y acceso
+
+<CodeRunner language="python" title="Crear y acceder a diccionarios" initialCode={`persona = {
+    "nombre": "Ana",
+    "edad": 28,
+    "ciudad": "Madrid"
+}
+
+print(persona["nombre"])    # Ana
+print(persona["edad"])      # 28
+
+# Acceso seguro con get(): devuelve None si la clave no existe
+print(persona.get("email"))           # None
+print(persona.get("email", "N/A"))    # N/A  (valor por defecto)`} />
+
+### Añadir, modificar y eliminar
+
+<CodeRunner language="python" title="Modificar diccionarios" initialCode={`persona = {"nombre": "Ana", "edad": 28}
+
+persona["email"] = "ana@email.com"   # añadir nueva clave
+persona["edad"] = 29                  # modificar valor existente
+print(persona)
+
+del persona["email"]                  # eliminar clave
+print(persona)
+
+edad = persona.pop("edad")           # eliminar y devolver valor
+print("Edad eliminada:", edad)
+print(persona)`} />
+
+### Métodos principales
+
+<CodeRunner language="python" title="keys(), values(), items()" initialCode={`persona = {"nombre": "Ana", "edad": 28, "ciudad": "Madrid"}
+
+print(persona.keys())    # dict_keys(['nombre', 'edad', 'ciudad'])
+print(persona.values())  # dict_values(['Ana', 28, 'Madrid'])
+print(persona.items())   # dict_items([('nombre', 'Ana'), ...])`} />
+
+### Iterar sobre diccionarios
+
+<CodeRunner language="python" title="Iterar sobre diccionario" initialCode={`persona = {"nombre": "Ana", "edad": 28, "ciudad": "Madrid"}
+
+# Iterar sobre claves
+for clave in persona:
+    print(clave)
+
+# Iterar sobre claves y valores
+for clave, valor in persona.items():
+    print(f"{clave}: {valor}")`} />
+
+### Diccionarios anidados
+
+<CodeRunner language="python" title="Diccionarios anidados" initialCode={`usuarios = {
+    "ana": {"edad": 28, "ciudad": "Madrid"},
+    "luis": {"edad": 35, "ciudad": "Barcelona"}
+}
+
+print(usuarios["ana"]["ciudad"])    # Madrid
+
+for nombre, datos in usuarios.items():
+    print(f"{nombre}: {datos['edad']} años, {datos['ciudad']}")`} />
+
+---
+
+## Conjuntos
+
+Un **conjunto** (`set`) es una colección desordenada de elementos **únicos**. Es útil cuando importa saber si un elemento está presente, pero no su posición ni duplicados:
+
+### Creación y características
+
+<CodeRunner language="python" title="Crear conjuntos" initialCode={`numeros = {1, 2, 3, 4, 5}
+letras = set("abracadabra")   # elimina duplicados automáticamente
+
+print(numeros)
+print(letras)
+print(type(numeros))   # <class 'set'>`} />
+
+<CodeRunner language="python" title="Añadir y eliminar elementos" initialCode={`colores = {"rojo", "verde", "azul"}
+
+colores.add("amarillo")
+print(colores)
+
+colores.remove("verde")     # lanza KeyError si no existe
+colores.discard("blanco")   # no lanza error si no existe
+print(colores)
+
+print("rojo" in colores)    # True  (pertenencia muy eficiente en sets)`} />
+
+### Operaciones entre conjuntos
+
+<CodeRunner language="python" title="Operaciones de conjuntos" initialCode={`A = {1, 2, 3, 4, 5}
+B = {4, 5, 6, 7, 8}
+
+print(A | B)    # Unión: {1, 2, 3, 4, 5, 6, 7, 8}
+print(A & B)    # Intersección: {4, 5}
+print(A - B)    # Diferencia: {1, 2, 3}
+print(A ^ B)    # Diferencia simétrica: {1, 2, 3, 6, 7, 8}`} />
+
+<CodeRunner language="python" title="Caso de uso: eliminar duplicados de una lista" initialCode={`numeros = [1, 3, 2, 3, 1, 4, 2, 5]
+
+unicos = list(set(numeros))
+print(unicos)   # sin duplicados (el orden puede variar)`} />
+
+---
+
+## Elegir la estructura correcta
+
+<table>
+  <thead>
+    <tr>
+      <th>Estructura</th>
+      <th>Ordenada</th>
+      <th>Mutable</th>
+      <th>Duplicados</th>
+      <th>Acceso por</th>
+      <th>Cuándo usarla</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Lista</strong></td>
+      <td>Sí</td>
+      <td>Sí</td>
+      <td>Sí</td>
+      <td>Índice</td>
+      <td>Colección ordenada que puede cambiar</td>
+    </tr>
+    <tr>
+      <td><strong>Tupla</strong></td>
+      <td>Sí</td>
+      <td>No</td>
+      <td>Sí</td>
+      <td>Índice</td>
+      <td>Datos fijos con posición significativa</td>
+    </tr>
+    <tr>
+      <td><strong>Diccionario</strong></td>
+      <td>Sí*</td>
+      <td>Sí</td>
+      <td>No (claves)</td>
+      <td>Clave</td>
+      <td>Datos con nombre o etiqueta</td>
+    </tr>
+    <tr>
+      <td><strong>Conjunto</strong></td>
+      <td>No</td>
+      <td>Sí</td>
+      <td>No</td>
+      <td>Pertenencia</td>
+      <td>Elementos únicos, búsqueda rápida</td>
+    </tr>
+  </tbody>
+</table>
+
+*Los diccionarios mantienen el orden de inserción desde Python 3.7.
+
+---
+
+## Errores comunes
+
+<CodeRunner language="python" title="Acceder a una clave inexistente" initialCode={`persona = {"nombre": "Ana"}
+
+try:
+    print(persona["email"])
+except KeyError as e:
+    print(f"KeyError: {e}")
+
+# Solución: usar get()
+print(persona.get("email", "sin email"))   # sin email`} />
+
+<CodeRunner language="python" title="Confundir {} vacío con set vacío" initialCode={`vacio = {}
+print(type(vacio))    # <class 'dict'>  ← no es un set
+
+vacio_set = set()
+print(type(vacio_set))  # <class 'set'>`} />
+
+<CodeRunner language="python" title="Modificar una lista mientras se itera" initialCode={`numeros = [1, 2, 3, 4, 5]
+
+# ❌ Modificar la lista durante la iteración produce resultados inesperados
+# for n in numeros:
+#     if n % 2 == 0:
+#         numeros.remove(n)
+
+# ✅ Iterar sobre una copia o usar comprensión
+impares = [n for n in numeros if n % 2 != 0]
+print(impares)`} />
+
+<CodeRunner language="python" title="Índice fuera de rango en lista" initialCode={`frutas = ["manzana", "pera", "uva"]
+
+try:
+    print(frutas[5])
+except IndexError as e:
+    print(f"IndexError: {e}")
+
+# Comprobar la longitud antes de acceder
+if len(frutas) > 5:
+    print(frutas[5])
+else:
+    print("Índice fuera de rango")`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Operación</th>
+      <th>Lista</th>
+      <th>Tupla</th>
+      <th>Diccionario</th>
+      <th>Conjunto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+        <td>Crear</td>
+        <td><code>[1, 2, 3]</code></td>
+        <td><code>(1, 2, 3)</code></td>
+        <td><code>&#123;"a": 1&#125;</code></td>
+        <td><code>&#123;1, 2, 3&#125;</code></td>
+    </tr>
+    <tr>
+        <td>Acceder</td>
+        <td><code>lista[0]</code></td>
+        <td><code>tupla[0]</code></td>
+        <td><code>d["clave"]</code></td>
+        <td><code>x in s</code></td>
+    </tr>
+    <tr>
+        <td>Añadir</td>
+        <td><code>lista.append(x)</code></td>
+        <td>No es posible</td>
+        <td><code>d["k"] = v</code></td>
+        <td><code>s.add(x)</code></td>
+    </tr>
+    <tr>
+        <td>Eliminar</td>
+        <td><code>lista.remove(x)</code></td>
+        <td>No es posible</td>
+        <td><code>del d["k"]</code></td>
+        <td><code>s.remove(x)</code></td>
+    </tr>
+    <tr>
+        <td>Iterar</td>
+        <td><code>for x in lista</code></td>
+        <td><code>for x in tupla</code></td>
+        <td><code>for k, v in d.items()</code></td>
+        <td><code>for x in s</code></td>
+    </tr>
+    <tr>
+        <td>Pertenencia</td>
+        <td><code>x in lista</code></td>
+        <td><code>x in tupla</code></td>
+        <td><code>k in d</code></td>
+        <td><code>x in s</code></td>
+    </tr>
+  </tbody>
+</table>

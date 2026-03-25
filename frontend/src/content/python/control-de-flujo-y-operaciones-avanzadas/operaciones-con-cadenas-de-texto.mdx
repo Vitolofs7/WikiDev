@@ -1,0 +1,350 @@
+# 2.4 Operaciones con cadenas de texto
+
+En la sección 1.4 se introdujo el tipo `str` como una secuencia de caracteres. Esta sección desarrolla en profundidad las operaciones disponibles sobre cadenas: cómo construirlas, acceder a sus partes y transformarlas.
+
+---
+
+## Concatenación y repetición
+
+Los operadores `+` y `*` ya se introdujeron brevemente en 1.4. Como recordatorio:
+
+<CodeRunner language="python" title="Concatenación y repetición" initialCode={`print("Hola" + ", " + "mundo")   # Hola, mundo
+print("-" * 20)                   # --------------------`} />
+
+> `+` une cadenas. `*` repite una cadena un número entero de veces. No pueden mezclarse con números directamente: `"Hola" + 3` produce un `TypeError`.
+
+---
+
+## Cadenas multilínea
+
+Para cadenas que ocupan varias líneas, Python ofrece la sintaxis de triple comilla (`"""` o `'''`):
+
+<CodeRunner language="python" title="Cadenas multilínea" initialCode={`mensaje = """Línea 1
+Línea 2
+Línea 3"""
+
+print(mensaje)`} />
+
+Las triples comillas también se usan para docstrings, como se vio en el capítulo 3 de funciones.
+
+---
+
+## Secuencias de escape
+
+Las secuencias de escape permiten incluir caracteres especiales dentro de una cadena:
+
+<table>
+  <thead>
+    <tr>
+      <th>Secuencia</th>
+      <th>Significado</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>\n</code></td><td>Salto de línea</td><td><code>"línea1\nlínea2"</code></td></tr>
+    <tr><td><code>\t</code></td><td>Tabulación</td><td><code>"col1\tcol2"</code></td></tr>
+    <tr><td><code>\\</code></td><td>Barra invertida literal</td><td><code>"C:\\ruta"</code></td></tr>
+    <tr><td><code>\"</code></td><td>Comilla doble dentro de cadena con comillas dobles</td><td><code>"dice \"hola\""</code></td></tr>
+    <tr><td><code>\'</code></td><td>Comilla simple dentro de cadena con comillas simples</td><td><code>'it\'s'</code></td></tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="Secuencias de escape" initialCode={`print("Primera línea\nSegunda línea")
+print("columna1\tcolumna2")
+print("Ruta: C:\\Users\\ana")`} />
+
+Las **cadenas raw** (`r"..."`) desactivan el procesamiento de secuencias de escape. Son útiles para rutas de archivos y expresiones regulares:
+
+<CodeRunner language="python" title="Cadenas raw" initialCode={`print(r"C:\Users\ana\documentos")   # sin procesar el \
+print("C:\\Users\\ana\\documentos")  # equivalente con escapes`} />
+
+---
+
+## f-strings
+
+Las **f-strings** (cadenas de formato) permiten insertar expresiones directamente dentro de una cadena. Se escriben con el prefijo `f` antes de las comillas y las expresiones van entre llaves `{}`:
+
+<CodeRunner language="python" title="f-strings básicas" initialCode={`nombre = "Ana"
+edad = 28
+
+print(f"Me llamo {nombre} y tengo {edad} años.")`} />
+
+Dentro de las llaves puede ir cualquier expresión Python, no solo variables:
+
+<CodeRunner language="python" title="Expresiones dentro de f-strings" initialCode={`precio = 100
+iva = 0.21
+
+print(f"Precio base: {precio}€")
+print(f"IVA: {precio * iva}€")
+print(f"Total: {precio * (1 + iva)}€")`} />
+
+### Formato de números
+
+Las f-strings permiten controlar el formato de los valores numéricos con la sintaxis `{valor:formato}`:
+
+<CodeRunner language="python" title="Formato numérico en f-strings" initialCode={`pi = 3.1415926535
+
+print(f"Pi con 2 decimales: {pi:.2f}")
+print(f"Pi con 4 decimales: {pi:.4f}")
+
+distancia = 1234567.89
+print(f"Distancia: {distancia:,.2f} km")   # separador de miles
+
+tasa = 0.1756
+print(f"Tasa: {tasa:.1%}")                 # formato porcentaje`} />
+
+---
+
+## len()
+
+La función `len()` devuelve el número de caracteres de una cadena, incluyendo espacios y símbolos:
+
+<CodeRunner language="python" title="Longitud de una cadena" initialCode={`print(len("Hola"))            # 4
+print(len("Hola, mundo"))     # 11
+print(len(""))                # 0  (cadena vacía)
+
+nombre = "Ana García"
+print(f"'{nombre}' tiene {len(nombre)} caracteres")`} />
+
+---
+
+## Indexación
+
+Una cadena es una secuencia de caracteres. Cada carácter tiene una **posición** o **índice** que permite acceder a él individualmente. Los índices empiezan en `0`:
+```
+ H  o  l  a  ,     m  u  n  d  o
+ 0  1  2  3  4  5  6  7  8  9  10
+```
+
+Para acceder a un carácter, se usa la sintaxis `cadena[índice]`:
+
+<CodeRunner language="python" title="Indexación positiva" initialCode={`texto = "Hola, mundo"
+
+print(texto[0])    # H  (primer carácter)
+print(texto[5])    # espacio
+print(texto[6])    # m`} />
+
+Python también permite **índices negativos**, que cuentan desde el final:
+```
+ H   o   l   a   ,       m   u   n   d   o
+-11 -10  -9  -8  -7  -6  -5  -4  -3  -2  -1
+```
+
+<CodeRunner language="python" title="Indexación negativa" initialCode={`texto = "Hola, mundo"
+
+print(texto[-1])    # o  (último carácter)
+print(texto[-5])    # m
+print(texto[-11])   # H`} />
+
+> Acceder a un índice fuera del rango de la cadena produce un `IndexError`.
+
+<CodeRunner language="python" title="IndexError por índice fuera de rango" initialCode={`texto = "Hola"
+
+try:
+    print(texto[10])
+except IndexError as e:
+    print(f"IndexError: {e}")`} />
+
+---
+
+## Slicing
+
+El **slicing** permite extraer una subcadena especificando un rango de índices. La sintaxis es:
+```python
+cadena[inicio:fin:paso]
+```
+
+- `inicio`: índice donde comienza la extracción (incluido)
+- `fin`: índice donde termina la extracción (excluido)
+- `paso`: salto entre caracteres (por defecto `1`)
+
+<CodeRunner language="python" title="Slicing básico" initialCode={`texto = "Hola, mundo"
+
+print(texto[0:4])    # Hola  (del 0 al 3, el 4 no se incluye)
+print(texto[6:11])   # mundo
+print(texto[6:])     # mundo (hasta el final)
+print(texto[:4])     # Hola  (desde el principio)
+print(texto[:])      # Hola, mundo (copia completa)`} />
+
+### Slicing con paso
+
+El tercer parámetro define el salto entre caracteres:
+
+<CodeRunner language="python" title="Slicing con paso" initialCode={`texto = "abcdefghij"
+
+print(texto[::2])    # acegi   (un carácter de cada dos)
+print(texto[1::2])   # bdfhj   (empieza en 1, de dos en dos)
+print(texto[::-1])   # jihgfedcba (cadena invertida)`} />
+
+### Slicing con índices negativos
+
+Los índices negativos también funcionan en slicing:
+
+<CodeRunner language="python" title="Slicing con negativos" initialCode={`texto = "Hola, mundo"
+
+print(texto[-5:])     # mundo  (últimos 5 caracteres)
+print(texto[:-6])     # Hola   (todo menos los últimos 6)
+print(texto[-5:-2])   # mun`} />
+
+> A diferencia de la indexación directa, el slicing nunca lanza `IndexError`. Si los índices están fuera de rango, Python los ajusta automáticamente.
+
+---
+
+## Métodos de cadenas
+
+Las cadenas disponen de métodos incorporados que permiten transformarlas y consultarlas. Se invocan con la notación `cadena.método()`.
+
+### Transformación de mayúsculas y minúsculas
+
+<CodeRunner language="python" title="Mayúsculas y minúsculas" initialCode={`texto = "Hola, Mundo"
+
+print(texto.upper())       # HOLA, MUNDO
+print(texto.lower())       # hola, mundo
+print(texto.capitalize())  # Hola, mundo  (solo la primera letra)
+print(texto.title())       # Hola, Mundo  (primera letra de cada palabra)`} />
+
+### Eliminar espacios
+
+<CodeRunner language="python" title="Eliminar espacios" initialCode={`texto = "   Hola, mundo   "
+
+print(texto.strip())    # "Hola, mundo"  (elimina ambos extremos)
+print(texto.lstrip())   # "Hola, mundo   "  (solo izquierda)
+print(texto.rstrip())   # "   Hola, mundo"  (solo derecha)`} />
+
+### Buscar y reemplazar
+
+<CodeRunner language="python" title="find() y count()" initialCode={`texto = "Hola, mundo mundo"
+
+print(texto.find("mundo"))    # 6   (índice de la primera aparición)
+print(texto.find("Python"))   # -1  (no encontrado)
+print(texto.count("mundo"))   # 2   (número de apariciones)`} />
+
+<CodeRunner language="python" title="replace()" initialCode={`texto = "Hola, mundo"
+
+print(texto.replace("mundo", "Python"))   # Hola, Python
+print(texto.replace("o", "0"))            # H0la, mund0`} />
+
+### Verificar contenido
+
+<CodeRunner language="python" title="startswith() y endswith()" initialCode={`texto = "archivo.py"
+
+print(texto.startswith("arch"))   # True
+print(texto.endswith(".py"))      # True
+print(texto.endswith(".txt"))     # False`} />
+
+<CodeRunner language="python" title="Métodos de verificación de tipo" initialCode={`print("12345".isdigit())     # True   (solo dígitos)
+print("abc".isalpha())       # True   (solo letras)
+print("abc123".isalnum())    # True   (letras y dígitos)
+print("  ".isspace())        # True   (solo espacios)`} />
+
+### Dividir y unir
+
+<CodeRunner language="python" title="split()" initialCode={`texto = "uno,dos,tres,cuatro"
+
+partes = texto.split(",")
+print(partes)           # ['uno', 'dos', 'tres', 'cuatro']
+print(len(partes))      # 4`} />
+
+<CodeRunner language="python" title="join()" initialCode={`partes = ["uno", "dos", "tres"]
+
+print(", ".join(partes))    # uno, dos, tres
+print("-".join(partes))     # uno-dos-tres
+print("".join(partes))      # unodostres`} />
+
+> `split()` divide una cadena en una lista. `join()` hace lo inverso: une una lista de cadenas en una sola. Ambos se usan con frecuencia juntos.
+
+---
+
+## Inmutabilidad
+
+Las cadenas en Python son **inmutables**: una vez creadas, no pueden modificarse. Los métodos no cambian la cadena original, sino que devuelven una nueva:
+
+<CodeRunner language="python" title="Las cadenas son inmutables" initialCode={`texto = "hola"
+
+# Los métodos devuelven una nueva cadena, no modifican la original
+nuevo = texto.upper()
+print(texto)   # hola  (sin cambios)
+print(nuevo)   # HOLA
+
+# No es posible modificar un carácter directamente:
+try:
+    texto[0] = "H"
+except TypeError as e:
+    print(f"TypeError: {e}")`} />
+
+Para "modificar" una cadena, se crea una nueva a partir de la original:
+
+<CodeRunner language="python" title="Crear una cadena modificada" initialCode={`texto = "hola, mundo"
+
+# Sustituir el primer carácter
+texto = texto[0].upper() + texto[1:]
+print(texto)   # Hola, mundo`} />
+
+---
+
+## Errores comunes
+
+<CodeRunner language="python" title="Concatenar str con int" initialCode={`edad = 25
+
+try:
+    print("Tengo " + edad + " años")
+except TypeError as e:
+    print(f"TypeError: {e}")
+
+# Solución 1: convertir con str()
+print("Tengo " + str(edad) + " años")
+
+# Solución 2: usar f-string (más limpio)
+print(f"Tengo {edad} años")`} />
+
+<CodeRunner language="python" title="Índice fuera de rango" initialCode={`texto = "Hola"
+
+try:
+    print(texto[10])
+except IndexError as e:
+    print(f"IndexError: {e}")
+
+# Slicing no lanza error aunque el índice esté fuera de rango
+print(texto[2:20])   # la  (Python ajusta automáticamente)`} />
+
+<CodeRunner language="python" title="Olvidar que los métodos devuelven una nueva cadena" initialCode={`texto = "  hola  "
+
+# Error frecuente: no usar el valor devuelto
+texto.strip()
+print(texto)   # "  hola  "  (sin cambios)
+
+# Correcto: asignar el resultado
+texto = texto.strip()
+print(texto)   # "hola"`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Operación</th>
+      <th>Ejemplo</th>
+      <th>Resultado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Concatenación</td><td><code>"Hola" + " mundo"</code></td><td><code>Hola mundo</code></td></tr>
+    <tr><td>Repetición</td><td><code>"-" * 5</code></td><td><code>-----</code></td></tr>
+    <tr><td>Longitud</td><td><code>len("Hola")</code></td><td><code>4</code></td></tr>
+    <tr><td>Indexación</td><td><code>"Hola"[0]</code></td><td><code>H</code></td></tr>
+    <tr><td>Índice negativo</td><td><code>"Hola"[-1]</code></td><td><code>a</code></td></tr>
+    <tr><td>Slicing</td><td><code>"Hola"[1:3]</code></td><td><code>ol</code></td></tr>
+    <tr><td>Invertir</td><td><code>"Hola"[::-1]</code></td><td><code>aloH</code></td></tr>
+    <tr><td>Mayúsculas</td><td><code>"hola".upper()</code></td><td><code>HOLA</code></td></tr>
+    <tr><td>Minúsculas</td><td><code>"HOLA".lower()</code></td><td><code>hola</code></td></tr>
+    <tr><td>Eliminar espacios</td><td><code>"  hola  ".strip()</code></td><td><code>hola</code></td></tr>
+    <tr><td>Buscar</td><td><code>"hola".find("ol")</code></td><td><code>1</code></td></tr>
+    <tr><td>Reemplazar</td><td><code>"hola".replace("h", "H")</code></td><td><code>Hola</code></td></tr>
+    <tr><td>Dividir</td><td><code>"a,b,c".split(",")</code></td><td><code>['a', 'b', 'c']</code></td></tr>
+    <tr><td>Unir</td><td><code>",".join(["a","b","c"])</code></td><td><code>a,b,c</code></td></tr>
+    <tr><td>f-string</td><td><code>f"Hola &#123;nombre&#125;"</code></td><td><code>Hola Ana</code></td></tr>
+  </tbody>
+</table>

@@ -1,0 +1,151 @@
+# 5.4 Evaluación dinámica
+
+Python permite ejecutar código que se construye como texto durante la ejecución del programa. La función `eval()` evalúa **expresiones** representadas como cadenas. Es una herramienta poderosa, pero con riesgos importantes que hay que conocer.
+
+---
+
+## eval()
+
+`eval()` toma una **cadena** que contiene una expresión Python válida, la evalúa y devuelve el resultado:
+
+<CodeRunner language="python" title="eval() básico" initialCode={`# Evaluar expresiones aritméticas
+print(eval("2 + 3"))          # 5
+print(eval("10 * 5 - 3"))    # 47
+print(eval("2 ** 10"))       # 1024
+
+# Evaluar expresiones con funciones
+print(eval("abs(-7)"))       # 7
+print(eval("len('Python')")) # 6
+print(eval("round(3.14159, 2)"))  # 3.14`} />
+
+<CodeRunner language="python" title="eval() con variables" initialCode={`x = 10
+y = 20
+
+# eval() tiene acceso a las variables del ámbito actual
+resultado = eval("x + y")
+print(resultado)   # 30
+
+# Expresiones más complejas
+print(eval("x ** 2 + y ** 2"))     # 500
+print(eval("[x, y, x + y]"))       # [10, 20, 30]`} />
+
+<CodeRunner language="python" title="eval() con contexto personalizado" initialCode={`import math
+
+# Se puede limitar qué variables y funciones están disponibles
+contexto = {"x": 5, "y": 10, "sqrt": math.sqrt}
+
+# Solo las variables del contexto están disponibles
+print(eval("x + y", contexto))         # 15
+print(eval("sqrt(x ** 2 + y ** 2)", contexto))  # ~11.18`} />
+
+<CodeRunner language="python" title="Ejemplo: calculadora simple" initialCode={`def calculadora(expresion):
+    """Evalúa una expresión matemática de forma controlada."""
+    # Solo permitir funciones matemáticas seguras
+    permitidas = {
+        "abs": abs, "round": round, "pow": pow,
+        "min": min, "max": max, "sum": sum,
+    }
+    
+    try:
+        resultado = eval(expresion, {"__builtins__": {}}, permitidas)
+        print(f"  {expresion} = {resultado}")
+        return resultado
+    except Exception as e:
+        print(f"  Error: {e}")
+        return None
+
+calculadora("2 + 3 * 4")
+calculadora("abs(-7) + round(3.7)")
+calculadora("pow(2, 10)")
+calculadora("max(1, 5, 3)")`} />
+
+---
+
+## Riesgos de seguridad
+
+`eval()` ejecuta **cualquier** código Python válido. Si se usa con datos proporcionados por el usuario, puede ser una vulnerabilidad grave:
+
+<CodeRunner language="python" title="⚠️ Riesgos de eval()" initialCode={`# ❌ PELIGROSO: un usuario podría ejecutar código malicioso
+# Ejemplo (seguro en este contexto de demostración):
+entrada_maliciosa = "__import__('os').getcwd()"
+
+try:
+    # Sin restricciones, eval() puede hacer CUALQUIER cosa
+    resultado = eval(entrada_maliciosa)
+    print(f"eval() ejecutó código del sistema: {resultado}")
+except Exception as e:
+    print(f"Error controlado: {e}")
+
+# ✅ SEGURO: restringir builtins
+try:
+    resultado = eval(entrada_maliciosa, {"__builtins__": {}})
+except NameError as e:
+    print(f"Bloqueado correctamente: {e}")`} />
+
+### Alternativas seguras
+
+<CodeRunner language="python" title="Alternativas a eval()" initialCode={`# Para convertir tipos, usar funciones específicas
+texto_numero = "42"
+
+# ❌ Innecesario y peligroso
+resultado = eval(texto_numero)
+
+# ✅ Seguro y explícito
+resultado = int(texto_numero)
+print(resultado)
+
+# Para evaluar expresiones matemáticas seguras
+import ast
+
+def eval_seguro(expresion):
+    """Evalúa solo literales Python (números, strings, listas, etc.)."""
+    try:
+        return ast.literal_eval(expresion)
+    except (ValueError, SyntaxError) as e:
+        return f"Error: {e}"
+
+# ✅ ast.literal_eval solo acepta literales
+print(eval_seguro("42"))           # 42
+print(eval_seguro("[1, 2, 3]"))    # [1, 2, 3]
+print(eval_seguro("{'a': 1}"))     # {'a': 1}
+
+# ✅ Rechaza código ejecutable
+print(eval_seguro("abs(-5)"))`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Función</th>
+      <th>Uso</th>
+      <th>Seguridad</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>eval(expr)</code></td>
+      <td>Evalúa una expresión Python</td>
+      <td>⚠️ Peligroso con datos externos</td>
+    </tr>
+    <tr>
+      <td><code>eval(expr, globals)</code></td>
+      <td>Evalúa con contexto limitado</td>
+      <td>⚠️ Más seguro, pero no infalible</td>
+    </tr>
+    <tr>
+      <td><code>ast.literal_eval()</code></td>
+      <td>Evalúa solo literales Python</td>
+      <td>✅ Seguro</td>
+    </tr>
+    <tr>
+      <td><code>int()</code>, <code>float()</code></td>
+      <td>Conversión de tipos específica</td>
+      <td>✅ Seguro</td>
+    </tr>
+  </tbody>
+</table>
+
+> **Regla de oro**: nunca uses `eval()` con datos que provienen del usuario. Usa `ast.literal_eval()` para interpretar literales, o funciones de conversión específicas como `int()` y `float()`.

@@ -1,0 +1,424 @@
+# 2.3 Condicionales
+
+Hasta ahora los programas que hemos escrito ejecutan todas las instrucciones en orden, sin desviarse. Los **condicionales** permiten que el programa tome decisiones: ejecutar un bloque de código solo si se cumple una condición, o elegir entre distintos caminos según el valor de una expresión.
+
+---
+
+## Qué es una condición
+
+Una **condición** es una expresión que Python evalúa y que produce un valor booleano: `True` o `False`. Ya vimos en 1.4 que el tipo `bool` tiene exactamente estos dos valores. Cualquier expresión que devuelva `True` o `False` puede usarse como condición:
+
+<CodeRunner language="python" title="Expresiones booleanas" initialCode={`print(5 > 3)       # True
+print(10 == 10)    # True
+print(7 < 2)       # False
+print(type(5 > 3)) # <class 'bool'>`} />
+
+---
+
+## Operadores de comparación
+
+Los operadores de comparación producen un valor booleano al comparar dos expresiones:
+
+<table>
+  <thead>
+    <tr>
+      <th>Operador</th>
+      <th>Significado</th>
+      <th>Ejemplo</th>
+      <th>Resultado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>==</code></td><td>Igual a</td><td><code>5 == 5</code></td><td><code>True</code></td></tr>
+    <tr><td><code>!=</code></td><td>Distinto de</td><td><code>5 != 3</code></td><td><code>True</code></td></tr>
+    <tr><td><code>&gt;</code></td><td>Mayor que</td><td><code>7 &gt; 3</code></td><td><code>True</code></td></tr>
+    <tr><td><code>&lt;</code></td><td>Menor que</td><td><code>3 &lt; 7</code></td><td><code>True</code></td></tr>
+    <tr><td><code>&gt;=</code></td><td>Mayor o igual</td><td><code>5 &gt;= 5</code></td><td><code>True</code></td></tr>
+    <tr><td><code>&lt;=</code></td><td>Menor o igual</td><td><code>3 &lt;= 7</code></td><td><code>True</code></td></tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="Operadores de comparación" initialCode={`a = 7
+b = 10
+
+print(a == b)   # False
+print(a != b)   # True
+print(a < b)    # True
+print(a >= 7)   # True`} />
+
+> Python permite encadenar comparaciones de forma natural: `0 < x < 10` es equivalente a `x > 0 and x < 10`. Esta sintaxis es más legible y menos propensa a errores.
+
+<CodeRunner language="python" title="Comparaciones encadenadas" initialCode={`x = 5
+print(0 < x < 10)    # True
+print(0 < x < 4)     # False`} />
+
+---
+
+## if simple
+
+La estructura `if` ejecuta un bloque de código únicamente si la condición es `True`. Si es `False`, el bloque se omite y el programa continúa:
+```python
+if condición:
+    # bloque que se ejecuta si la condición es True
+```
+
+La **indentación** es obligatoria y define qué instrucciones pertenecen al bloque. Por convención se usan 4 espacios:
+
+<CodeRunner language="python" title="if simple" initialCode={`temperatura = 30
+
+if temperatura > 25:
+    print("Hace calor")
+
+print("Esto siempre se ejecuta")`} />
+
+---
+
+## if / else
+
+`else` define un bloque alternativo que se ejecuta cuando la condición es `False`:
+
+<CodeRunner language="python" title="if / else" initialCode={`edad = 17
+
+if edad >= 18:
+    print("Puedes votar")
+else:
+    print("No puedes votar todavía")`} />
+
+---
+
+## if / elif / else
+
+Cuando hay más de dos casos posibles, `elif` permite encadenar condiciones adicionales. Python las evalúa de arriba a abajo y ejecuta el primer bloque cuya condición sea `True`. Si ninguna lo es, ejecuta `else`:
+
+<CodeRunner language="python" title="if / elif / else" initialCode={`nota = 85
+
+if nota >= 90:
+    print("Sobresaliente")
+elif nota >= 75:
+    print("Notable")
+elif nota >= 60:
+    print("Aprobado")
+else:
+    print("Suspenso")`} />
+
+> Una vez que se ejecuta un bloque, el resto se omite aunque sus condiciones también sean `True`. El orden de las condiciones importa.
+
+---
+
+## Operadores lógicos: and, or, not
+
+Los operadores lógicos permiten combinar varias condiciones en una sola expresión:
+
+<table>
+  <thead>
+    <tr>
+      <th>Operador</th>
+      <th>Resultado</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>and</code></td><td><code>True</code> si ambas condiciones son <code>True</code></td><td><code>x &gt; 0 and y &gt; 0</code></td></tr>
+    <tr><td><code>or</code></td><td><code>True</code> si al menos una es <code>True</code></td><td><code>x &gt; 0 or y &gt; 0</code></td></tr>
+    <tr><td><code>not</code></td><td>Invierte el valor booleano</td><td><code>not x &gt; 0</code></td></tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="Operador and" initialCode={`edad = 20
+tiene_entrada = True
+
+if edad >= 18 and tiene_entrada:
+    print("Puedes entrar al concierto")
+else:
+    print("No puedes entrar")`} />
+
+<CodeRunner language="python" title="Operador or" initialCode={`dia = "sábado"
+
+if dia == "sábado" or dia == "domingo":
+    print("Es fin de semana")
+else:
+    print("Es día laborable")`} />
+
+<CodeRunner language="python" title="Operador not" initialCode={`bloqueado = False
+
+if not bloqueado:
+    print("Acceso permitido")
+else:
+    print("Acceso denegado")`} />
+
+### Precedencia de operadores lógicos
+
+Los operadores lógicos tienen su propia precedencia: `not` se evalúa primero, luego `and`, y por último `or`. Los paréntesis permiten controlar el orden explícitamente:
+
+<CodeRunner language="python" title="Precedencia lógica" initialCode={`x = 5
+
+# not se evalúa antes que and
+print(not x > 3 and x < 10)    # False → (not True) and True → False
+
+# Con paréntesis, el orden cambia
+print(not (x > 3 and x < 10))  # False → not True → False
+
+# or tiene menor precedencia que and
+print(True or False and False)  # True → True or (False and False)`} />
+
+---
+
+## Condicionales anidados
+
+Un bloque `if` puede contener otros `if` en su interior. Sin embargo, un anidamiento excesivo dificulta la lectura:
+
+<CodeRunner language="python" title="Condicionales anidados" initialCode={`x = 5
+
+if x > 0:
+    if x < 10:
+        print("Número entre 0 y 10")
+    else:
+        print("Número mayor o igual a 10")
+else:
+    print("Número no positivo")`} />
+
+Cuando las condiciones son independientes, es preferible combinarlas con operadores lógicos:
+
+<CodeRunner language="python" title="Simplificar con operadores lógicos" initialCode={`x = 5
+
+# Equivalente al ejemplo anterior, más legible
+if 0 < x < 10:
+    print("Número entre 0 y 10")
+elif x >= 10:
+    print("Número mayor o igual a 10")
+else:
+    print("Número no positivo")`} />
+
+---
+
+## Valores truthy y falsy
+
+En Python, cualquier valor puede usarse directamente como condición. Python lo convierte implícitamente a `bool` antes de evaluarlo.
+
+Los siguientes valores se evalúan como `False`:
+
+<table>
+  <thead>
+    <tr>
+      <th>Valor</th>
+      <th>Tipo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>False</code></td><td><code>bool</code></td></tr>
+    <tr><td><code>0</code>, <code>0.0</code></td><td><code>int</code>, <code>float</code></td></tr>
+    <tr><td><code>""</code></td><td><code>str</code> vacía</td></tr>
+    <tr><td><code>None</code></td><td><code>NoneType</code></td></tr>
+  </tbody>
+</table>
+
+Cualquier otro valor se evalúa como `True`.
+
+<CodeRunner language="python" title="Valores falsy" initialCode={`nombre = ""
+
+if nombre:
+    print("Nombre:", nombre)
+else:
+    print("El nombre está vacío")`} />
+
+<CodeRunner language="python" title="Valores truthy" initialCode={`cantidad = 42
+
+if cantidad:
+    print("Hay", cantidad, "unidades")
+else:
+    print("Sin stock")`} />
+
+> Usar valores truthy y falsy hace el código más conciso, pero puede reducir la claridad. En condiciones donde el tipo importa, es preferible ser explícito: `if nombre != ""` es más preciso que `if nombre`.
+
+---
+
+## Expresión condicional
+
+Python permite escribir un `if/else` simple en una sola línea mediante la **expresión condicional** (también llamada operador ternario):
+```python
+valor_si_true if condición else valor_si_false
+```
+
+<CodeRunner language="python" title="Expresión condicional" initialCode={`edad = 20
+
+estado = "mayor de edad" if edad >= 18 else "menor de edad"
+print(estado)   # mayor de edad`} />
+
+<CodeRunner language="python" title="Expresión condicional en print()" initialCode={`x = -5
+print("positivo" if x > 0 else "no positivo")   # no positivo`} />
+
+> La expresión condicional es útil para asignaciones simples. Para lógica más compleja, el `if/else` convencional es más legible.
+
+---
+
+## match / case (Python 3.10+)
+
+`match/case` es una estructura introducida en Python 3.10 que permite comparar una variable contra múltiples patrones de forma clara y concisa. Es especialmente útil cuando hay muchos casos posibles:
+```python
+match variable:
+    case patrón1:
+        # bloque
+    case patrón2:
+        # bloque
+    case _:
+        # caso por defecto
+```
+
+<CodeRunner language="python" title="match / case básico" initialCode={`comando = "start"
+
+match comando:
+    case "start":
+        print("Iniciando...")
+    case "stop":
+        print("Deteniendo...")
+    case "restart":
+        print("Reiniciando...")
+    case _:
+        print("Comando no reconocido")`} />
+
+El comodín `_` actúa como `else`: captura cualquier valor no contemplado por los casos anteriores.
+
+`match/case` también permite combinar varios valores en un mismo caso con `|`:
+
+<CodeRunner language="python" title="Varios valores en un caso" initialCode={`dia = "sábado"
+
+match dia:
+    case "lunes" | "martes" | "miércoles" | "jueves" | "viernes":
+        print("Día laborable")
+    case "sábado" | "domingo":
+        print("Fin de semana")
+    case _:
+        print("Día no reconocido")`} />
+
+Y puede añadir condiciones adicionales con `if` dentro de cada caso:
+
+<CodeRunner language="python" title="match con condición adicional" initialCode={`precio = 150
+
+match precio:
+    case p if p < 50:
+        print("Económico")
+    case p if p < 200:
+        print("Precio medio")
+    case _:
+        print("Premium")`} />
+
+> `match/case` no es un simple `switch`. Soporta patrones estructurados, desestructuración de tuplas y listas, y condiciones adicionales. Se trata en mayor profundidad cuando se introducen las estructuras de datos.
+
+---
+
+## Errores comunes
+
+<CodeRunner language="python" title="Olvidar los dos puntos" initialCode={`# SyntaxError: falta el : al final de la condición
+# if x > 0
+#     print("positivo")
+
+# Correcto:
+x = 5
+if x > 0:
+    print("positivo")`} />
+
+<CodeRunner language="python" title="Usar = en lugar de ==" initialCode={`x = 10
+
+# SyntaxError: el operador de asignación no puede usarse en una condición
+# if x = 10:
+#     print("es diez")
+
+# Correcto:
+if x == 10:
+    print("es diez")`} />
+
+<CodeRunner language="python" title="Comparar booleanos innecesariamente" initialCode={`activo = True
+
+# Innecesario: activo ya es un booleano
+if activo == True:
+    print("activo")
+
+# Correcto y más idiomático:
+if activo:
+    print("activo")`} />
+
+<CodeRunner language="python" title="Anidamiento excesivo" initialCode={`a = True
+b = True
+c = True
+
+# Difícil de leer
+if a:
+    if b:
+        if c:
+            print("Todo verdadero")
+
+# Equivalente, más claro
+if a and b and c:
+    print("Todo verdadero")`} />
+
+<CodeRunner language="python" title="Omitir el caso por defecto" initialCode={`x = 5
+
+# Sin else: si x no es 1 ni 2, no ocurre nada y no hay aviso
+if x == 1:
+    print("uno")
+elif x == 2:
+    print("dos")
+
+# Con else: todos los casos están cubiertos
+if x == 1:
+    print("uno")
+elif x == 2:
+    print("dos")
+else:
+    print("otro valor:", x)`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Estructura</th>
+      <th>Uso</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>if</code></td>
+      <td>Ejecuta un bloque si la condición es <code>True</code></td>
+      <td><code>if x &gt; 0:</code></td>
+    </tr>
+    <tr>
+      <td><code>if / else</code></td>
+      <td>Elige entre dos caminos</td>
+      <td><code>if x &gt; 0: ... else: ...</code></td>
+    </tr>
+    <tr>
+      <td><code>if / elif / else</code></td>
+      <td>Evalúa múltiples condiciones en orden</td>
+      <td><code>if ... elif ... else ...</code></td>
+    </tr>
+    <tr>
+      <td>Expresión condicional</td>
+      <td><code>if/else</code> en una línea</td>
+      <td><code>"sí" if x &gt; 0 else "no"</code></td>
+    </tr>
+    <tr>
+      <td><code>match / case</code></td>
+      <td>Comparación por patrones (Python 3.10+)</td>
+      <td><code>match x: case 1: ...</code></td>
+    </tr>
+    <tr>
+      <td><code>and</code></td>
+      <td><code>True</code> si ambas condiciones son <code>True</code></td>
+      <td><code>x &gt; 0 and y &gt; 0</code></td>
+    </tr>
+    <tr>
+      <td><code>or</code></td>
+      <td><code>True</code> si al menos una es <code>True</code></td>
+      <td><code>x &gt; 0 or y &gt; 0</code></td>
+    </tr>
+    <tr>
+      <td><code>not</code></td>
+      <td>Invierte el valor booleano</td>
+      <td><code>not x &gt; 0</code></td>
+    </tr>
+  </tbody>
+</table>

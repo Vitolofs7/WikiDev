@@ -1,0 +1,164 @@
+# 5.9 Lambda con estructuras
+
+Las funciones lambda son especialmente útiles para transformar, filtrar y ordenar datos dentro de estructuras como listas, diccionarios, tuplas y combinaciones de estas.
+
+---
+
+## Listas
+
+<CodeRunner language="python" title="Transformar listas" initialCode={`# Convertir temperaturas de Celsius a Fahrenheit
+celsius = [0, 20, 37, 100]
+fahrenheit = list(map(lambda c: round(c * 9/5 + 32, 1), celsius))
+print(f"Celsius:    {celsius}")
+print(f"Fahrenheit: {fahrenheit}")
+
+# Filtrar y transformar en cadena
+numeros = [15, 3, 42, 7, 28, 91, 5]
+grandes = list(filter(lambda n: n > 10, numeros))
+etiquetas = list(map(lambda n: f"[{n}]", grandes))
+print(etiquetas)`} />
+
+<CodeRunner language="python" title="Listas de listas" initialCode={`# Ordenar sublistas por su suma
+grupos = [[3, 5, 1], [8, 2], [4, 4, 4, 4], [10]]
+por_suma = sorted(grupos, key=lambda g: sum(g))
+for g in por_suma:
+    print(f"  {g} → suma: {sum(g)}")
+
+# Obtener el mayor de cada sublista
+maximos = list(map(lambda g: max(g), grupos))
+print(f"Máximos: {maximos}")`} />
+
+---
+
+## Diccionarios
+
+<CodeRunner language="python" title="Ordenar diccionarios" initialCode={`ventas = {"Enero": 1500, "Febrero": 2300, "Marzo": 1800, "Abril": 2100}
+
+# Ordenar por valor (ventas)
+por_ventas = sorted(ventas.items(), key=lambda item: item[1], reverse=True)
+for mes, venta in por_ventas:
+    print(f"  {mes}: {venta}€")
+
+print()
+
+# Ordenar por clave (nombre del mes)
+por_nombre = sorted(ventas.items(), key=lambda item: item[0])
+for mes, venta in por_nombre:
+    print(f"  {mes}: {venta}€")`} />
+
+<CodeRunner language="python" title="Transformar diccionarios" initialCode={`precios = {"manzana": 1.50, "pera": 2.00, "kiwi": 3.25, "uva": 2.80}
+
+# Aplicar descuento del 20%
+con_descuento = {k: round(v * 0.8, 2) for k, v in precios.items()}
+print("Con descuento:", con_descuento)
+
+# Filtrar productos baratos (< 2.50€)
+baratos = dict(filter(lambda item: item[1] < 2.50, precios.items()))
+print("Baratos:", baratos)`} />
+
+---
+
+## Tuplas
+
+<CodeRunner language="python" title="Lambda con tuplas" initialCode={`# Ordenar tuplas por un elemento específico
+coordenadas = [(3, 5), (1, 8), (4, 2), (2, 9)]
+
+# Por primer elemento (x)
+por_x = sorted(coordenadas, key=lambda c: c[0])
+print(f"Por X: {por_x}")
+
+# Por segundo elemento (y)
+por_y = sorted(coordenadas, key=lambda c: c[1])
+print(f"Por Y: {por_y}")
+
+# Por distancia al origen
+import math
+por_distancia = sorted(coordenadas, key=lambda c: math.sqrt(c[0]**2 + c[1]**2))
+print(f"Por distancia: {por_distancia}")`} />
+
+---
+
+## Listas de diccionarios
+
+Este es uno de los usos más habituales de lambda: ordenar y filtrar listas de registros:
+
+<CodeRunner language="python" title="Ordenar listas de diccionarios" initialCode={`productos = [
+    {"nombre": "Teclado", "precio": 45.99, "stock": 23},
+    {"nombre": "Ratón", "precio": 19.99, "stock": 50},
+    {"nombre": "Monitor", "precio": 299.99, "stock": 8},
+    {"nombre": "USB", "precio": 9.99, "stock": 100},
+    {"nombre": "Auriculares", "precio": 59.99, "stock": 15},
+]
+
+# Ordenar por precio
+por_precio = sorted(productos, key=lambda p: p["precio"])
+print("Por precio:")
+for p in por_precio:
+    print(f"  {p['nombre']}: {p['precio']}€")
+
+print()
+
+# Ordenar por stock (menor primero)
+por_stock = sorted(productos, key=lambda p: p["stock"])
+print("Por stock (bajo primero):")
+for p in por_stock:
+    print(f"  {p['nombre']}: {p['stock']} uds")`} />
+
+<CodeRunner language="python" title="Filtrar listas de diccionarios" initialCode={`empleados = [
+    {"nombre": "Ana", "depto": "IT", "salario": 35000},
+    {"nombre": "Carlos", "depto": "Ventas", "salario": 28000},
+    {"nombre": "Lucía", "depto": "IT", "salario": 42000},
+    {"nombre": "Pedro", "depto": "RRHH", "salario": 31000},
+    {"nombre": "María", "depto": "IT", "salario": 38000},
+]
+
+# Filtrar por departamento
+it = list(filter(lambda e: e["depto"] == "IT", empleados))
+print("Departamento IT:")
+for e in it:
+    print(f"  {e['nombre']}: {e['salario']}€")
+
+# Empleados con salario > 30000, ordenados por salario
+bien_pagados = sorted(
+    filter(lambda e: e["salario"] > 30000, empleados),
+    key=lambda e: e["salario"],
+    reverse=True
+)
+print("\\nSalario > 30000:")
+for e in bien_pagados:
+    print(f"  {e['nombre']}: {e['salario']}€")`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Estructura</th>
+      <th>Patrón típico</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Lista de números</td>
+      <td><code>sorted(nums, key=lambda x: abs(x))</code></td>
+    </tr>
+    <tr>
+      <td>Lista de strings</td>
+      <td><code>sorted(strs, key=lambda s: len(s))</code></td>
+    </tr>
+    <tr>
+      <td>Lista de tuplas</td>
+      <td><code>sorted(tups, key=lambda t: t[1])</code></td>
+    </tr>
+    <tr>
+      <td>Lista de dicts</td>
+      <td><code>sorted(dicts, key=lambda d: d["campo"])</code></td>
+    </tr>
+    <tr>
+      <td>Diccionario</td>
+      <td><code>sorted(d.items(), key=lambda item: item[1])</code></td>
+    </tr>
+  </tbody>
+</table>

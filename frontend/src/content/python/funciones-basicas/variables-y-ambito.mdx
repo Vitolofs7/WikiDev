@@ -1,0 +1,179 @@
+# 3.7 Variables y ámbito
+
+Cuando se trabaja con funciones, las variables no siempre son accesibles desde cualquier parte del programa. Python tiene reglas claras sobre **dónde existe** y **dónde se puede usar** cada variable. A este concepto se le llama **ámbito** (*scope*).
+
+---
+
+## Variables locales
+
+Una variable creada **dentro de una función** es **local**: solo existe mientras la función se ejecuta y no se puede usar fuera de ella:
+
+<CodeRunner language="python" title="Variables locales" initialCode={`def calcular():
+    resultado = 42    # variable local
+    print(f"Dentro: {resultado}")
+
+calcular()
+
+# ❌ La variable no existe fuera de la función
+try:
+    print(resultado)
+except NameError as e:
+    print(f"NameError: {e}")`} />
+
+Cada llamada a la función crea una **nueva copia** de sus variables locales. Las variables de una llamada no afectan a las de otra:
+
+<CodeRunner language="python" title="Cada llamada es independiente" initialCode={`def contar():
+    n = 0
+    n += 1
+    print(f"n = {n}")
+
+contar()   # n = 1
+contar()   # n = 1  ← se crea una nueva 'n' cada vez
+contar()   # n = 1`} />
+
+Los **parámetros** también son variables locales de la función:
+
+<CodeRunner language="python" title="Parámetros como variables locales" initialCode={`def saludar(nombre):
+    mensaje = f"Hola, {nombre}"
+    print(mensaje)
+
+saludar("Ana")
+
+# Ni 'nombre' ni 'mensaje' existen aquí
+try:
+    print(nombre)
+except NameError as e:
+    print(f"NameError: {e}")`} />
+
+---
+
+## Variables globales
+
+Una variable creada **fuera de cualquier función** es **global**: existe durante toda la ejecución del programa y es **visible** desde dentro de las funciones (solo para lectura):
+
+<CodeRunner language="python" title="Variables globales — lectura" initialCode={`IVA = 21   # variable global
+
+def precio_con_iva(precio):
+    # Puede LEER la variable global IVA
+    return round(precio * (1 + IVA / 100), 2)
+
+print(precio_con_iva(100))   # 121.0
+print(precio_con_iva(50))    # 60.5`} />
+
+Sin embargo, si se intenta **modificar** una variable global dentro de una función sin declararla como `global`, Python crea una variable local con el mismo nombre en su lugar:
+
+<CodeRunner language="python" title="Sombra de variable global" initialCode={`contador = 0   # global
+
+def incrementar():
+    # Esto crea una variable LOCAL 'contador', no modifica la global
+    contador = 1
+    print(f"Dentro: {contador}")
+
+incrementar()
+print(f"Fuera: {contador}")   # sigue siendo 0`} />
+
+---
+
+## Uso de global
+
+La palabra clave `global` permite que una función **modifique** una variable global en lugar de crear una local:
+
+<CodeRunner language="python" title="Palabra clave global" initialCode={`contador = 0
+
+def incrementar():
+    global contador   # declara que usará la variable global
+    contador += 1
+
+incrementar()
+incrementar()
+incrementar()
+print(f"Contador: {contador}")   # 3`} />
+
+<CodeRunner language="python" title="global en ejemplo práctico" initialCode={`intentos = 3
+
+def usar_intento():
+    global intentos
+    if intentos > 0:
+        intentos -= 1
+        print(f"Intento usado. Quedan: {intentos}")
+    else:
+        print("No quedan intentos")
+
+usar_intento()
+usar_intento()
+usar_intento()
+usar_intento()`} />
+
+> Aunque `global` funciona, su uso excesivo crea código difícil de seguir y depurar. Es preferible usar **parámetros y valores de retorno** para comunicar datos entre funciones.
+
+---
+
+## Buenas prácticas
+
+### ✅ Preferir parámetros y retorno sobre variables globales
+
+<CodeRunner language="python" title="❌ Con global: difícil de rastrear" initialCode={`total = 0
+
+def agregar_producto(precio):
+    global total
+    total += precio
+
+agregar_producto(29.99)
+agregar_producto(15.50)
+print(f"Total: {total}€")   # ¿de dónde viene este valor?`} />
+
+<CodeRunner language="python" title="✅ Con parámetros y retorno: claro y predecible" initialCode={`def agregar_producto(total_actual, precio):
+    return total_actual + precio
+
+total = 0
+total = agregar_producto(total, 29.99)
+total = agregar_producto(total, 15.50)
+print(f"Total: {total}€")   # el flujo de datos es explícito`} />
+
+### ✅ Usar constantes globales (en mayúsculas)
+
+Las constantes de configuración son el uso legítimo más común de variables globales:
+
+<CodeRunner language="python" title="Constantes globales" initialCode={`# Constantes: valores que no cambian (por convención en MAYÚSCULAS)
+IVA = 21
+MONEDA = "€"
+MAX_INTENTOS = 3
+
+def precio_final(precio):
+    return f"{round(precio * (1 + IVA / 100), 2)}{MONEDA}"
+
+print(precio_final(100))
+print(precio_final(49.99))`} />
+
+### Resumen de reglas de ámbito
+
+<table>
+  <thead>
+    <tr>
+      <th>Situación</th>
+      <th>Comportamiento</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Leer variable global dentro de función</td>
+      <td>✅ Permitido sin <code>global</code></td>
+    </tr>
+    <tr>
+      <td>Modificar variable global dentro de función</td>
+      <td>❌ Crea una local (sombra) sin <code>global</code></td>
+    </tr>
+    <tr>
+      <td>Usar <code>global</code> para modificar</td>
+      <td>✅ Funciona, pero evitar si es posible</td>
+    </tr>
+    <tr>
+      <td>Constantes globales en MAYÚSCULAS</td>
+      <td>✅ Uso recomendado</td>
+    </tr>
+    <tr>
+      <td>Parámetros y <code>return</code></td>
+      <td>✅ Forma preferida de comunicar datos</td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,450 @@
+# 2.7 Bucles
+
+Los bucles permiten ejecutar un bloque de código de forma repetida. Python ofrece dos estructuras de iteración con propósitos distintos: `while` repite mientras se cumpla una condición, y `for` recorre los elementos de una secuencia.
+
+---
+
+## El bucle while
+
+### Sintaxis y funcionamiento
+
+`while` ejecuta su bloque repetidamente mientras la condición sea `True`. Cuando la condición se vuelve `False`, el bucle termina y el programa continúa:
+```python
+while condición:
+    # bloque que se repite
+```
+
+<CodeRunner language="python" title="while básico" initialCode={`contador = 1
+
+while contador <= 5:
+    print("Iteración:", contador)
+    contador += 1
+
+print("Bucle terminado")`} />
+
+> Es responsabilidad del programador garantizar que la condición eventualmente se vuelva `False`. Si la condición nunca cambia, el bucle se ejecuta indefinidamente.
+
+### Contador y acumulador
+
+Los patrones más habituales con `while` son el **contador** (variable que controla cuántas veces se ejecuta el bucle) y el **acumulador** (variable que acumula un resultado):
+
+<CodeRunner language="python" title="Acumulador con while" initialCode={`total = 0
+n = 1
+
+while n <= 5:
+    total += n
+    n += 1
+
+print("Suma de 1 a 5:", total)   # 15`} />
+
+### Bucle infinito con while True
+
+`while True` crea un bucle que no termina por su condición, sino mediante `break`. Es el patrón habitual para menús interactivos y procesos que deben ejecutarse hasta que ocurra algo:
+
+<CodeRunner language="python" title="while True con break" initialCode={`while True:
+    entrada = input("Escribe 'salir' para terminar: ")
+    if entrada == "salir":
+        break
+    print("Escribiste:", entrada)
+
+print("Programa terminado")`} />
+
+### break y continue
+
+`break` interrumpe el bucle inmediatamente. `continue` salta el resto del bloque actual y vuelve a evaluar la condición:
+
+<CodeRunner language="python" title="break en while" initialCode={`n = 0
+
+while n < 10:
+    n += 1
+    if n == 6:
+        break        # sale del bucle al llegar a 6
+    print(n)`} />
+
+<CodeRunner language="python" title="continue en while" initialCode={`n = 0
+
+while n < 10:
+    n += 1
+    if n % 2 == 0:
+        continue     # salta los números pares
+    print(n)`} />
+
+### Banderas
+
+Una **bandera** es una variable booleana que controla cuándo debe terminar el bucle. Es útil cuando la condición de salida depende de varias partes del código:
+
+<CodeRunner language="python" title="Bandera de control" initialCode={`activo = True
+contador = 0
+
+while activo:
+    print("Iteración:", contador)
+    contador += 1
+    if contador == 3:
+        activo = False   # cambia la bandera para salir`} />
+
+### while / else
+
+Python permite añadir un bloque `else` a un `while`. Se ejecuta únicamente si el bucle termina de forma natural (sin `break`):
+
+<CodeRunner language="python" title="while / else" initialCode={`password_correcta = "python123"
+intentos = 0
+max_intentos = 3
+
+while intentos < max_intentos:
+    entrada = input("Contraseña: ")
+    if entrada == password_correcta:
+        print("Acceso permitido")
+        break
+    intentos += 1
+    print(f"Incorrecto. Intentos restantes: {max_intentos - intentos}")
+else:
+    print("Número máximo de intentos superado")`} />
+
+---
+
+## El bucle for
+
+### Sintaxis y funcionamiento
+
+`for` recorre los elementos de cualquier secuencia o iterable, asignando cada elemento a la variable de iteración:
+```python
+for variable in secuencia:
+    # bloque que se ejecuta para cada elemento
+```
+
+<CodeRunner language="python" title="for básico" initialCode={`frutas = ["manzana", "pera", "uva"]
+
+for fruta in frutas:
+    print(fruta)`} />
+
+### range()
+
+`range()` genera una secuencia de números y es la forma más habitual de repetir un bloque un número determinado de veces:
+
+<CodeRunner language="python" title="range() básico" initialCode={`for i in range(5):      # 0, 1, 2, 3, 4
+    print(i)`} />
+
+`range()` acepta hasta tres argumentos: `range(inicio, fin, paso)`. El valor `fin` no se incluye:
+
+<CodeRunner language="python" title="range() con inicio, fin y paso" initialCode={`print("Del 1 al 5:")
+for i in range(1, 6):
+    print(i)
+
+print("Pares del 0 al 10:")
+for i in range(0, 11, 2):
+    print(i)
+
+print("Cuenta atrás:")
+for i in range(5, 0, -1):
+    print(i)`} />
+
+### Iterar sobre cadenas
+
+Las cadenas son iterables: `for` puede recorrer sus caracteres uno a uno:
+
+<CodeRunner language="python" title="Iterar sobre una cadena" initialCode={`for letra in "Python":
+    print(letra)`} />
+
+<CodeRunner language="python" title="Contar vocales" initialCode={`texto = "programacion"
+vocales = "aeiou"
+contador = 0
+
+for letra in texto:
+    if letra in vocales:
+        contador += 1
+
+print("Vocales:", contador)`} />
+
+### enumerate()
+
+`enumerate()` permite iterar sobre una secuencia obteniendo simultáneamente el índice y el valor de cada elemento:
+
+<CodeRunner language="python" title="enumerate()" initialCode={`frutas = ["manzana", "pera", "uva"]
+
+for indice, fruta in enumerate(frutas):
+    print(f"{indice}: {fruta}")`} />
+
+Por defecto el índice empieza en `0`. Se puede cambiar el valor inicial con el segundo argumento:
+
+<CodeRunner language="python" title="enumerate() con inicio personalizado" initialCode={`frutas = ["manzana", "pera", "uva"]
+
+for numero, fruta in enumerate(frutas, start=1):
+    print(f"{numero}. {fruta}")`} />
+
+### zip()
+
+`zip()` combina varios iterables elemento a elemento, produciendo tuplas con los elementos que ocupan la misma posición. Es la forma más limpia de iterar sobre varias listas relacionadas en paralelo:
+
+<CodeRunner language="python" title="zip() con dos listas" initialCode={`nombres = ["Ana", "Luis", "Marta"]
+edades  = [25, 30, 22]
+
+for nombre, edad in zip(nombres, edades):
+    print(f"{nombre} tiene {edad} años")`} />
+
+`zip()` también funciona con más de dos iterables:
+
+<CodeRunner language="python" title="zip() con tres listas" initialCode={`nombres  = ["Ana", "Luis", "Marta"]
+edades   = [25, 30, 22]
+ciudades = ["Madrid", "Sevilla", "Valencia"]
+
+for nombre, edad, ciudad in zip(nombres, edades, ciudades):
+    print(f"{nombre} ({edad}) - {ciudad}")`} />
+
+> `zip()` se detiene cuando el iterable más corto se agota. Los elementos sobrantes de los iterables más largos se descartan silenciosamente.
+
+<CodeRunner language="python" title="zip() con listas de distinta longitud" initialCode={`a = [1, 2, 3, 4]
+b = ["a", "b"]
+
+print(list(zip(a, b)))   # [(1, 'a'), (2, 'b')]  ← 3 y 4 se descartan`} />
+
+`zip()` también es útil para construir diccionarios a partir de dos listas:
+
+<CodeRunner language="python" title="Crear diccionario con zip()" initialCode={`claves  = ["nombre", "edad", "ciudad"]
+valores = ["Ana", 25, "Madrid"]
+
+diccionario = dict(zip(claves, valores))
+print(diccionario)`} />
+
+### Bucles anidados
+
+Un bucle puede contener otro bucle en su interior. El bucle interior se ejecuta completo en cada iteración del exterior:
+
+<CodeRunner language="python" title="Bucles anidados" initialCode={`for i in range(1, 4):
+    for j in range(1, 4):
+        print(f"  ({i}, {j})", end=" ")
+    print()`} />
+
+<CodeRunner language="python" title="Tabla de multiplicar" initialCode={`for i in range(1, 6):
+    for j in range(1, 6):
+        print(f"{i * j:3}", end=" ")
+    print()`} />
+
+### break y continue en for
+
+`break` y `continue` funcionan igual que en `while`:
+
+<CodeRunner language="python" title="break en for" initialCode={`numeros = [3, 7, 2, 9, 4]
+
+for n in numeros:
+    if n == 2:
+        print("Encontrado:", n)
+        break`} />
+
+<CodeRunner language="python" title="continue en for" initialCode={`datos = [10, -5, 0, 15, -3, 8]
+
+for d in datos:
+    if d <= 0:
+        continue     # salta valores no positivos
+    print("Dato válido:", d)`} />
+
+`for` también admite un bloque `else` que se ejecuta si el bucle termina sin `break`:
+
+<CodeRunner language="python" title="for / else" initialCode={`numeros = [1, 3, 5, 7]
+
+for n in numeros:
+    if n % 2 == 0:
+        print("Encontrado número par:", n)
+        break
+else:
+    print("No hay números pares en la lista")`} />
+
+### Comprensiones de listas
+
+Las **comprensiones de listas** son una forma concisa de crear listas a partir de un bucle `for` en una sola línea:
+```python
+[expresión for variable in iterable]
+[expresión for variable in iterable if condición]
+```
+
+<CodeRunner language="python" title="Comprensión básica" initialCode={`# Con bucle for tradicional
+cuadrados = []
+for n in range(1, 6):
+    cuadrados.append(n ** 2)
+print(cuadrados)
+
+# Equivalente con comprensión
+cuadrados = [n ** 2 for n in range(1, 6)]
+print(cuadrados)`} />
+
+<CodeRunner language="python" title="Comprensión con condición" initialCode={`# Solo los números pares del 0 al 9
+pares = [n for n in range(10) if n % 2 == 0]
+print(pares)
+
+# Solo palabras con más de 3 letras
+palabras = ["sol", "luna", "estrella", "mar"]
+largas = [p for p in palabras if len(p) > 3]
+print(largas)`} />
+
+<CodeRunner language="python" title="Comprensión con expresión condicional" initialCode={`# Clasificar números como "par" o "impar"
+clasificacion = ["par" if n % 2 == 0 else "impar" for n in range(6)]
+print(clasificacion)`} />
+
+> Las comprensiones de listas son más concisas y en general más eficientes que el bucle equivalente. Sin embargo, si la lógica es compleja, el bucle `for` tradicional es más legible.
+
+---
+
+## Cuándo usar while vs for
+
+<table>
+  <thead>
+    <tr>
+      <th>Situación</th>
+      <th>Usar</th>
+      <th>Razón</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Número de iteraciones conocido</td>
+      <td><code>for</code></td>
+      <td>Más legible y directo</td>
+    </tr>
+    <tr>
+      <td>Recorrer una secuencia</td>
+      <td><code>for</code></td>
+      <td>Diseñado para eso</td>
+    </tr>
+    <tr>
+      <td>Condición dinámica o desconocida</td>
+      <td><code>while</code></td>
+      <td>No se sabe cuántas iteraciones se necesitan</td>
+    </tr>
+    <tr>
+      <td>Validar entrada del usuario</td>
+      <td><code>while</code></td>
+      <td>Repetir hasta que la entrada sea válida</td>
+    </tr>
+    <tr>
+      <td>Proceso continuo con salida por evento</td>
+      <td><code>while True</code></td>
+      <td>El bucle no termina por condición sino por <code>break</code></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## Errores comunes
+
+<CodeRunner language="python" title="Bucle infinito por olvidar actualizar la condición" initialCode={`# ❌ La variable nunca cambia → bucle infinito
+# contador = 0
+# while contador < 5:
+#     print(contador)   # falta: contador += 1
+
+# ✅ Correcto
+contador = 0
+while contador < 5:
+    print(contador)
+    contador += 1`} />
+
+<CodeRunner language="python" title="break que nunca se alcanza" initialCode={`# ❌ El break nunca se ejecuta porque la condición es imposible
+n = 0
+while n < 5:
+    if n == 10:     # n nunca llega a 10 dentro de este bucle
+        break
+    n += 1
+
+print("n final:", n)   # 5, el bucle terminó por la condición, no por break`} />
+
+<CodeRunner language="python" title="zip() con listas de distinta longitud sin avisar" initialCode={`nombres = ["Ana", "Luis", "Marta", "Carlos"]
+edades  = [25, 30]
+
+# zip() descarta los elementos sobrantes silenciosamente
+for nombre, edad in zip(nombres, edades):
+    print(nombre, edad)
+
+print("Procesados:", min(len(nombres), len(edades)), "de", len(nombres))`} />
+
+<CodeRunner language="python" title="Modificar una lista mientras se recorre" initialCode={`numeros = [1, 2, 3, 4, 5]
+
+# ❌ Modificar la lista durante la iteración produce resultados inesperados
+# for n in numeros:
+#     if n % 2 == 0:
+#         numeros.remove(n)
+
+# ✅ Iterar sobre una copia o usar comprensión
+impares = [n for n in numeros if n % 2 != 0]
+print(impares)`} />
+
+<CodeRunner language="python" title="Comprensión demasiado compleja" initialCode={`# ❌ Difícil de leer
+resultado = [x * y for x in range(1, 4) for y in range(1, 4) if x != y]
+
+# ✅ Más claro con un bucle tradicional
+resultado = []
+for x in range(1, 4):
+    for y in range(1, 4):
+        if x != y:
+            resultado.append(x * y)
+
+print(resultado)`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Estructura</th>
+      <th>Uso</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>while condición</code></td>
+      <td>Repite mientras la condición sea <code>True</code></td>
+      <td><code>while n &lt; 10:</code></td>
+    </tr>
+    <tr>
+      <td><code>while True</code></td>
+      <td>Bucle infinito controlado con <code>break</code></td>
+      <td><code>while True: ... break</code></td>
+    </tr>
+    <tr>
+      <td><code>for x in seq</code></td>
+      <td>Recorre cada elemento de una secuencia</td>
+      <td><code>for n in lista:</code></td>
+    </tr>
+    <tr>
+      <td><code>range(n)</code></td>
+      <td>Genera números de <code>0</code> a <code>n-1</code></td>
+      <td><code>for i in range(5):</code></td>
+    </tr>
+    <tr>
+      <td><code>range(a, b, paso)</code></td>
+      <td>Genera números de <code>a</code> a <code>b-1</code> con salto</td>
+      <td><code>range(0, 10, 2)</code></td>
+    </tr>
+    <tr>
+      <td><code>enumerate(seq)</code></td>
+      <td>Itera con índice y valor</td>
+      <td><code>for i, x in enumerate(lista):</code></td>
+    </tr>
+    <tr>
+      <td><code>zip(a, b)</code></td>
+      <td>Itera sobre dos o más secuencias en paralelo</td>
+      <td><code>for x, y in zip(a, b):</code></td>
+    </tr>
+    <tr>
+      <td><code>break</code></td>
+      <td>Sale del bucle inmediatamente</td>
+      <td><code>if x == 0: break</code></td>
+    </tr>
+    <tr>
+      <td><code>continue</code></td>
+      <td>Salta al siguiente ciclo</td>
+      <td><code>if x &lt; 0: continue</code></td>
+    </tr>
+    <tr>
+      <td><code>for/else</code>, <code>while/else</code></td>
+      <td>Se ejecuta si el bucle termina sin <code>break</code></td>
+      <td><code>for ... else: ...</code></td>
+    </tr>
+    <tr>
+      <td>Comprensión de lista</td>
+      <td>Crea una lista con un <code>for</code> en una línea</td>
+      <td><code>[x**2 for x in range(5)]</code></td>
+    </tr>
+  </tbody>
+</table>

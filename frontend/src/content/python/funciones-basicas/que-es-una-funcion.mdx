@@ -1,0 +1,129 @@
+# 3.1 ¿Qué es una función?
+
+A medida que los programas crecen, el código tiende a repetirse y a volverse difícil de leer. Las **funciones** son la herramienta fundamental de Python para organizar, reutilizar y estructurar el código en bloques con nombre y propósito claro.
+
+---
+
+## Definición
+
+Una **función** es un bloque de código con nombre que realiza una tarea específica y puede ejecutarse tantas veces como sea necesario simplemente llamándola por su nombre.
+
+Ya hemos usado funciones desde el principio del curso: `print()`, `len()`, `type()`, `abs()`, `round()` son todas funciones. La diferencia es que esas funciones las proporciona Python. En este capítulo aprenderemos a crear las nuestras.
+
+---
+
+## Reutilización de código
+
+Sin funciones, cualquier comportamiento que se necesite en varios puntos del programa debe copiarse. Esto crea problemas inmediatos: si hay un error o se necesita un cambio, hay que encontrar y modificar todas las copias.
+
+Con una función, el comportamiento se define una sola vez y se usa tantas veces como sea necesario. Un cambio en la función afecta automáticamente a todos los lugares donde se usa:
+
+<CodeRunner language="python" title="Sin función: repetición inevitable" initialCode={`# ❌ El mismo cálculo repetido tres veces
+precio1 = 100
+total1 = precio1 + precio1 * 0.21
+print(f"Producto 1: {round(total1, 2)}€")
+
+precio2 = 250
+total2 = precio2 + precio2 * 0.21
+print(f"Producto 2: {round(total2, 2)}€")
+
+precio3 = 75
+total3 = precio3 + precio3 * 0.21
+print(f"Producto 3: {round(total3, 2)}€")`} />
+
+<CodeRunner language="python" title="Con función: un solo lugar para cambiar" initialCode={`# ✅ El cálculo está definido una sola vez
+def precio_con_iva(precio):
+    return round(precio * 1.21, 2)
+
+print(f"Producto 1: {precio_con_iva(100)}€")
+print(f"Producto 2: {precio_con_iva(250)}€")
+print(f"Producto 3: {precio_con_iva(75)}€")`} />
+
+---
+
+## Modularidad
+
+Las funciones permiten dividir un programa complejo en piezas más pequeñas, cada una con una responsabilidad clara. Este principio se llama **modularidad**: en lugar de un bloque largo de código difícil de entender, el programa se construye como una combinación de funciones bien nombradas.
+
+Un programa modular es más fácil de:
+
+- **Leer**: cada función tiene un nombre que describe lo que hace
+- **Depurar**: se puede probar cada función por separado
+- **Mantener**: un cambio en una función no afecta a las demás
+- **Reutilizar**: una función bien diseñada puede usarse en otros programas
+
+<CodeRunner language="python" title="Programa modular" initialCode={`def calcular_descuento(precio, porcentaje):
+    return precio * (porcentaje / 100)
+
+def calcular_iva(precio):
+    return precio * 0.21
+
+def precio_final(precio, descuento=0):
+    precio_con_descuento = precio - calcular_descuento(precio, descuento)
+    return round(precio_con_descuento + calcular_iva(precio_con_descuento), 2)
+
+# El programa principal es fácil de leer
+print(precio_final(100))          # sin descuento
+print(precio_final(100, 10))      # con 10% de descuento
+print(precio_final(250, 15))      # con 15% de descuento`} />
+
+---
+
+## Ejemplo básico
+
+La función más simple posible: un nombre, un cuerpo, una tarea:
+
+<CodeRunner language="python" title="Primera función propia" initialCode={`def saludar():
+    print("Hola, mundo")
+
+# La definición no ejecuta nada.
+# Para ejecutar el cuerpo, hay que llamar a la función:
+saludar()
+saludar()
+saludar()`} />
+
+Tres cosas importantes en este ejemplo:
+
+<table>
+  <thead>
+    <tr>
+      <th>Elemento</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>def</code></td>
+      <td>Palabra clave que indica que se está definiendo una función</td>
+    </tr>
+    <tr>
+      <td><code>saludar</code></td>
+      <td>Nombre de la función</td>
+    </tr>
+    <tr>
+      <td><code>saludar()</code></td>
+      <td>Llamada a la función: ejecuta el cuerpo</td>
+    </tr>
+  </tbody>
+</table>
+
+La definición y la llamada son dos operaciones distintas. La definición crea la función; la llamada la ejecuta. Esta distinción se desarrolla en detalle en la sección **3.10 Flujo de ejecución**.
+
+---
+
+## Las funciones como valores
+
+En Python, una función es un objeto como cualquier otro. Puede inspeccionarse, asignarse a una variable o pasarse como argumento:
+
+<CodeRunner language="python" title="Las funciones son objetos" initialCode={`def saludar():
+    print("Hola")
+
+# La función es un objeto de tipo function
+print(type(saludar))    # <class 'function'>
+print(saludar)          # <function saludar at 0x...>
+
+# Sin paréntesis: referencia al objeto función (no la ejecuta)
+# Con paréntesis: llamada que ejecuta el cuerpo
+saludar()               # Hola`} />
+
+> Sin los paréntesis, `saludar` es solo una referencia al objeto función. Con los paréntesis, `saludar()` ejecuta el cuerpo. Este es uno de los errores más frecuentes al empezar a trabajar con funciones.

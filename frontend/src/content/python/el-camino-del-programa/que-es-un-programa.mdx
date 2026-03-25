@@ -1,0 +1,93 @@
+# 1.1 ¿Qué es un programa?
+
+Un **programa** es una secuencia de instrucciones que le indica al ordenador cómo realizar una tarea. Esa tarea puede ser matemática (resolver una ecuación), simbólica (buscar y reemplazar texto) o visual (procesar una imagen). En todos los casos, el programa descompone un problema complejo en pasos simples que el ordenador puede ejecutar.
+
+## Un modelo mental: tipos de instrucciones
+
+A nivel conceptual, los programas pueden describirse como combinaciones de cinco tipos de instrucciones. Este modelo no forma parte de la sintaxis de Python, sino que es una forma útil de clasificar lo que hace el código. Aunque los programas reales pueden ser más complejos, muchos se ajustan a esta clasificación:
+
+<table>
+  <thead>
+    <tr>
+      <th>Tipo</th>
+      <th>Descripción</th>
+      <th>Ejemplo en Python</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Entrada</strong></td>
+      <td>Obtener datos del teclado, un archivo o la red</td>
+      <td><code>nombre = input("Nombre: ")</code></td>
+    </tr>
+    <tr>
+      <td><strong>Salida</strong></td>
+      <td>Mostrar datos en pantalla o escribirlos en un archivo</td>
+      <td><code>print("Hola, mundo")</code></td>
+    </tr>
+    <tr>
+      <td><strong>Operaciones</strong></td>
+      <td>Realizar cálculos aritméticos o transformaciones de datos</td>
+      <td><code>resultado = 42 * 2</code></td>
+    </tr>
+    <tr>
+      <td><strong>Condicional</strong></td>
+      <td>Ejecutar instrucciones según el valor de una condición</td>
+      <td><code>if edad >= 18: ...</code></td>
+    </tr>
+    <tr>
+      <td><strong>Repetición</strong></td>
+      <td>Ejecutar un bloque de instrucciones de forma iterativa</td>
+      <td><code>for i in range(10): ...</code></td>
+    </tr>
+  </tbody>
+</table>
+
+## Flujo de control
+
+Por defecto, Python ejecuta las instrucciones de arriba a abajo, en el orden en que aparecen en el código. Este orden se denomina **flujo de control**. Las instrucciones condicionales y de repetición pueden modificarlo, haciendo que ciertas instrucciones se ejecuten o se repitan en función de condiciones. El ordenador aplica cada instrucción exactamente como está escrita, sin inferir intenciones más allá de lo que el código especifica.
+
+## Ejemplo: ejecución secuencial
+
+El caso más simple es una secuencia de instrucciones que se ejecutan una tras otra, en el orden en que aparecen:
+
+<CodeRunner language="python" title="Ejecución secuencial" initialCode={`print("Primero")
+print("Segundo")
+print("Tercero")`} />
+
+Cada línea se ejecuta en orden. Cambiar el orden de las instrucciones cambia el resultado del programa.
+
+## Ejemplo: combinación de tipos de instrucciones
+
+El siguiente programa combina operaciones, una instrucción condicional y una de repetición. No es necesario comprender en detalle estas estructuras en este punto; el objetivo es observar cómo distintos tipos de instrucciones pueden coexistir en un mismo programa:
+
+<CodeRunner language="python" title="Varios tipos de instrucciones" initialCode={`numero = 7
+
+if numero < 1:
+    print("Número fuera de rango.")
+else:
+    for i in range(1, numero + 1):
+        cuadrado = i ** 2
+        print(i, cuadrado)`} />
+
+## La analogía de la receta
+
+Un programa puede compararse con una receta de cocina: ambos describen una secuencia de pasos para obtener un resultado a partir de unos datos de entrada.
+
+<table>
+  <thead>
+    <tr>
+      <th>Receta</th>
+      <th>Programa</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Ingredientes</td><td>Datos de entrada</td></tr>
+    <tr><td>Pasos numerados</td><td>Instrucciones en orden</td></tr>
+    <tr><td>"Si no tienes X, usa Y"</td><td>Instrucción condicional</td></tr>
+    <tr><td>"Repite durante 5 minutos"</td><td>Instrucción de repetición</td></tr>
+    <tr><td>Plato final</td><td>Resultado o salida</td></tr>
+  </tbody>
+</table>
+
+A diferencia de una receta, que puede interpretarse con cierto margen de flexibilidad, un programa se ejecuta de forma determinista: dadas las mismas condiciones de entrada, produce siempre el mismo resultado.

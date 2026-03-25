@@ -1,0 +1,204 @@
+# 5.11 Programación funcional
+
+La **programación funcional** es un paradigma que trata las funciones como ciudadanos de primera clase y favorece la composición de transformaciones sobre los datos. Python no es un lenguaje puramente funcional, pero ofrece herramientas que permiten aplicar este estilo de forma efectiva.
+
+---
+
+## map + filter
+
+La combinación de `map()` y `filter()` permite crear **pipelines de datos**: primero se filtran los elementos relevantes y luego se transforman:
+
+<CodeRunner language="python" title="Pipeline: filter + map" initialCode={`ventas = [
+    {"producto": "Teclado", "precio": 45, "cantidad": 3},
+    {"producto": "Ratón", "precio": 20, "cantidad": 0},
+    {"producto": "Monitor", "precio": 300, "cantidad": 2},
+    {"producto": "USB", "precio": 10, "cantidad": 15},
+    {"producto": "Auriculares", "precio": 60, "cantidad": 0},
+]
+
+# Pipeline: filtrar productos con stock → calcular valor total
+con_stock = filter(lambda v: v["cantidad"] > 0, ventas)
+valores = map(lambda v: {
+    "producto": v["producto"],
+    "valor_total": v["precio"] * v["cantidad"]
+}, con_stock)
+
+print("Productos con stock:")
+for v in valores:
+    print(f"  {v['producto']}: {v['valor_total']}€")`} />
+
+<CodeRunner language="python" title="Pipeline encadenado" initialCode={`numeros = range(1, 21)
+
+# Pipeline: filtrar pares → elevar al cuadrado → convertir a string
+resultado = list(
+    map(lambda x: f"[{x}]",
+        map(lambda x: x ** 2,
+            filter(lambda x: x % 2 == 0, numeros)))
+)
+print(resultado)
+
+# Alternativa más legible: comprensión
+resultado2 = [f"[{x**2}]" for x in range(1, 21) if x % 2 == 0]
+print(resultado2)`} />
+
+---
+
+## reduce
+
+`reduce()` condensa una colección en un solo valor aplicando una función acumulativa:
+
+<CodeRunner language="python" title="reduce para acumulaciones complejas" initialCode={`from functools import reduce
+
+# Aplanar una lista de listas
+listas = [[1, 2], [3, 4], [5, 6]]
+plana = reduce(lambda a, b: a + b, listas)
+print(f"Aplanada: {plana}")   # [1, 2, 3, 4, 5, 6]
+
+# Construir un diccionario acumulativo
+pares = [("a", 1), ("b", 2), ("c", 3)]
+diccionario = reduce(lambda d, par: {**d, par[0]: par[1]}, pares, {})
+print(f"Dict: {diccionario}")
+
+# Factorial con reduce
+factorial = lambda n: reduce(lambda a, b: a * b, range(1, n + 1))
+print(f"5! = {factorial(5)}")    # 120
+print(f"10! = {factorial(10)}")  # 3628800`} />
+
+---
+
+## zip()
+
+`zip()` combina iterables en paralelo, creando tuplas de elementos correspondientes. Es fundamental para procesar datos relacionados:
+
+<CodeRunner language="python" title="zip() para datos paralelos" initialCode={`nombres = ["Ana", "Carlos", "Lucía"]
+notas = [8.5, 6.2, 9.1]
+aprobados = [True, True, True]
+
+# Combinar datos paralelos
+for nombre, nota, aprobado in zip(nombres, notas, aprobados):
+    estado = "✅" if aprobado else "❌"
+    print(f"  {estado} {nombre}: {nota}")
+
+print()
+
+# zip + map para transformaciones paralelas
+totales = list(map(lambda par: par[0] * par[1],
+    zip([10, 20, 30], [1.21, 1.21, 1.10])))
+print(f"Totales con IVA: {totales}")`} />
+
+<CodeRunner language="python" title="zip() para crear diccionarios" initialCode={`claves = ["nombre", "edad", "email"]
+valores = ["Ana", 28, "ana@mail.com"]
+
+# Crear diccionario con zip
+usuario = dict(zip(claves, valores))
+print(usuario)
+
+# Transponer una matriz con zip
+matriz = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
+
+transpuesta = list(map(list, zip(*matriz)))
+print("Original:")
+for fila in matriz:
+    print(f"  {fila}")
+print("Transpuesta:")
+for fila in transpuesta:
+    print(f"  {fila}")`} />
+
+---
+
+## Transformaciones complejas
+
+<CodeRunner language="python" title="Pipeline completo de datos" initialCode={`from functools import reduce
+
+# Datos de una tienda online
+pedidos = [
+    {"cliente": "Ana", "productos": [("Libro", 15), ("USB", 10)]},
+    {"cliente": "Carlos", "productos": [("Monitor", 300)]},
+    {"cliente": "Lucía", "productos": [("Teclado", 45), ("Ratón", 20), ("Alfombrilla", 8)]},
+]
+
+# 1. Calcular total por pedido
+totales = list(map(
+    lambda p: {
+        "cliente": p["cliente"],
+        "total": sum(precio for _, precio in p["productos"]),
+        "articulos": len(p["productos"])
+    },
+    pedidos
+))
+
+# 2. Filtrar pedidos > 50€
+grandes = list(filter(lambda p: p["total"] > 50, totales))
+
+# 3. Ordenar de mayor a menor
+grandes.sort(key=lambda p: p["total"], reverse=True)
+
+print("Pedidos > 50€:")
+for p in grandes:
+    print(f"  {p['cliente']}: {p['total']}€ ({p['articulos']} artículos)")
+
+# 4. Total facturado
+facturacion = reduce(lambda acc, p: acc + p["total"], totales, 0)
+print(f"\\nFacturación total: {facturacion}€")`} />
+
+<CodeRunner language="python" title="Composición de funciones" initialCode={`from functools import reduce
+
+def componer(*funciones):
+    """Compone múltiples funciones de derecha a izquierda."""
+    return reduce(lambda f, g: lambda x: f(g(x)), funciones)
+
+# Crear un pipeline de transformaciones
+procesar = componer(
+    lambda x: x.strip(),       # 3. Eliminar espacios
+    lambda x: x.title(),       # 2. Primera letra mayúscula
+    lambda x: x.lower(),       # 1. Todo minúsculas
+)
+
+nombres = ["  ANA GARCÍA  ", " carlos LÓPEZ", "LUCÍA  "]
+procesados = list(map(procesar, nombres))
+print(procesados)`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Herramienta</th>
+      <th>Uso funcional</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>map()</code></td>
+      <td>Transformar cada elemento</td>
+      <td><code>map(lambda x: x*2, nums)</code></td>
+    </tr>
+    <tr>
+      <td><code>filter()</code></td>
+      <td>Seleccionar elementos</td>
+      <td><code>filter(lambda x: x>0, nums)</code></td>
+    </tr>
+    <tr>
+      <td><code>reduce()</code></td>
+      <td>Acumular en un valor</td>
+      <td><code>reduce(lambda a,b: a+b, nums)</code></td>
+    </tr>
+    <tr>
+      <td><code>zip()</code></td>
+      <td>Combinar iterables en paralelo</td>
+      <td><code>zip(claves, valores)</code></td>
+    </tr>
+    <tr>
+      <td>Pipeline</td>
+      <td>Encadenar transformaciones</td>
+      <td><code>map(f, filter(g, datos))</code></td>
+    </tr>
+  </tbody>
+</table>

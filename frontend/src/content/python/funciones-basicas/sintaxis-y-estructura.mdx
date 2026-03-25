@@ -1,0 +1,208 @@
+# 3.2 Sintaxis y estructura
+
+Una función en Python tiene una estructura fija y bien definida. Conocer cada parte y su propósito es la base para escribir funciones correctas y legibles.
+
+---
+
+## La palabra clave def
+
+Toda definición de función comienza con `def`, seguida del nombre, los paréntesis y dos puntos:
+```python
+def nombre_función():
+    # cuerpo
+```
+
+<CodeRunner language="python" title="Estructura básica" initialCode={`def saludar():
+    print("Hola, mundo")
+
+saludar()`} />
+
+---
+
+## Encabezado y cuerpo
+
+Una definición de función tiene dos partes:
+
+<table>
+  <thead>
+    <tr>
+      <th>Parte</th>
+      <th>Descripción</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Encabezado</strong></td>
+      <td>Primera línea: <code>def</code>, nombre y paréntesis. Termina con <code>:</code></td>
+      <td><code>def saludar():</code></td>
+    </tr>
+    <tr>
+      <td><strong>Cuerpo</strong></td>
+      <td>Líneas indentadas que contienen las instrucciones</td>
+      <td><code>    print("Hola")</code></td>
+    </tr>
+  </tbody>
+</table>
+
+El cuerpo puede contener cualquier número de instrucciones: asignaciones, condicionales, bucles, llamadas a otras funciones:
+
+<CodeRunner language="python" title="Cuerpo con varias instrucciones" initialCode={`def describir_numero(n):
+    print(f"Número: {n}")
+    if n > 0:
+        print("Es positivo")
+    elif n < 0:
+        print("Es negativo")
+    else:
+        print("Es cero")
+
+describir_numero(5)
+describir_numero(-3)
+describir_numero(0)`} />
+
+---
+
+## Indentación
+
+La indentación define qué instrucciones pertenecen al cuerpo de la función. En Python se usan **4 espacios** por nivel. Una indentación incorrecta produce un `IndentationError`:
+
+<CodeRunner language="python" title="Indentación correcta e incorrecta" initialCode={`# ✅ Correcto: todas las líneas del cuerpo indentadas al mismo nivel
+def saludar():
+    print("Hola")
+    print("¿Qué tal?")
+
+saludar()
+
+# Esta línea está fuera de la función (no indentada)
+print("Esto siempre se ejecuta")`} />
+
+<CodeRunner language="python" title="IndentationError" initialCode={`# ❌ Indentación inconsistente → IndentationError
+try:
+    exec("""
+def funcion_mal():
+    print("línea 1")
+  print("línea 2")
+""")
+except IndentationError as e:
+    print(f"IndentationError: {e}")`} />
+
+> Usa siempre **4 espacios** por nivel de indentación. No mezcles espacios y tabuladores: aunque visualmente parezcan iguales, Python los trata como distintos y puede producir errores difíciles de detectar.
+
+---
+
+## Cuerpo vacío: pass
+
+Una función no puede tener el cuerpo completamente vacío. Si necesitas definir una función sin implementarla todavía, usa `pass` como marcador:
+
+<CodeRunner language="python" title="Función con pass" initialCode={`def funcion_pendiente():
+    pass   # marcador: indica cuerpo vacío intencionadamente
+
+funcion_pendiente()   # no hace nada, pero no da error`} />
+
+---
+
+## Ejecución: definición vs llamada
+
+Cuando Python lee una definición `def`, **no ejecuta el cuerpo**: simplemente registra la función y continúa. El cuerpo se ejecuta únicamente cuando se llama a la función:
+
+<CodeRunner language="python" title="Definición vs ejecución" initialCode={`print("1 — antes de la definición")
+
+def saludar():
+    print("   → dentro de saludar()")
+
+print("2 — después de la definición")
+
+saludar()   # aquí se ejecuta el cuerpo
+
+print("3 — después de la llamada")`} />
+
+El orden de salida es `1 → 2 → dentro → 3`. La definición no produce ninguna salida.
+
+---
+
+## Nomenclatura
+
+Las funciones siguen las mismas convenciones de nombre que las variables, con una recomendación adicional: los nombres de función deben ser **verbos o frases verbales** que describan la acción que realizan:
+
+<table>
+  <thead>
+    <tr>
+      <th>Convención</th>
+      <th>Ejemplo correcto</th>
+      <th>Ejemplo incorrecto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>snake\_case</code></td>
+      <td><code>calcular\_area</code></td>
+      <td><code>calcularArea</code></td>
+    </tr>
+    <tr>
+      <td>Verbo descriptivo</td>
+      <td><code>imprimir\_resultado</code></td>
+      <td><code>resultado</code></td>
+    </tr>
+    <tr>
+      <td>Sin abreviaturas oscuras</td>
+      <td><code>validar\_edad</code></td>
+      <td><code>val\_ed</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="Nomenclatura correcta" initialCode={`def calcular_area_circulo(radio):
+    import math
+    return math.pi * radio ** 2
+
+def imprimir_resultado(valor, unidad):
+    print(f"Resultado: {round(valor, 2)} {unidad}")
+
+imprimir_resultado(calcular_area_circulo(5), "m²")`} />
+
+---
+
+## Errores comunes
+
+<CodeRunner language="python" title="Olvidar los dos puntos" initialCode={`# ❌ SyntaxError: falta el : al final del encabezado
+try:
+    exec("def saludar()\n    print('Hola')")
+except SyntaxError as e:
+    print(f"SyntaxError: {e}")
+
+# ✅ Correcto
+def saludar():
+    print("Hola")
+
+saludar()`} />
+
+<CodeRunner language="python" title="Llamar antes de definir" initialCode={`# ❌ NameError: la función no existe todavía
+try:
+    despedir()
+except NameError as e:
+    print(f"NameError: {e}")
+
+# ✅ Primero la definición, luego la llamada
+def despedir():
+    print("¡Hasta luego!")
+
+despedir()`} />
+
+<CodeRunner language="python" title="Confundir definición con llamada" initialCode={`def calcular_doble(x):
+    return x * 2
+
+# ❌ Sin paréntesis: solo referencia el objeto función
+resultado = calcular_doble
+print(resultado)    # <function calcular_doble at 0x...>
+
+# ✅ Con paréntesis: ejecuta la función
+resultado = calcular_doble(5)
+print(resultado)    # 10`} />
+
+<CodeRunner language="python" title="Redefinir una función accidentalmente" initialCode={`def saludar():
+    print("Hola")
+
+def saludar():           # redefine la función anterior sin aviso
+    print("Buenos días")
+
+saludar()   # Buenos días  ← la primera versión se ha perdido`} />

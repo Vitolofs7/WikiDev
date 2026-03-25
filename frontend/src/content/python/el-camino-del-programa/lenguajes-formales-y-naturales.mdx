@@ -1,0 +1,187 @@
+# 1.6 Lenguajes formales y naturales
+
+Habiendo escrito los primeros programas y trabajado con tipos y operadores, es un buen momento para reflexionar sobre una pregunta fundamental: ¿en qué se diferencia Python de los lenguajes que usamos para comunicarnos entre personas?
+
+## Lenguajes naturales
+
+Los **lenguajes naturales** son las lenguas que hablan las personas: español, inglés, francés. No fueron diseñados, sino que evolucionaron de forma orgánica a lo largo del tiempo.
+
+Su característica principal es la **flexibilidad**: los hablantes interpretan el significado a partir del contexto, el tono y la experiencia compartida, incluso cuando una frase es ambigua o gramaticalmente incorrecta. "Vi al hombre con el telescopio" puede significar dos cosas distintas, y el contexto suele resolver cuál es la correcta.
+
+## Lenguajes formales
+
+Los **lenguajes formales** son lenguajes diseñados deliberadamente para un propósito específico, con reglas precisas y sin ambigüedad:
+
+<table>
+  <thead>
+    <tr>
+      <th>Lenguaje formal</th>
+      <th>Propósito</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Notación matemática</td>
+      <td>Expresar relaciones numéricas</td>
+      <td><code>f(x) = x² + 2x + 1</code></td>
+    </tr>
+    <tr>
+      <td>Fórmulas químicas</td>
+      <td>Representar moléculas</td>
+      <td><code>H₂O</code>, <code>CO₂</code></td>
+    </tr>
+    <tr>
+      <td>Lenguajes de programación</td>
+      <td>Expresar computaciones</td>
+      <td><code>resultado = x ** 2 + 2 * x + 1</code></td>
+    </tr>
+  </tbody>
+</table>
+
+Python es un lenguaje formal: cada instrucción tiene un único significado posible, determinado exclusivamente por lo que está escrito.
+
+---
+
+## Diferencias clave
+
+<table>
+  <thead>
+    <tr>
+      <th>Característica</th>
+      <th>Lenguaje natural</th>
+      <th>Lenguaje formal (Python)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Ambigüedad</strong></td>
+      <td>Frecuente; el contexto la resuelve</td>
+      <td>No existe; cada expresión tiene un único resultado</td>
+    </tr>
+    <tr>
+      <td><strong>Redundancia</strong></td>
+      <td>Alta; las repeticiones reducen malentendidos</td>
+      <td>Mínima; cada símbolo tiene un propósito concreto</td>
+    </tr>
+    <tr>
+      <td><strong>Literalidad</strong></td>
+      <td>Baja; abundan metáforas e ironía</td>
+      <td>Total; el código hace exactamente lo que dice</td>
+    </tr>
+    <tr>
+      <td><strong>Tolerancia a errores</strong></td>
+      <td>Alta; un error rara vez impide la comprensión</td>
+      <td>Nula; un carácter incorrecto puede detener el programa</td>
+    </tr>
+  </tbody>
+</table>
+
+### Sin ambigüedad
+
+En Python, una expresión produce siempre el mismo resultado, independientemente del contexto. Esto conecta directamente con lo visto en la sección 1.5: la precedencia de operadores garantiza que `2 + 3 * 4` tenga siempre un único resultado posible:
+
+<CodeRunner language="python" title="Una sola interpretación posible" initialCode={`print(2 + 3 * 4)    # siempre 14, nunca 20
+print((2 + 3) * 4)  # 20 solo si se especifica explícitamente`} />
+
+### Literalidad total
+
+Python ejecuta exactamente lo que está escrito, sin inferir intenciones. Esto explica por qué los errores de tipo vistos en 1.4, como mezclar `str` e `int`, no se resuelven solos:
+
+<CodeRunner language="python" title="Python es completamente literal" initialCode={`x = 5
+print(x + 1)   # 6
+
+# Python distingue mayúsculas de minúsculas.
+# Descomentar la siguiente línea produce un NameError:
+# print(X + 1)`} />
+
+### Tolerancia cero a los errores
+
+En lenguaje natural, "hoal" se entiende como "hola". En Python, cualquier error detiene la ejecución. Los errores de sintaxis introducidos brevemente en 1.3 son un ejemplo directo de esta característica:
+
+<CodeRunner language="python" title="Los detalles importan" initialCode={`# Correcto:
+print("Hola, mundo")
+
+# Cada una de estas líneas produciría un error si se descomenta:
+# Print("Hola")        # NameError: mayúscula incorrecta
+# print("Hola)         # SyntaxError: comilla sin cerrar
+# print("Hola", mundo) # NameError: mundo no está definido`} />
+
+---
+
+## Tokens y estructura
+
+Las reglas de un lenguaje formal se dividen en dos niveles:
+
+**Tokens** son los elementos básicos del lenguaje: palabras clave, números, operadores y símbolos. Un token inválido provoca un error de sintaxis de inmediato.
+
+**Estructura** es la forma en que esos tokens se combinan. Es posible tener tokens válidos combinados de forma incorrecta, y el resultado sigue siendo un error.
+
+<CodeRunner language="python" title="Tokens válidos, estructura inválida" initialCode={`# Tokens válidos pero en orden incorrecto → SyntaxError
+# Descomentar para ver el error:
+# print(3 + * 2)
+
+# Estructura correcta:
+print(3 + 2)    # 5
+print(3 * 2)    # 6`} />
+
+---
+
+## La analogía con la poesía y la prosa
+
+Una forma de situar el código dentro del espectro del lenguaje:
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>Poesía</th>
+      <th>Prosa</th>
+      <th>Código</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Prioridad</strong></td>
+      <td>Sonido y emoción</td>
+      <td>Significado y estructura</td>
+      <td>Precisión e instrucción</td>
+    </tr>
+    <tr>
+      <td><strong>Ambigüedad</strong></td>
+      <td>Deliberada y valorada</td>
+      <td>Reducida pero presente</td>
+      <td>Inexistente</td>
+    </tr>
+    <tr>
+      <td><strong>Interpretación</strong></td>
+      <td>Subjetiva</td>
+      <td>Mayormente objetiva</td>
+      <td>Única y determinista</td>
+    </tr>
+  </tbody>
+</table>
+
+El código es el lenguaje más preciso de los tres: no deja espacio para la interpretación.
+
+---
+
+## Cómo leer código como lenguaje formal
+
+Leer código requiere un enfoque distinto al de leer texto en lenguaje natural.
+
+**Identifica los tokens antes de interpretar.** Antes de entender qué hace una línea, reconoce sus partes: ¿qué es una variable?, ¿qué es un operador?, ¿qué es una función?
+
+**No asumas flujo lineal.** A diferencia de la prosa, el código no siempre se ejecuta de arriba a abajo. Las funciones pueden definirse en una línea y usarse en otra muy distinta.
+
+**Los detalles cambian el significado.** Un punto, una coma o una mayúscula en el lugar incorrecto produce resultados completamente distintos:
+
+<CodeRunner language="python" title="Pequeños detalles, grandes diferencias" initialCode={`x = 10
+
+print(x)      # muestra el valor de x  → 10
+print("x")    # muestra la letra x     → x
+print((x))    # equivale a print(x)    → 10
+
+# print(X)   # NameError: X no existe (Python distingue mayúsculas)`} />
+
+> Aprender a programar implica también aprender a pensar con precisión. La atención al detalle que requiere Python no es un obstáculo, sino una habilidad que se desarrolla con la práctica y resulta valiosa más allá de la programación.

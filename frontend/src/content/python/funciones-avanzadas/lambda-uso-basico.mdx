@@ -1,0 +1,145 @@
+# 5.7 Lambda — Uso básico
+
+Las funciones lambda se usan habitualmente para transformaciones rápidas, comparaciones y como funciones de un solo uso. Esta sección muestra los patrones más frecuentes.
+
+---
+
+## Operaciones simples
+
+<CodeRunner language="python" title="Operaciones aritméticas" initialCode={`# Duplicar
+doble = lambda x: x * 2
+print(doble(7))   # 14
+
+# Cuadrado
+cuadrado = lambda x: x ** 2
+print(cuadrado(5))   # 25
+
+# Porcentaje
+porcentaje = lambda valor, total: round(valor / total * 100, 1)
+print(porcentaje(35, 200))   # 17.5
+
+# Precio con IVA
+con_iva = lambda precio, iva=21: round(precio * (1 + iva / 100), 2)
+print(con_iva(100))       # 121.0
+print(con_iva(100, 10))   # 110.0`} />
+
+<CodeRunner language="python" title="Operaciones con cadenas" initialCode={`# Formatear nombre
+formato_nombre = lambda n: n.strip().title()
+print(formato_nombre("  ana garcía  "))   # Ana García
+
+# Iniciales
+iniciales = lambda nombre: "".join(p[0].upper() for p in nombre.split())
+print(iniciales("Ana García López"))   # AGL
+
+# Repetir texto
+repetir = lambda texto, n: texto * n
+print(repetir("Hola ", 3))   # Hola Hola Hola`} />
+
+---
+
+## Comparaciones
+
+<CodeRunner language="python" title="Lambda para comparaciones" initialCode={`# Verificar paridad
+es_par = lambda n: n % 2 == 0
+print(es_par(4))    # True
+print(es_par(7))    # False
+
+# Verificar mayoría de edad
+es_mayor = lambda edad: edad >= 18
+print(es_mayor(20))   # True
+print(es_mayor(15))   # False
+
+# Verificar rango
+en_rango = lambda x, a, b: a <= x <= b
+print(en_rango(5, 1, 10))    # True
+print(en_rango(15, 1, 10))   # False
+
+# Usar en filter
+edades = [12, 18, 25, 8, 30, 16]
+mayores = list(filter(lambda e: e >= 18, edades))
+print(f"Mayores de edad: {mayores}")`} />
+
+<CodeRunner language="python" title="Lambda para ordenación" initialCode={`# Ordenar por longitud
+palabras = ["Python", "C", "JavaScript", "Go", "Rust"]
+por_longitud = sorted(palabras, key=lambda p: len(p))
+print(por_longitud)   # ['C', 'Go', 'Rust', 'Python', 'JavaScript']
+
+# Ordenar por último carácter
+por_ultimo = sorted(palabras, key=lambda p: p[-1])
+print(por_ultimo)
+
+# Ordenar números por valor absoluto
+numeros = [-5, 3, -1, 8, -3, 2]
+por_abs = sorted(numeros, key=lambda n: abs(n))
+print(por_abs)   # [-1, 2, 3, -3, -5, 8]`} />
+
+---
+
+## Sin parámetros
+
+Las lambdas sin parámetros son menos comunes pero útiles para crear valores diferidos o funciones de fábrica:
+
+<CodeRunner language="python" title="Lambda sin parámetros" initialCode={`# Valor constante
+obtener_pi = lambda: 3.14159
+print(obtener_pi())   # 3.14159
+
+# Mensaje fijo
+alerta = lambda: "⚠️ Acción no permitida"
+print(alerta())
+
+# Generador de timestamp
+from datetime import datetime
+ahora = lambda: datetime.now().strftime("%H:%M:%S")
+print(f"Hora actual: {ahora()}")`} />
+
+<CodeRunner language="python" title="Lambda sin parámetros en diccionarios" initialCode={`# Diccionario de acciones
+acciones = {
+    "saludo": lambda: print("¡Hola!"),
+    "despedida": lambda: print("¡Adiós!"),
+    "ayuda": lambda: print("Escribe 'saludo' o 'despedida'"),
+}
+
+for nombre, accion in acciones.items():
+    print(f"[{nombre}]", end=" → ")
+    accion()`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Patrón</th>
+      <th>Ejemplo</th>
+      <th>Resultado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Aritmética</td>
+      <td><code>lambda x: x * 2</code></td>
+      <td>Duplicar valor</td>
+    </tr>
+    <tr>
+      <td>Comparación</td>
+      <td><code>lambda x: x > 0</code></td>
+      <td>Verificar condición</td>
+    </tr>
+    <tr>
+      <td>Formato</td>
+      <td><code>lambda s: s.upper()</code></td>
+      <td>Transformar texto</td>
+    </tr>
+    <tr>
+      <td>Clave de orden</td>
+      <td><code>key=lambda x: len(x)</code></td>
+      <td>Criterio de ordenación</td>
+    </tr>
+    <tr>
+      <td>Sin parámetros</td>
+      <td><code>lambda: valor</code></td>
+      <td>Valor diferido</td>
+    </tr>
+  </tbody>
+</table>

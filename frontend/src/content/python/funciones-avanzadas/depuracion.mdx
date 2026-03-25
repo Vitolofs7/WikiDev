@@ -1,0 +1,258 @@
+# 5.5 Depuración
+
+Los errores en funciones son inevitables. Saber identificarlos, entender por qué ocurren y aplicar estrategias sistemáticas para corregirlos es una habilidad tan importante como escribir código.
+
+---
+
+## Errores comunes
+
+### Error de tipo en argumentos
+
+<CodeRunner language="python" title="TypeError: tipos incorrectos" initialCode={`def calcular_area(base, altura):
+    return base * altura / 2
+
+# ❌ Pasar un string donde se espera un número
+try:
+    calcular_area("5", 3)
+except TypeError as e:
+    print(f"TypeError: {e}")
+
+# ✅ Asegurar el tipo correcto
+print(calcular_area(5, 3))   # 7.5`} />
+
+### Error de número de argumentos
+
+<CodeRunner language="python" title="TypeError: número de argumentos" initialCode={`def sumar(a, b):
+    return a + b
+
+# ❌ Demasiado pocos
+try:
+    sumar(5)
+except TypeError as e:
+    print(f"TypeError: {e}")
+
+# ❌ Demasiados
+try:
+    sumar(5, 3, 2)
+except TypeError as e:
+    print(f"TypeError: {e}")
+
+# ✅ Número correcto
+print(sumar(5, 3))   # 8`} />
+
+### Usar resultado de función nula
+
+<CodeRunner language="python" title="Usar None accidentalmente" initialCode={`# ❌ .sort() devuelve None, no la lista ordenada
+numeros = [3, 1, 4, 1, 5]
+resultado = numeros.sort()
+print(resultado)   # None
+
+# ✅ Usar sorted() que sí devuelve la lista
+print(sorted([3, 1, 4, 1, 5]))   # [1, 1, 3, 4, 5]
+
+# ❌ print() también devuelve None
+texto = print("hola")
+print(type(texto))   # NoneType`} />
+
+### Mutar argumento mutable
+
+<CodeRunner language="python" title="Mutación accidental de listas" initialCode={`def agregar_elemento(lista, elemento):
+    lista.append(elemento)   # modifica la lista original
+    return lista
+
+mi_lista = [1, 2, 3]
+resultado = agregar_elemento(mi_lista, 4)
+print(f"resultado: {resultado}")
+print(f"mi_lista: {mi_lista}")   # ¡también cambió!
+
+# ✅ Trabajar con una copia
+def agregar_seguro(lista, elemento):
+    nueva = lista.copy()
+    nueva.append(elemento)
+    return nueva
+
+mi_lista2 = [1, 2, 3]
+resultado2 = agregar_seguro(mi_lista2, 4)
+print(f"resultado2: {resultado2}")
+print(f"mi_lista2: {mi_lista2}")   # sin cambios`} />
+
+### Valor por defecto mutable
+
+<CodeRunner language="python" title="⚠️ Valor por defecto mutable" initialCode={`# ❌ PELIGRO: la lista por defecto se comparte entre llamadas
+def agregar_malo(elemento, lista=[]):
+    lista.append(elemento)
+    return lista
+
+print(agregar_malo(1))   # [1]
+print(agregar_malo(2))   # [1, 2]  ← ¡acumula!
+print(agregar_malo(3))   # [1, 2, 3]  ← ¡sigue acumulando!
+
+# ✅ Usar None como valor por defecto
+def agregar_bien(elemento, lista=None):
+    if lista is None:
+        lista = []
+    lista.append(elemento)
+    return lista
+
+print(agregar_bien(1))   # [1]
+print(agregar_bien(2))   # [2]  ← correcto
+print(agregar_bien(3))   # [3]  ← correcto`} />
+
+---
+
+## Estrategias
+
+### Print estratégico
+
+<CodeRunner language="python" title="Depuración con print()" initialCode={`def calcular_descuento(precio, descuento, iva=21):
+    print(f"  [DEBUG] precio={precio}, descuento={descuento}, iva={iva}")
+    
+    precio_desc = precio * (1 - descuento / 100)
+    print(f"  [DEBUG] precio con descuento: {precio_desc}")
+    
+    total = precio_desc * (1 + iva / 100)
+    print(f"  [DEBUG] total con IVA: {total}")
+    
+    return round(total, 2)
+
+resultado = calcular_descuento(100, 20)
+print(f"Resultado: {resultado}")`} />
+
+### Dividir y conquistar
+
+<CodeRunner language="python" title="Aislar el problema" initialCode={`# Si una función compleja falla, probar cada paso por separado
+def procesar(datos):
+    # Paso 1: filtrar
+    filtrados = [x for x in datos if x > 0]
+    print(f"Paso 1 (filtrar): {filtrados}")
+    
+    # Paso 2: transformar
+    transformados = [x ** 2 for x in filtrados]
+    print(f"Paso 2 (transformar): {transformados}")
+    
+    # Paso 3: resumir
+    resultado = sum(transformados) / len(transformados)
+    print(f"Paso 3 (resumir): {resultado}")
+    
+    return round(resultado, 2)
+
+print(procesar([3, -1, 4, -2, 5]))`} />
+
+### Verificar tipos y valores
+
+<CodeRunner language="python" title="Verificaciones preventivas" initialCode={`def dividir_seguro(a, b):
+    # Verificar tipos
+    if not isinstance(a, (int, float)):
+        raise TypeError(f"'a' debe ser numérico, recibido: {type(a).__name__}")
+    if not isinstance(b, (int, float)):
+        raise TypeError(f"'b' debe ser numérico, recibido: {type(b).__name__}")
+    # Verificar valores
+    if b == 0:
+        raise ValueError("No se puede dividir por cero")
+    
+    return a / b
+
+print(dividir_seguro(10, 3))
+
+try:
+    dividir_seguro(10, 0)
+except ValueError as e:
+    print(f"ValueError: {e}")
+
+try:
+    dividir_seguro("10", 3)
+except TypeError as e:
+    print(f"TypeError: {e}")`} />
+
+---
+
+## assert
+
+La sentencia `assert` verifica que una condición sea verdadera. Si es falsa, lanza un `AssertionError`. Es ideal para verificar **precondiciones** y **postcondiciones** durante el desarrollo:
+
+<CodeRunner language="python" title="assert — verificaciones" initialCode={`def calcular_media(numeros):
+    assert len(numeros) > 0, "La lista no puede estar vacía"
+    assert all(isinstance(n, (int, float)) for n in numeros), "Todos deben ser números"
+    
+    return sum(numeros) / len(numeros)
+
+# ✅ Funciona
+print(calcular_media([7, 8, 9]))
+
+# ❌ Lista vacía
+try:
+    calcular_media([])
+except AssertionError as e:
+    print(f"AssertionError: {e}")
+
+# ❌ Tipo incorrecto
+try:
+    calcular_media([1, "dos", 3])
+except AssertionError as e:
+    print(f"AssertionError: {e}")`} />
+
+<CodeRunner language="python" title="assert en precondiciones y postcondiciones" initialCode={`def aplicar_descuento(precio, porcentaje):
+    # Precondiciones: condiciones que DEBEN cumplirse al entrar
+    assert precio >= 0, f"Precio negativo: {precio}"
+    assert 0 <= porcentaje <= 100, f"Porcentaje fuera de rango: {porcentaje}"
+    
+    resultado = precio * (1 - porcentaje / 100)
+    
+    # Postcondición: condición que DEBE cumplirse al salir
+    assert resultado >= 0, f"Resultado negativo: {resultado}"
+    assert resultado <= precio, f"Resultado mayor que el precio: {resultado}"
+    
+    return round(resultado, 2)
+
+print(aplicar_descuento(100, 25))    # 75.0
+
+try:
+    aplicar_descuento(-50, 10)
+except AssertionError as e:
+    print(f"Precondición: {e}")
+
+try:
+    aplicar_descuento(100, 150)
+except AssertionError as e:
+    print(f"Precondición: {e}")`} />
+
+> **Importante**: `assert` se usa durante el **desarrollo** para detectar errores del programador, no para validar datos del usuario. En producción, Python puede desactivar los asserts con la opción `-O`.
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Herramienta</th>
+      <th>Uso</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>print()</code> estratégico</td>
+      <td>Mostrar valores intermedios para rastrear el flujo</td>
+    </tr>
+    <tr>
+      <td><code>type()</code> / <code>isinstance()</code></td>
+      <td>Verificar que los tipos son correctos</td>
+    </tr>
+    <tr>
+      <td><code>assert condición, msg</code></td>
+      <td>Verificar precondiciones y postcondiciones</td>
+    </tr>
+    <tr>
+      <td>Dividir y conquistar</td>
+      <td>Probar cada paso de una función por separado</td>
+    </tr>
+    <tr>
+      <td>Usar <code>None</code> como defecto</td>
+      <td>Evitar el bug de valores mutables por defecto</td>
+    </tr>
+    <tr>
+      <td>Copiar listas</td>
+      <td>Evitar mutaciones accidentales con <code>.copy()</code></td>
+    </tr>
+  </tbody>
+</table>

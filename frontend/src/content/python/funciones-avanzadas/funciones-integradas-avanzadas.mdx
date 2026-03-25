@@ -1,0 +1,247 @@
+# 5.3 Funciones integradas avanzadas
+
+Python ofrece funciones integradas para crear estructuras de datos, convertir entre tipos numéricos y examinar objetos en tiempo de ejecución. Estas herramientas son fundamentales para escribir código flexible y depurable.
+
+---
+
+## Estructuras
+
+### set()
+
+Crea un **conjunto**: una colección de elementos únicos, sin orden ni duplicados:
+
+<CodeRunner language="python" title="set() — conjuntos" initialCode={`# Desde una lista (elimina duplicados)
+numeros = set([1, 2, 2, 3, 3, 3])
+print(numeros)          # {1, 2, 3}
+
+# Desde una cadena (cada carácter único)
+letras = set("abracadabra")
+print(letras)           # {'a', 'b', 'c', 'd', 'r'}
+
+# Conjunto vacío (NO usar {}, eso crea un dict)
+vacio = set()
+print(type(vacio))      # <class 'set'>
+
+# Eliminar duplicados de una lista preservando el tipo
+lista = [5, 3, 5, 1, 3, 2, 1]
+sin_duplicados = list(set(lista))
+print(sin_duplicados)`} />
+
+### list()
+
+Convierte cualquier iterable en una **lista**:
+
+<CodeRunner language="python" title="list() — listas" initialCode={`# Desde range
+print(list(range(5)))           # [0, 1, 2, 3, 4]
+
+# Desde cadena
+print(list("Python"))           # ['P', 'y', 't', 'h', 'o', 'n']
+
+# Desde tupla
+print(list((10, 20, 30)))       # [10, 20, 30]
+
+# Desde set
+print(list({3, 1, 2}))          # [1, 2, 3] (orden puede variar)
+
+# Desde diccionario (devuelve las claves)
+print(list({"a": 1, "b": 2}))  # ['a', 'b']`} />
+
+### tuple()
+
+Convierte cualquier iterable en una **tupla** (inmutable):
+
+<CodeRunner language="python" title="tuple() — tuplas" initialCode={`# Desde lista
+print(tuple([1, 2, 3]))         # (1, 2, 3)
+
+# Desde cadena
+print(tuple("abc"))             # ('a', 'b', 'c')
+
+# Desde range
+print(tuple(range(5)))          # (0, 1, 2, 3, 4)
+
+# Las tuplas son inmutables: no se pueden modificar
+t = tuple([1, 2, 3])
+try:
+    t[0] = 99
+except TypeError as e:
+    print(f"TypeError: {e}")`} />
+
+### dict()
+
+Crea un **diccionario** desde pares clave-valor:
+
+<CodeRunner language="python" title="dict() — diccionarios" initialCode={`# Desde argumentos nombrados
+persona = dict(nombre="Ana", edad=28, ciudad="Madrid")
+print(persona)
+
+# Desde lista de tuplas (clave, valor)
+pares = [("a", 1), ("b", 2), ("c", 3)]
+d = dict(pares)
+print(d)   # {'a': 1, 'b': 2, 'c': 3}
+
+# Desde zip de dos listas
+claves = ["nombre", "edad", "rol"]
+valores = ["Carlos", 35, "admin"]
+usuario = dict(zip(claves, valores))
+print(usuario)`} />
+
+---
+
+## Conversión
+
+### bool()
+
+Convierte un valor a **booleano** siguiendo las reglas de truthy/falsy:
+
+<CodeRunner language="python" title="bool() — conversión booleana" initialCode={`# Valores falsy → False
+print(bool(0))        # False
+print(bool(""))       # False
+print(bool([]))       # False
+print(bool(None))     # False
+
+# Valores truthy → True
+print(bool(1))        # True
+print(bool("texto"))  # True
+print(bool([1, 2]))   # True
+print(bool(-1))       # True`} />
+
+### int(), float()
+
+Conversiones numéricas ya vistas, con un detalle adicional:
+
+<CodeRunner language="python" title="Conversiones numéricas" initialCode={`# int() trunca hacia cero
+print(int(3.9))     # 3
+print(int(-3.9))    # -3
+
+# float() acepta enteros y cadenas
+print(float(42))    # 42.0
+print(float("inf")) # inf`} />
+
+### complex()
+
+Crea números **complejos** con parte real e imaginaria:
+
+<CodeRunner language="python" title="complex() — números complejos" initialCode={`# Crear números complejos
+c1 = complex(3, 4)     # 3 + 4j
+print(c1)              # (3+4j)
+
+# Partes real e imaginaria
+print(c1.real)         # 3.0
+print(c1.imag)         # 4.0
+
+# Desde cadena
+c2 = complex("2+5j")
+print(c2)              # (2+5j)
+
+# Módulo (distancia al origen)
+import math
+modulo = abs(c1)       # √(3² + 4²)
+print(f"|{c1}| = {modulo}")   # 5.0`} />
+
+---
+
+## Introspección
+
+### id()
+
+Devuelve un identificador **único** para cada objeto en memoria:
+
+<CodeRunner language="python" title="id() — identidad del objeto" initialCode={`a = [1, 2, 3]
+b = a          # b apunta al mismo objeto
+c = [1, 2, 3]  # c es un objeto distinto con el mismo valor
+
+print(f"id(a) = {id(a)}")
+print(f"id(b) = {id(b)}")
+print(f"id(c) = {id(c)}")
+
+print(f"a is b: {a is b}")   # True (mismo objeto)
+print(f"a is c: {a is c}")   # False (objetos distintos)
+print(f"a == c: {a == c}")   # True (mismo valor)`} />
+
+### dir()
+
+Lista todos los **atributos y métodos** de un objeto:
+
+<CodeRunner language="python" title="dir() — explorar objetos" initialCode={`# Métodos de una cadena (solo los públicos)
+metodos_str = [m for m in dir("hola") if not m.startswith("_")]
+print("Métodos de str:")
+for m in metodos_str[:10]:
+    print(f"  .{m}()")
+print(f"  ... y {len(metodos_str) - 10} más")
+
+print()
+
+# Métodos de una lista
+metodos_list = [m for m in dir([]) if not m.startswith("_")]
+print(f"Métodos de list: {metodos_list}")`} />
+
+### help()
+
+Muestra la **documentación** de cualquier objeto, función o módulo:
+
+<CodeRunner language="python" title="help() — documentación" initialCode={`# Documentación de una función integrada
+help(sorted)
+
+# Documentación de un método
+# help(str.upper)`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Función</th>
+      <th>Descripción</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>set()</code></td>
+      <td>Crea un conjunto (sin duplicados)</td>
+      <td><code>set([1,1,2]) → {1, 2}</code></td>
+    </tr>
+    <tr>
+      <td><code>list()</code></td>
+      <td>Convierte a lista</td>
+      <td><code>list("abc") → ['a','b','c']</code></td>
+    </tr>
+    <tr>
+      <td><code>tuple()</code></td>
+      <td>Convierte a tupla</td>
+      <td><code>tuple([1,2]) → (1, 2)</code></td>
+    </tr>
+    <tr>
+      <td><code>dict()</code></td>
+      <td>Crea un diccionario</td>
+      <td><code>dict(a=1) → &#123;'a': 1&#125;</code></td>
+    </tr>
+    <tr>
+      <td><code>bool()</code></td>
+      <td>Convierte a booleano</td>
+      <td><code>bool(0) → False</code></td>
+    </tr>
+    <tr>
+      <td><code>complex()</code></td>
+      <td>Crea un número complejo</td>
+      <td><code>complex(3,4) → (3+4j)</code></td>
+    </tr>
+    <tr>
+      <td><code>id()</code></td>
+      <td>Identificador único del objeto</td>
+      <td><code>id(x)</code></td>
+    </tr>
+    <tr>
+      <td><code>dir()</code></td>
+      <td>Lista atributos y métodos</td>
+      <td><code>dir("hola")</code></td>
+    </tr>
+    <tr>
+      <td><code>help()</code></td>
+      <td>Muestra documentación</td>
+      <td><code>help(abs)</code></td>
+    </tr>
+  </tbody>
+</table>

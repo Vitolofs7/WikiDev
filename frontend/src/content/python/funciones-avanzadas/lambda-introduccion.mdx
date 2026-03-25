@@ -1,0 +1,165 @@
+# 5.6 Funciones Lambda — Introducción
+
+Las **funciones lambda** son funciones **anónimas** (sin nombre) que se escriben en una sola línea. Son una forma compacta de crear funciones simples, especialmente útiles cuando se pasan como argumentos a otras funciones.
+
+---
+
+## Definición
+
+Una función lambda es una función sin nombre definida con la palabra clave `lambda`. Puede tener cualquier número de parámetros, pero solo **una expresión** como cuerpo:
+
+<CodeRunner language="python" title="Primera función lambda" initialCode={`# Función lambda que duplica un número
+doble = lambda x: x * 2
+
+print(doble(5))      # 10
+print(doble(3))      # 6
+print(type(doble))   # <class 'function'>`} />
+
+> Una lambda es simplemente otra forma de crear un objeto función. El resultado es idéntico a una función definida con `def`.
+
+---
+
+## Sintaxis
+
+```python
+lambda parámetros: expresión
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Parte</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>lambda</code></td>
+      <td>Palabra clave que inicia la definición</td>
+    </tr>
+    <tr>
+      <td><code>parámetros</code></td>
+      <td>Cero o más parámetros, separados por comas</td>
+    </tr>
+    <tr>
+      <td><code>:</code></td>
+      <td>Separador entre parámetros y expresión</td>
+    </tr>
+    <tr>
+      <td><code>expresión</code></td>
+      <td>Una única expresión cuyo resultado se devuelve automáticamente</td>
+    </tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="Ejemplos de sintaxis" initialCode={`# Sin parámetros
+saludo = lambda: "Hola, mundo"
+print(saludo())   # Hola, mundo
+
+# Un parámetro
+cuadrado = lambda x: x ** 2
+print(cuadrado(4))   # 16
+
+# Dos parámetros
+sumar = lambda a, b: a + b
+print(sumar(3, 7))   # 10
+
+# Con valor por defecto
+saludar = lambda nombre, prefijo="Hola": f"{prefijo}, {nombre}"
+print(saludar("Ana"))              # Hola, Ana
+print(saludar("Ana", "Buenos días"))  # Buenos días, Ana`} />
+
+---
+
+## Diferencias con def
+
+<table>
+  <thead>
+    <tr>
+      <th>Característica</th>
+      <th><code>def</code></th>
+      <th><code>lambda</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Nombre</td>
+      <td>Tiene nombre propio</td>
+      <td>Anónima (o asignada a variable)</td>
+    </tr>
+    <tr>
+      <td>Cuerpo</td>
+      <td>Múltiples líneas e instrucciones</td>
+      <td>Una sola expresión</td>
+    </tr>
+    <tr>
+      <td><code>return</code></td>
+      <td>Explícito</td>
+      <td>Implícito (devuelve el resultado de la expresión)</td>
+    </tr>
+    <tr>
+      <td>Docstring</td>
+      <td>Soporta docstrings</td>
+      <td>No soporta docstrings</td>
+    </tr>
+    <tr>
+      <td>Legibilidad</td>
+      <td>Mejor para lógica compleja</td>
+      <td>Mejor para operaciones simples</td>
+    </tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="Equivalencia def vs lambda" initialCode={`# Con def
+def doble_def(x):
+    return x * 2
+
+# Con lambda (equivalente)
+doble_lambda = lambda x: x * 2
+
+# Ambas producen el mismo resultado
+print(doble_def(5))      # 10
+print(doble_lambda(5))   # 10
+
+# La diferencia está en el nombre interno
+print(doble_def.__name__)     # doble_def
+print(doble_lambda.__name__)  # <lambda>`} />
+
+---
+
+## Cuándo usar
+
+### ✅ Usar lambda cuando:
+
+<CodeRunner language="python" title="Buen uso de lambda" initialCode={`numeros = [5, -3, 8, -1, 4]
+
+# ✅ Operación simple como argumento de otra función
+positivos = list(filter(lambda x: x > 0, numeros))
+print(positivos)   # [5, 8, 4]
+
+# ✅ Clave de ordenación
+palabras = ["banana", "manzana", "kiwi", "uva"]
+ordenadas = sorted(palabras, key=lambda p: len(p))
+print(ordenadas)   # ['uva', 'kiwi', 'banana', 'manzana']`} />
+
+### ❌ Evitar lambda cuando:
+
+<CodeRunner language="python" title="Mal uso de lambda" initialCode={`# ❌ Lambda demasiado compleja: difícil de leer
+proceso = lambda x: "positivo" if x > 0 else ("cero" if x == 0 else "negativo")
+
+# ✅ Mejor con def
+def clasificar(x):
+    if x > 0:
+        return "positivo"
+    elif x == 0:
+        return "cero"
+    return "negativo"
+
+# ❌ Lambda asignada a variable sin motivo
+doble = lambda x: x * 2   # no aporta nada sobre def
+
+# ✅ Mejor con def (tiene nombre, docstring posible)
+def doble(x):
+    return x * 2`} />
+
+> **Regla práctica**: si la lambda no cabe cómodamente en una línea, o si necesitas asignarla a una variable, usa `def`.

@@ -1,0 +1,204 @@
+# 5.14 Lambda — Trucos avanzados
+
+Esta sección recopila técnicas avanzadas con lambdas que permiten escribir código más dinámico y flexible: generación de funciones en tiempo de ejecución, diccionarios de funciones y evaluación inmediata.
+
+---
+
+## Funciones dinámicas
+
+Las lambdas permiten generar funciones parametrizadas durante la ejecución del programa:
+
+<CodeRunner language="python" title="Generador de convertidores de unidades" initialCode={`def crear_convertidor(factor, unidad_origen, unidad_destino):
+    """Crea una función de conversión de unidades."""
+    return lambda valor: (round(valor * factor, 4), f"{unidad_destino}")
+
+# Crear convertidores
+km_a_millas = crear_convertidor(0.6214, "km", "mi")
+kg_a_libras = crear_convertidor(2.2046, "kg", "lb")
+celsius_a_fahr = lambda c: (round(c * 9/5 + 32, 1), "°F")
+
+# Usar
+print(km_a_millas(100))      # (62.14, 'mi')
+print(kg_a_libras(75))       # (165.345, 'lb')
+print(celsius_a_fahr(37))    # (98.6, '°F')`} />
+
+<CodeRunner language="python" title="Generador de validadores" initialCode={`# Crear validadores dinámicamente
+validadores = {
+    "min_length": lambda n: lambda s: len(s) >= n,
+    "max_length": lambda n: lambda s: len(s) <= n,
+    "contiene": lambda c: lambda s: c in s,
+    "empieza_con": lambda p: lambda s: s.startswith(p),
+    "es_numerico": lambda: lambda s: s.replace(".", "", 1).isdigit(),
+}
+
+# Crear reglas específicas
+reglas_email = [
+    validadores["min_length"](5),
+    validadores["contiene"]("@"),
+    validadores["contiene"]("."),
+]
+
+def validar(valor, reglas):
+    return all(regla(valor) for regla in reglas)
+
+print(f"'ana@mail.com': {validar('ana@mail.com', reglas_email)}")   # True
+print(f"'sin-arroba': {validar('sin-arroba', reglas_email)}")       # False
+print(f"'a@b': {validar('a@b', reglas_email)}")                     # False`} />
+
+---
+
+## Diccionarios de funciones
+
+Los diccionarios con lambdas como valores son un patrón potente para reemplazar cadenas de `if/elif`:
+
+<CodeRunner language="python" title="Calculadora con diccionario de lambdas" initialCode={`calculadora = {
+    "sumar": lambda a, b: a + b,
+    "restar": lambda a, b: a - b,
+    "multiplicar": lambda a, b: a * b,
+    "dividir": lambda a, b: round(a / b, 2) if b != 0 else "Error",
+    "potencia": lambda a, b: a ** b,
+    "modulo": lambda a, b: a % b,
+}
+
+def operar(operacion, a, b):
+    if operacion in calculadora:
+        resultado = calculadora[operacion](a, b)
+        print(f"  {operacion}({a}, {b}) = {resultado}")
+    else:
+        print(f"  Operación '{operacion}' no disponible")
+
+operar("sumar", 10, 5)
+operar("dividir", 10, 3)
+operar("potencia", 2, 8)
+operar("raiz", 9, 2)`} />
+
+<CodeRunner language="python" title="Procesador de comandos" initialCode={`# Sistema de comandos con lambdas
+comandos = {
+    "upper": lambda t: t.upper(),
+    "lower": lambda t: t.lower(),
+    "title": lambda t: t.title(),
+    "reverse": lambda t: t[::-1],
+    "length": lambda t: str(len(t)),
+    "words": lambda t: str(len(t.split())),
+    "strip": lambda t: t.strip(),
+}
+
+def ejecutar(texto, *ops):
+    resultado = texto
+    for op in ops:
+        if op in comandos:
+            resultado = comandos[op](resultado)
+    return resultado
+
+texto = "  hola mundo python  "
+print(ejecutar(texto, "strip", "title"))     # Hola Mundo Python
+print(ejecutar(texto, "strip", "upper"))     # HOLA MUNDO PYTHON
+print(ejecutar("Python", "reverse"))         # nohtyP`} />
+
+<CodeRunner language="python" title="Formateo condicional" initialCode={`# Formatear valores según su tipo
+formateadores = {
+    int: lambda v: f"{v:,}".replace(",", "."),
+    float: lambda v: f"{v:,.2f}€".replace(",", "X").replace(".", ",").replace("X", "."),
+    str: lambda v: f'"{v}"',
+    bool: lambda v: "Sí" if v else "No",
+    type(None): lambda v: "—",
+}
+
+def formatear(valor):
+    f = formateadores.get(type(valor), lambda v: str(v))
+    return f(valor)
+
+datos = [1500000, 3.14159, "Python", True, None, [1, 2]]
+for d in datos:
+    print(f"  {str(d):15} → {formatear(d)}")`} />
+
+---
+
+## Evaluación en tiempo real
+
+<CodeRunner language="python" title="Funciones de decisión dinámica" initialCode={`# Sistema de descuentos dinámico
+reglas_descuento = [
+    (lambda c: c["total"] > 500, 15, "Compra > 500€"),
+    (lambda c: c["es_premium"], 10, "Cliente premium"),
+    (lambda c: c["articulos"] > 5, 5, "Más de 5 artículos"),
+]
+
+def calcular_descuento(compra):
+    for condicion, descuento, razon in reglas_descuento:
+        if condicion(compra):
+            return descuento, razon
+    return 0, "Sin descuento"
+
+compras = [
+    {"total": 600, "es_premium": False, "articulos": 3},
+    {"total": 100, "es_premium": True, "articulos": 2},
+    {"total": 200, "es_premium": False, "articulos": 8},
+    {"total": 50, "es_premium": False, "articulos": 1},
+]
+
+for c in compras:
+    desc, razon = calcular_descuento(c)
+    print(f"  {c['total']}€ → {desc}% ({razon})")`} />
+
+<CodeRunner language="python" title="Pipeline configurable" initialCode={`# Definir un pipeline de transformaciones configurable
+def crear_pipeline(*pasos):
+    """Crea una función que aplica una serie de transformaciones."""
+    def pipeline(datos):
+        resultado = datos
+        for paso in pasos:
+            resultado = paso(resultado)
+        return resultado
+    return pipeline
+
+# Pipelines diferentes para distintos casos
+pipeline_texto = crear_pipeline(
+    lambda s: s.strip(),
+    lambda s: s.lower(),
+    lambda s: s.replace("  ", " "),
+    lambda s: s.title(),
+)
+
+pipeline_numeros = crear_pipeline(
+    lambda nums: [abs(n) for n in nums],
+    lambda nums: sorted(nums),
+    lambda nums: [n for n in nums if n > 0],
+)
+
+print(pipeline_texto("  hOLA   mUnDo  pYTHon  "))
+print(pipeline_numeros([-3, 0, 5, -1, 8, -4, 2]))`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Truco</th>
+      <th>Patrón</th>
+      <th>Uso</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Función dinámica</td>
+      <td><code>lambda n: lambda x: x*n</code></td>
+      <td>Crear funciones parametrizadas</td>
+    </tr>
+    <tr>
+      <td>Dict de funciones</td>
+      <td><code>&#123;"op": lambda: ...&#125;</code></td>
+      <td>Reemplazar if/elif, despachadores</td>
+    </tr>
+    <tr>
+      <td>Pipeline</td>
+      <td>Lista de lambdas aplicadas en secuencia</td>
+      <td>Transformaciones encadenadas</td>
+    </tr>
+    <tr>
+      <td>Reglas dinámicas</td>
+      <td>Lista de <code>(condición_lambda, acción)</code></td>
+      <td>Sistemas de reglas configurables</td>
+    </tr>
+  </tbody>
+</table>

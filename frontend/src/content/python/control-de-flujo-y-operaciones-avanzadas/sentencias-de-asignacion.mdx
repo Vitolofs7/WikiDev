@@ -1,0 +1,316 @@
+# 2.1 Sentencias de asignación
+
+En el capítulo anterior se introdujo la variable como un nombre que hace referencia a un valor almacenado en memoria. Esta sección formaliza cómo funciona ese mecanismo, amplía los patrones de asignación más habituales y establece buenas prácticas que harán el código más legible y mantenible.
+
+## El operador de asignación
+
+Una **sentencia de asignación** vincula un nombre a un valor usando el operador `=`:
+```python
+mensaje = "Hola"
+n = 17
+pi = 3.14159
+```
+
+El `=` de Python no expresa igualdad matemática: es una **instrucción**. Significa *evalúa el lado derecho y asocia el resultado al nombre del lado izquierdo*. La dirección importa: el nombre siempre va a la izquierda y el valor a la derecha.
+
+<CodeRunner language="python" title="Sentencias de asignación básicas" initialCode={`mensaje = "Hola"
+n = 17
+pi = 3.14159
+
+print(mensaje)
+print(n)
+print(pi)`} />
+
+## Diagrama de estado
+
+Una forma útil de visualizar qué ocurre con las variables es el **diagrama de estado**: cada nombre apunta al valor que almacena.
+```
+mensaje ──→ "Hola"
+n       ──→ 17
+pi      ──→ 3.14159
+```
+
+Cuando Python encuentra un nombre en una expresión, lo sustituye por el valor al que apunta en ese momento. Si el nombre no existe todavía, lanza un `NameError`.
+
+## El lado derecho se evalúa primero
+
+Python evalúa completamente el lado derecho antes de realizar la asignación. Esto permite que una variable aparezca en ambos lados de la misma instrucción:
+
+<CodeRunner language="python" title="El lado derecho se evalúa primero" initialCode={`x = 10
+print(x)    # 10
+
+x = x + 1   # Python evalúa x + 1 → 11, luego asigna 11 a x
+print(x)    # 11
+
+x = x * 2   # Python evalúa x * 2 → 22, luego asigna 22 a x
+print(x)    # 22`} />
+
+> `x = x + 1` sería una contradicción en matemáticas. En Python es una instrucción perfectamente válida: toma el valor actual de `x`, le suma 1 y almacena el resultado en `x`.
+
+## Reasignación
+
+Una variable puede cambiar de valor en cualquier momento. El valor anterior se pierde:
+
+<CodeRunner language="python" title="Reasignación" initialCode={`ciudad = "Madrid"
+print(ciudad)   # Madrid
+
+ciudad = "Barcelona"
+print(ciudad)   # Barcelona  ← el valor anterior se ha perdido`} />
+
+Una variable también puede cambiar de tipo al reasignarse, aunque hacerlo con frecuencia dificulta la legibilidad del código:
+
+<CodeRunner language="python" title="Cambio de tipo al reasignar" initialCode={`x = 42
+print(type(x))   # <class 'int'>
+
+x = "ahora soy texto"
+print(type(x))   # <class 'str'>`} />
+
+## Asignación compuesta
+
+Los operadores de asignación compuesta combinan una operación aritmética con la reasignación en una sola instrucción. Son especialmente frecuentes en bucles y acumuladores:
+
+<CodeRunner language="python" title="Operadores de asignación compuesta" initialCode={`contador = 0
+
+contador += 1    # contador = contador + 1
+print(contador)  # 1
+
+contador += 1
+print(contador)  # 2
+
+contador *= 3    # contador = contador * 3
+print(contador)  # 6
+
+contador -= 2    # contador = contador - 2
+print(contador)  # 4`} />
+
+La tabla completa de operadores de asignación compuesta disponibles en Python:
+
+<table>
+  <thead>
+    <tr>
+      <th>Operador</th>
+      <th>Equivale a</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>x += n</code></td><td><code>x = x + n</code></td><td><code>x += 5</code></td></tr>
+    <tr><td><code>x -= n</code></td><td><code>x = x - n</code></td><td><code>x -= 3</code></td></tr>
+    <tr><td><code>x *= n</code></td><td><code>x = x * n</code></td><td><code>x *= 2</code></td></tr>
+    <tr><td><code>x /= n</code></td><td><code>x = x / n</code></td><td><code>x /= 4</code></td></tr>
+    <tr><td><code>x //= n</code></td><td><code>x = x // n</code></td><td><code>x //= 2</code></td></tr>
+    <tr><td><code>x %= n</code></td><td><code>x = x % n</code></td><td><code>x %= 3</code></td></tr>
+    <tr><td><code>x **= n</code></td><td><code>x = x ** n</code></td><td><code>x **= 2</code></td></tr>
+  </tbody>
+</table>
+
+## Asignación múltiple
+
+Python permite asignar varios valores a varias variables en una sola instrucción. Los valores se asignan en orden posicional de izquierda a derecha:
+
+<CodeRunner language="python" title="Asignación múltiple" initialCode={`x, y, z = 1, 2, 3
+print(x, y, z)   # 1 2 3`} />
+
+También es posible asignar el mismo valor a varias variables simultáneamente:
+
+<CodeRunner language="python" title="Asignación encadenada" initialCode={`a = b = c = 0
+print(a, b, c)   # 0 0 0`} />
+
+### Intercambio de variables
+
+Un uso especialmente útil de la asignación múltiple es el intercambio de valores entre dos variables. En la mayoría de lenguajes esto requiere una variable auxiliar; en Python se resuelve en una sola línea:
+
+<CodeRunner language="python" title="Intercambio de variables" initialCode={`a = 10
+b = 20
+print("Antes:", a, b)   # 10 20
+
+a, b = b, a             # intercambio directo
+print("Después:", a, b) # 20 10`} />
+
+## El valor None
+
+`None` es un valor especial que representa la ausencia de valor. Se utiliza habitualmente para inicializar una variable cuando su valor definitivo aún no se conoce:
+
+<CodeRunner language="python" title="None como valor inicial" initialCode={`resultado = None
+print(resultado)        # None
+print(type(resultado))  # <class 'NoneType'>`} />
+
+Para comprobar si una variable contiene `None`, se usa el operador `is` en lugar de `==`:
+
+<CodeRunner language="python" title="Comprobar None con is" initialCode={`ganador = None
+
+if ganador is None:
+    print("Todavía no hay ganador")
+else:
+    print("El ganador es:", ganador)
+
+ganador = "Ana"
+
+if ganador is None:
+    print("Todavía no hay ganador")
+else:
+    print("El ganador es:", ganador)`} />
+
+> Usa siempre `is None` y no `== None`. El operador `is` comprueba identidad en memoria, que es exactamente lo que se necesita para `None`. Usar `==` puede producir comportamientos inesperados con ciertos tipos de datos definidos por el usuario.
+
+## Entrada de datos
+
+Python permite asignar a una variable un valor introducido por el usuario en tiempo de ejecución mediante la función `input()`:
+```python
+nombre = input("¿Cómo te llamas? ")
+```
+
+`input()` siempre devuelve una cadena de texto (`str`). Si se necesita un valor numérico, es necesario convertirlo explícitamente con `int()` o `float()`. El uso completo de `input()`, incluyendo conversión de tipos y validación de la entrada, se trata en detalle en la sección **2.5 Entrada de datos y validación**.
+
+## Buenas prácticas
+
+### Nombres descriptivos
+
+Un buen nombre de variable describe el dato que almacena. Los nombres cortos o genéricos obligan al lector a inferir el significado por contexto:
+
+<CodeRunner language="python" title="Nombres descriptivos" initialCode={`# Difícil de entender
+x = 1500
+y = 0.21
+z = x * y
+
+# Claro sin necesidad de comentarios
+precio_base = 1500
+tipo_iva = 0.21
+importe_iva = precio_base * tipo_iva
+
+print(importe_iva)   # 315.0`} />
+
+### Convenciones de nomenclatura (PEP 8)
+
+Python tiene una guía de estilo oficial llamada **PEP 8** que establece, entre otras cosas, cómo deben nombrarse las variables:
+
+<table>
+  <thead>
+    <tr>
+      <th>Tipo</th>
+      <th>Convención</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Variables y funciones</td>
+      <td><code>snake\_case</code></td>
+      <td><code>precio\_base</code>, <code>nombre\_usuario</code></td>
+    </tr>
+    <tr>
+      <td>Constantes</td>
+      <td><code>UPPER\_SNAKE\_CASE</code></td>
+      <td><code>PI</code>, <code>MAX\_INTENTOS</code></td>
+    </tr>
+    <tr>
+      <td>Variable desechable</td>
+      <td><code>\_</code></td>
+      <td><code>\_ = valor\_ignorado</code></td>
+    </tr>
+  </tbody>
+</table>
+
+### Inicialización explícita
+
+Inicializa siempre las variables antes de usarlas. Si el valor definitivo no se conoce aún, usa `None` o un valor neutro adecuado al tipo:
+```python
+total = 0        # acumulador numérico
+nombre = ""      # cadena vacía
+encontrado = False  # estado booleano
+resultado = None    # valor aún desconocido
+```
+
+---
+
+## Errores comunes
+
+<CodeRunner language="python" title="Usar una variable antes de asignarla" initialCode={`try:
+    print(temperatura)
+except NameError as e:
+    print(f"NameError: {e}")
+
+temperatura = 22
+print(temperatura)   # 22`} />
+
+<CodeRunner language="python" title="Expresión en el lado izquierdo" initialCode={`# El lado izquierdo debe ser siempre un nombre de variable.
+# Descomentar cualquiera de estas líneas produce SyntaxError:
+# 10 = x
+# x + 1 = 5
+
+# Correcto:
+x = 10
+x = x + 1
+print(x)   # 11`} />
+
+<CodeRunner language="python" title="Confundir = con ==" initialCode={`x = 10
+
+x = 20           # asignación: x ahora vale 20
+print(x)         # 20
+
+print(x == 20)   # comparación: devuelve True o False
+print(x == 10)   # False`} />
+
+<CodeRunner language="python" title="Asignación múltiple con número distinto de valores" initialCode={`try:
+    a, b = 1, 2, 3   # tres valores para dos variables
+except ValueError as e:
+    print(f"ValueError: {e}")
+
+a, b = 1, 2   # correcto
+print(a, b)   # 1 2`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Operación</th>
+      <th>Ejemplo</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Asignación simple</td>
+      <td><code>x = 10</code></td>
+      <td>Crea o actualiza la variable <code>x</code></td>
+    </tr>
+    <tr>
+      <td>Reasignación</td>
+      <td><code>x = x + 1</code></td>
+      <td>Evalúa el lado derecho y actualiza <code>x</code></td>
+    </tr>
+    <tr>
+      <td>Asignación compuesta</td>
+      <td><code>x += 1</code></td>
+      <td>Atajo de <code>x = x + 1</code></td>
+    </tr>
+    <tr>
+      <td>Asignación múltiple</td>
+      <td><code>x, y = 1, 2</code></td>
+      <td>Asigna varios valores en una instrucción</td>
+    </tr>
+    <tr>
+      <td>Asignación encadenada</td>
+      <td><code>a = b = 0</code></td>
+      <td>Asigna el mismo valor a varias variables</td>
+    </tr>
+    <tr>
+      <td>Intercambio</td>
+      <td><code>a, b = b, a</code></td>
+      <td>Intercambia los valores de dos variables</td>
+    </tr>
+    <tr>
+      <td>Valor ausente</td>
+      <td><code>x = None</code></td>
+      <td>Variable definida sin valor significativo</td>
+    </tr>
+    <tr>
+      <td>Comprobar None</td>
+      <td><code>x is None</code></td>
+      <td>Comprueba si una variable no tiene valor asignado</td>
+    </tr>
+  </tbody>
+</table>

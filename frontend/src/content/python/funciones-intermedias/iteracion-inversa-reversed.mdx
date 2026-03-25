@@ -1,0 +1,248 @@
+# 4.6 Iteración inversa con reversed()
+
+La función `reversed()` permite recorrer cualquier secuencia en **orden inverso** sin modificar el original. Es una alternativa limpia y eficiente al *slicing* invertido y al método `.reverse()`.
+
+---
+
+## Fundamentos
+
+### Iterador
+
+`reversed()` devuelve un **iterador** que produce los elementos en orden inverso. No crea una nueva lista en memoria:
+
+<CodeRunner language="python" title="reversed() devuelve un iterador" initialCode={`numeros = [1, 2, 3, 4, 5]
+
+# reversed() no devuelve una lista directamente
+resultado = reversed(numeros)
+print(resultado)         # <list_reverseiterator object>
+print(type(resultado))   # <class 'list_reverseiterator'>
+
+# Para obtener una lista, hay que convertir
+print(list(reversed(numeros)))   # [5, 4, 3, 2, 1]`} />
+
+### No modifica el original
+
+A diferencia de `.reverse()`, `reversed()` **no altera** la secuencia original:
+
+<CodeRunner language="python" title="reversed() no modifica el original" initialCode={`numeros = [10, 20, 30, 40]
+
+invertida = list(reversed(numeros))
+print(f"Invertida: {invertida}")     # [40, 30, 20, 10]
+print(f"Original:  {numeros}")       # [10, 20, 30, 40]  ← sin cambios`} />
+
+---
+
+## Casos básicos
+
+### Listas
+
+<CodeRunner language="python" title="reversed() con listas" initialCode={`colores = ["rojo", "verde", "azul", "amarillo"]
+print(list(reversed(colores)))   # ['amarillo', 'azul', 'verde', 'rojo']
+
+numeros = [1, 2, 3, 4, 5]
+print(list(reversed(numeros)))   # [5, 4, 3, 2, 1]`} />
+
+### Strings
+
+<CodeRunner language="python" title="reversed() con strings" initialCode={`texto = "Python"
+
+# reversed() produce caracteres individuales
+print(list(reversed(texto)))     # ['n', 'o', 'h', 't', 'y', 'P']
+
+# Para obtener la cadena invertida, usar join
+invertido = "".join(reversed(texto))
+print(invertido)                 # nohtyP
+
+# Detectar palíndromos
+def es_palindromo(palabra):
+    limpia = palabra.lower().replace(" ", "")
+    return limpia == "".join(reversed(limpia))
+
+print(es_palindromo("radar"))      # True
+print(es_palindromo("Ana"))        # True
+print(es_palindromo("Python"))     # False`} />
+
+### Tuplas
+
+<CodeRunner language="python" title="reversed() con tuplas" initialCode={`coordenadas = (10, 20, 30)
+print(tuple(reversed(coordenadas)))   # (30, 20, 10)
+
+meses = ("Enero", "Febrero", "Marzo")
+print(tuple(reversed(meses)))         # ('Marzo', 'Febrero', 'Enero')`} />
+
+---
+
+## Iteración
+
+### Uso en for
+
+El uso más frecuente de `reversed()` es directamente en un bucle `for`:
+
+<CodeRunner language="python" title="reversed() en bucles for" initialCode={`# Cuenta regresiva
+print("Cuenta regresiva:")
+for n in reversed(range(1, 6)):
+    print(f"  {n}...")
+print("  ¡Despegue!")
+
+print()
+
+# Recorrer historial del más reciente al más antiguo
+historial = ["Inicio sesión", "Abrió archivo", "Guardó cambios", "Cerró sesión"]
+print("Historial (más reciente primero):")
+for accion in reversed(historial):
+    print(f"  → {accion}")`} />
+
+---
+
+## Comparación
+
+### .reverse() vs reversed()
+
+<table>
+  <thead>
+    <tr>
+      <th>Característica</th>
+      <th><code>.reverse()</code></th>
+      <th><code>reversed()</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Tipo</td>
+      <td>Método de lista</td>
+      <td>Función integrada</td>
+    </tr>
+    <tr>
+      <td>Modifica el original</td>
+      <td>✅ Sí (in-place)</td>
+      <td>❌ No</td>
+    </tr>
+    <tr>
+      <td>Devuelve</td>
+      <td><code>None</code></td>
+      <td>Un iterador</td>
+    </tr>
+    <tr>
+      <td>Funciona con</td>
+      <td>Solo listas</td>
+      <td>Listas, tuplas, strings, ranges...</td>
+    </tr>
+    <tr>
+      <td>Memoria</td>
+      <td>No usa memoria extra</td>
+      <td>No usa memoria extra</td>
+    </tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title=".reverse() vs reversed()" initialCode={`# .reverse() modifica la lista original y devuelve None
+lista1 = [1, 2, 3]
+resultado = lista1.reverse()
+print(f"lista1: {lista1}")       # [3, 2, 1]  ← modificada
+print(f"resultado: {resultado}") # None
+
+# reversed() no modifica y devuelve un iterador
+lista2 = [1, 2, 3]
+resultado2 = list(reversed(lista2))
+print(f"lista2: {lista2}")        # [1, 2, 3]  ← sin cambios
+print(f"resultado2: {resultado2}")  # [3, 2, 1]`} />
+
+---
+
+## Uso combinado
+
+### map()
+
+<CodeRunner language="python" title="reversed() con map()" initialCode={`numeros = [1, 2, 3, 4, 5]
+
+# Invertir y transformar
+resultado = list(map(lambda x: x ** 2, reversed(numeros)))
+print(resultado)   # [25, 16, 9, 4, 1]`} />
+
+### any() / all()
+
+<CodeRunner language="python" title="reversed() con any() y all()" initialCode={`pasos = [True, True, False, True, True]
+
+# ¿Los últimos 3 pasos fueron exitosos?
+ultimos_3 = list(reversed(pasos))[:3]
+print(f"Últimos 3: {ultimos_3}")
+print(f"¿Todos OK? {all(ultimos_3)}")   # False`} />
+
+### enumerate()
+
+<CodeRunner language="python" title="reversed() con enumerate()" initialCode={`tareas = ["Diseño", "Desarrollo", "Testing", "Deploy"]
+
+print("Tareas en orden inverso:")
+for i, tarea in enumerate(reversed(tareas), 1):
+    print(f"  {i}. {tarea}")`} />
+
+---
+
+## Casos avanzados
+
+### Matrices
+
+<CodeRunner language="python" title="Invertir filas de una matriz" initialCode={`matriz = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
+
+print("Original:")
+for fila in matriz:
+    print(f"  {fila}")
+
+print("Filas invertidas:")
+for fila in reversed(matriz):
+    print(f"  {fila}")
+
+print("Cada fila invertida:")
+for fila in matriz:
+    print(f"  {list(reversed(fila))}")`} />
+
+### Inversión doble
+
+<CodeRunner language="python" title="Inversión doble = original" initialCode={`original = [10, 20, 30, 40, 50]
+
+# Invertir dos veces devuelve al original
+doble = list(reversed(list(reversed(original))))
+print(f"Original: {original}")
+print(f"Doble:    {doble}")
+print(f"¿Iguales? {original == doble}")   # True`} />
+
+---
+
+## Buenas prácticas
+
+<table>
+  <thead>
+    <tr>
+      <th>Situación</th>
+      <th>Recomendación</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Iterar en orden inverso</td>
+      <td><code>for x in reversed(lista):</code></td>
+    </tr>
+    <tr>
+      <td>Obtener copia invertida</td>
+      <td><code>list(reversed(lista))</code> o <code>lista[::-1]</code></td>
+    </tr>
+    <tr>
+      <td>Invertir lista in-place</td>
+      <td><code>lista.reverse()</code></td>
+    </tr>
+    <tr>
+      <td>Invertir string</td>
+      <td><code>"".join(reversed(s))</code> o <code>s[::-1]</code></td>
+    </tr>
+    <tr>
+      <td>Rendimiento</td>
+      <td><code>reversed()</code> es óptimo: no crea copia en memoria</td>
+    </tr>
+  </tbody>
+</table>
+
+> Usa `reversed()` cuando necesites recorrer en orden inverso sin modificar el original. Para obtener una copia invertida rápida, `lista[::-1]` es igualmente válido y más conciso.

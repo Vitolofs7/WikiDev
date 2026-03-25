@@ -1,0 +1,226 @@
+# 3.4 Parámetros y argumentos
+
+Cuando definimos funciones que necesitan datos de entrada, usamos **parámetros** y **argumentos**. Aunque a menudo se usan como sinónimos, técnicamente son conceptos distintos que conviene diferenciar.
+
+---
+
+## Parámetro vs argumento
+
+<table>
+  <thead>
+    <tr>
+      <th>Concepto</th>
+      <th>Dónde aparece</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Parámetro</strong></td>
+      <td>En la <strong>definición</strong> de la función</td>
+      <td>Variable que actúa como marcador de posición para recibir un valor</td>
+    </tr>
+    <tr>
+      <td><strong>Argumento</strong></td>
+      <td>En la <strong>llamada</strong> a la función</td>
+      <td>Valor concreto que se pasa a la función al invocarla</td>
+    </tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="Parámetro vs argumento" initialCode={`def saludar(nombre):       # 'nombre' es el PARÁMETRO
+    print(f"Hola, {nombre}")
+
+saludar("Ana")             # "Ana" es el ARGUMENTO
+saludar("Carlos")          # "Carlos" es otro ARGUMENTO`} />
+
+> El parámetro es la **variable** en la definición; el argumento es el **valor** en la llamada. El argumento se asigna al parámetro cuando se ejecuta la función.
+
+---
+
+## Argumentos posicionales
+
+Por defecto, los argumentos se asignan a los parámetros **en el orden** en que se escriben. A estos se les llama **argumentos posicionales**:
+
+<CodeRunner language="python" title="Argumentos posicionales" initialCode={`def presentar(nombre, edad, ciudad):
+    print(f"{nombre} tiene {edad} años y vive en {ciudad}")
+
+# El orden importa: cada argumento va al parámetro correspondiente
+presentar("Ana", 28, "Madrid")
+presentar("Carlos", 35, "Barcelona")`} />
+
+Si se cambia el orden, los valores se asignan a los parámetros equivocados:
+
+<CodeRunner language="python" title="Error al cambiar el orden" initialCode={`def presentar(nombre, edad, ciudad):
+    print(f"{nombre} tiene {edad} años y vive en {ciudad}")
+
+# ❌ Los argumentos están en el orden incorrecto
+presentar(28, "Madrid", "Ana")   # "28 tiene Madrid años y vive en Ana"`} />
+
+---
+
+## Argumentos nombrados
+
+Para evitar depender del orden, se pueden pasar argumentos usando el **nombre del parámetro**. Estos se llaman **argumentos nombrados** (o *keyword arguments*):
+
+<CodeRunner language="python" title="Argumentos nombrados" initialCode={`def presentar(nombre, edad, ciudad):
+    print(f"{nombre} tiene {edad} años y vive en {ciudad}")
+
+# Con argumentos nombrados, el orden no importa
+presentar(ciudad="Sevilla", nombre="Lucía", edad=22)
+
+# Se pueden mezclar posicionales y nombrados,
+# pero los posicionales siempre van primero
+presentar("Pedro", ciudad="Valencia", edad=30)`} />
+
+<CodeRunner language="python" title="Error: posicional después de nombrado" initialCode={`def presentar(nombre, edad, ciudad):
+    print(f"{nombre} tiene {edad} años y vive en {ciudad}")
+
+# ❌ SyntaxError: argumento posicional después de nombrado
+try:
+    exec('presentar(nombre="Ana", 28, "Madrid")')
+except SyntaxError as e:
+    print(f"SyntaxError: {e}")`} />
+
+> **Regla**: los argumentos posicionales siempre deben ir **antes** que los nombrados en una llamada.
+
+---
+
+## Valores por defecto
+
+Un parámetro puede tener un **valor por defecto** que se usa cuando no se pasa un argumento para ese parámetro. Se define con `=` en la declaración:
+
+<CodeRunner language="python" title="Valores por defecto" initialCode={`def saludar(nombre, saludo="Hola"):
+    print(f"{saludo}, {nombre}")
+
+saludar("Ana")                # usa el valor por defecto: "Hola, Ana"
+saludar("Carlos", "Buenos días")  # sobreescribe: "Buenos días, Carlos"`} />
+
+Los parámetros con valor por defecto deben ir **después** de los que no tienen valor por defecto:
+
+<CodeRunner language="python" title="Orden correcto de parámetros" initialCode={`# ✅ Correcto: parámetros sin defecto primero
+def crear_usuario(nombre, rol="usuario", activo=True):
+    print(f"{nombre} | rol: {rol} | activo: {activo}")
+
+crear_usuario("Ana")
+crear_usuario("Carlos", "admin")
+crear_usuario("Lucía", "editor", False)`} />
+
+<CodeRunner language="python" title="Error: defecto antes de obligatorio" initialCode={`# ❌ SyntaxError: parámetro sin defecto después de uno con defecto
+try:
+    exec('''
+def crear_usuario(rol="usuario", nombre):
+    pass
+''')
+except SyntaxError as e:
+    print(f"SyntaxError: {e}")`} />
+
+Un ejemplo práctico con varios valores por defecto:
+
+<CodeRunner language="python" title="Función con múltiples valores por defecto" initialCode={`def calcular_precio(precio_base, descuento=0, iva=21):
+    precio_con_descuento = precio_base * (1 - descuento / 100)
+    precio_final = precio_con_descuento * (1 + iva / 100)
+    return round(precio_final, 2)
+
+# Solo precio base
+print(calcular_precio(100))              # 121.0
+
+# Con descuento del 10%
+print(calcular_precio(100, 10))          # 108.9
+
+# Con descuento y otro IVA
+print(calcular_precio(100, 10, 10))      # 99.0
+
+# Solo cambiando el IVA (usando argumento nombrado)
+print(calcular_precio(100, iva=10))      # 110.0`} />
+
+---
+
+## Paso de expresiones y funciones
+
+Los argumentos no tienen que ser valores simples. Python evalúa cualquier expresión **antes** de pasarla a la función:
+
+<CodeRunner language="python" title="Expresiones como argumentos" initialCode={`def mostrar_doble(n):
+    print(f"El doble de {n} es {n * 2}")
+
+# Argumento literal
+mostrar_doble(5)
+
+# Argumento: expresión aritmética
+mostrar_doble(3 + 4)
+
+# Argumento: resultado de otra función
+mostrar_doble(len("Python"))
+
+# Argumento: operación con variable
+x = 10
+mostrar_doble(x ** 2)`} />
+
+Se pueden pasar llamadas a funciones como argumentos, y Python las evalúa de dentro hacia fuera:
+
+<CodeRunner language="python" title="Funciones como argumentos" initialCode={`# Python evalúa de dentro hacia fuera:
+# 1. abs(-7) → 7
+# 2. pow(7, 2) → 49
+# 3. str(49) → "49"
+resultado = str(pow(abs(-7), 2))
+print(resultado)        # "49"
+print(type(resultado))  # <class 'str'>`} />
+
+<CodeRunner language="python" title="Funciones propias como argumentos" initialCode={`def cuadrado(n):
+    return n ** 2
+
+def sumar(a, b):
+    return a + b
+
+# El resultado de cuadrado() se pasa como argumento a sumar()
+print(sumar(cuadrado(3), cuadrado(4)))   # 9 + 16 = 25
+
+# Y el resultado se puede pasar a otra función
+import math
+print(math.sqrt(sumar(cuadrado(3), cuadrado(4))))   # √25 = 5.0`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Concepto</th>
+      <th>Descripción</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Parámetro</td>
+      <td>Variable en la definición</td>
+      <td><code>def f(x):</code> → <code>x</code> es parámetro</td>
+    </tr>
+    <tr>
+      <td>Argumento</td>
+      <td>Valor en la llamada</td>
+      <td><code>f(5)</code> → <code>5</code> es argumento</td>
+    </tr>
+    <tr>
+      <td>Posicional</td>
+      <td>Se asigna por orden</td>
+      <td><code>f(1, 2, 3)</code></td>
+    </tr>
+    <tr>
+      <td>Nombrado</td>
+      <td>Se asigna por nombre</td>
+      <td><code>f(x=1, y=2)</code></td>
+    </tr>
+    <tr>
+      <td>Valor por defecto</td>
+      <td>Valor si no se pasa argumento</td>
+      <td><code>def f(x=10):</code></td>
+    </tr>
+    <tr>
+      <td>Expresión como argumento</td>
+      <td>Se evalúa antes de pasar</td>
+      <td><code>f(abs(-5))</code></td>
+    </tr>
+  </tbody>
+</table>

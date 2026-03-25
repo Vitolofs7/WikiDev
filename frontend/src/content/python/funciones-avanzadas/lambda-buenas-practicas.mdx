@@ -1,0 +1,156 @@
+# 5.13 Lambda — Buenas prácticas
+
+Las lambdas son herramientas concisas, pero su mal uso puede hacer el código difícil de leer y mantener. Estas guías ayudan a decidir cuándo usar lambda, cuándo evitarla y qué errores son más frecuentes.
+
+---
+
+## Cuándo usar
+
+### ✅ Operaciones simples como argumento
+
+<CodeRunner language="python" title="Lambda como argumento: ideal" initialCode={`alumnos = [
+    {"nombre": "Ana", "nota": 8.5},
+    {"nombre": "Carlos", "nota": 6.2},
+    {"nombre": "Lucía", "nota": 9.1},
+]
+
+# ✅ Lambda clara como clave de sorted
+por_nota = sorted(alumnos, key=lambda a: a["nota"], reverse=True)
+for a in por_nota:
+    print(f"  {a['nombre']}: {a['nota']}")`} />
+
+### ✅ Transformaciones en una línea
+
+<CodeRunner language="python" title="Transformaciones simples" initialCode={`precios = [29.99, 15.50, 42.00, 8.75]
+
+# ✅ Clara y concisa
+con_iva = list(map(lambda p: round(p * 1.21, 2), precios))
+print(con_iva)
+
+# ✅ Filtro simple
+caros = list(filter(lambda p: p > 20, precios))
+print(caros)`} />
+
+### ✅ Funciones de un solo uso
+
+<CodeRunner language="python" title="Lambda para uso único" initialCode={`datos = ["  Ana García  ", " CARLOS lópez", "lucía PÉREZ "]
+
+# ✅ La función solo se usa aquí, no necesita nombre
+limpios = list(map(lambda s: s.strip().title(), datos))
+print(limpios)`} />
+
+---
+
+## Cuándo evitar
+
+### ❌ Lambda asignada a variable sin motivo
+
+<CodeRunner language="python" title="Evitar: lambda con nombre" initialCode={`# ❌ Lambda asignada a variable: no aporta nada
+cuadrado = lambda x: x ** 2
+
+# ✅ Mejor usar def: tiene nombre real, permite docstring
+def cuadrado(x):
+    """Eleva un número al cuadrado."""
+    return x ** 2
+
+print(cuadrado(5))`} />
+
+### ❌ Lambda demasiado compleja
+
+<CodeRunner language="python" title="Evitar: lambda compleja" initialCode={`# ❌ Difícil de leer
+procesar = lambda x: x.strip().title() if isinstance(x, str) and len(x) > 0 else "N/A"
+
+# ✅ Claro con def
+def procesar(x):
+    if isinstance(x, str) and len(x) > 0:
+        return x.strip().title()
+    return "N/A"
+
+print(procesar("  ana  "))
+print(procesar(""))
+print(procesar(None))`} />
+
+### ❌ Cuando necesitas varias líneas
+
+<CodeRunner language="python" title="Evitar: lógica de varias líneas" initialCode={`# ❌ Intentar meter lógica compleja en lambda
+# calcular = lambda p, d, i: round((p - p * d / 100) * (1 + i / 100), 2)
+
+# ✅ Con def es más claro
+def calcular_precio(precio, descuento=0, iva=21):
+    """Calcula precio final con descuento e IVA."""
+    base = precio * (1 - descuento / 100)
+    total = base * (1 + iva / 100)
+    return round(total, 2)
+
+print(calcular_precio(100, 10, 21))`} />
+
+### Guía de decisión
+
+<table>
+  <thead>
+    <tr>
+      <th>Situación</th>
+      <th>Usar</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Clave de <code>sorted()</code></td>
+      <td>✅ <code>lambda</code></td>
+    </tr>
+    <tr>
+      <td>Argumento de <code>map()</code>/<code>filter()</code></td>
+      <td>✅ <code>lambda</code> (si es simple)</td>
+    </tr>
+    <tr>
+      <td>Operación de una línea, uso único</td>
+      <td>✅ <code>lambda</code></td>
+    </tr>
+    <tr>
+      <td>Función con nombre reutilizable</td>
+      <td>❌ <code>def</code></td>
+    </tr>
+    <tr>
+      <td>Lógica con condicionales anidados</td>
+      <td>❌ <code>def</code></td>
+    </tr>
+    <tr>
+      <td>Función que necesita documentación</td>
+      <td>❌ <code>def</code></td>
+    </tr>
+    <tr>
+      <td>Más de una expresión</td>
+      <td>❌ <code>def</code></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## Errores comunes
+
+<CodeRunner language="python" title="Error: olvidar que lambda devuelve una expresión" initialCode={`# ❌ print() dentro de lambda devuelve None
+resultado = list(map(lambda x: print(x), [1, 2, 3]))
+print(f"Resultado: {resultado}")   # [None, None, None]
+
+# ✅ Lambda para transformar, print por separado
+resultado = list(map(lambda x: x * 2, [1, 2, 3]))
+print(f"Resultado: {resultado}")`} />
+
+<CodeRunner language="python" title="Error: closure en bucle" initialCode={`# ❌ Todas las lambdas capturan la MISMA variable i
+funciones_mal = [lambda: i for i in range(5)]
+print([f() for f in funciones_mal])   # [4, 4, 4, 4, 4]
+
+# ✅ Capturar el valor con argumento por defecto
+funciones_bien = [lambda i=i: i for i in range(5)]
+print([f() for f in funciones_bien])   # [0, 1, 2, 3, 4]`} />
+
+<CodeRunner language="python" title="Error: comparar funciones integradas" initialCode={`# ❌ Lambda innecesaria cuando ya existe una función
+numeros = [-3, 1, -5, 2, -1]
+resultado = list(map(lambda x: abs(x), numeros))
+
+# ✅ Pasar la función directamente (más limpio)
+resultado = list(map(abs, numeros))
+print(resultado)`} />
+
+> **Regla de oro**: si puedes leer la lambda en voz alta y entenderla sin pausar, es una buena lambda. Si necesitas re-leerla para entenderla, usa `def`.

@@ -1,0 +1,376 @@
+# 2.9 Depuración aplicada
+
+En la sección 1.7 se introdujeron los tres tipos de error y las estrategias básicas de depuración. Esta sección aplica esas técnicas a los errores más frecuentes que aparecen al trabajar con los conceptos del capítulo 2: variables, cadenas, condicionales, bucles y estructuras de datos.
+
+---
+
+## Errores en condicionales
+
+### Condición que nunca se ejecuta
+
+Uno de los errores más frecuentes con `if/elif/else` es colocar las condiciones en un orden que hace que algunas nunca se alcancen:
+
+<CodeRunner language="python" title="Orden incorrecto en elif" initialCode={`nota = 85
+
+# ❌ La segunda condición nunca se ejecuta:
+# cualquier nota >= 75 también cumple >= 60, y se captura antes
+if nota >= 60:
+    print("Aprobado")
+elif nota >= 75:
+    print("Notable")    # nunca llega aquí
+elif nota >= 90:
+    print("Sobresaliente")  # nunca llega aquí
+
+# ✅ Correcto: de mayor a menor restricción
+if nota >= 90:
+    print("Sobresaliente")
+elif nota >= 75:
+    print("Notable")
+elif nota >= 60:
+    print("Aprobado")
+else:
+    print("Suspenso")`} />
+
+### Confundir = con ==
+
+<CodeRunner language="python" title="Asignación vs comparación en condicional" initialCode={`x = 10
+
+# ❌ SyntaxError: no se puede asignar dentro de un if
+# if x = 10:
+#     print("es diez")
+
+# ✅ Correcto
+if x == 10:
+    print("es diez")`} />
+
+### Comparar tipos incompatibles
+
+<CodeRunner language="python" title="Comparar str con int" initialCode={`entrada = "5"   # simula input() sin convertir
+
+# ❌ Comparar str con int siempre es False
+if entrada == 5:
+    print("Es cinco")
+else:
+    print("No es cinco")   # se ejecuta siempre
+
+# ✅ Convertir antes de comparar
+if int(entrada) == 5:
+    print("Es cinco")`} />
+
+---
+
+## Errores en bucles
+
+### Bucle infinito por olvidar actualizar la condición
+
+El error más habitual con `while`: la variable que controla la condición nunca cambia dentro del bucle:
+
+<CodeRunner language="python" title="Bucle infinito" initialCode={`# ❌ contador nunca cambia → bucle infinito
+# contador = 0
+# while contador < 5:
+#     print(contador)    # falta: contador += 1
+
+# ✅ Correcto
+contador = 0
+while contador < 5:
+    print(contador)
+    contador += 1`} />
+
+### Condición de salida inalcanzable
+
+<CodeRunner language="python" title="break que nunca se ejecuta" initialCode={`# ❌ n nunca llega a 10 dentro de este bucle
+n = 0
+while n < 5:
+    if n == 10:      # esta condición es imposible
+        break
+    n += 1
+print("n final:", n)   # 5, terminó por la condición, no por break
+
+# ✅ Condición alcanzable
+n = 0
+while n < 5:
+    if n == 3:
+        print("Encontrado n=3, saliendo")
+        break
+    n += 1`} />
+
+### Contador mal inicializado
+
+<CodeRunner language="python" title="Acumulador sin inicializar" initialCode={`numeros = [3, 5, 7, 2]
+
+# ❌ total no está inicializado
+try:
+    for n in numeros:
+        total += n    # NameError: total no existe
+except NameError as e:
+    print(f"NameError: {e}")
+
+# ✅ Inicializar antes del bucle
+total = 0
+for n in numeros:
+    total += n
+print("Total:", total)`} />
+
+### Modificar una lista mientras se itera
+
+<CodeRunner language="python" title="Modificar lista durante iteración" initialCode={`numeros = [1, 2, 3, 4, 5, 6]
+
+# ❌ Eliminar elementos mientras se itera produce saltos
+resultado_malo = []
+for n in numeros:
+    if n % 2 != 0:
+        numeros.remove(n)   # modifica la lista que se está recorriendo
+print("Resultado incorrecto:", numeros)
+
+# ✅ Usar comprensión o iterar sobre una copia
+numeros = [1, 2, 3, 4, 5, 6]
+pares = [n for n in numeros if n % 2 == 0]
+print("Resultado correcto:", pares)`} />
+
+### off-by-one: el error de límite
+
+El error "off-by-one" ocurre cuando el bucle itera una vez de más o de menos. Es especialmente frecuente con `range()` porque el límite superior es exclusivo:
+
+<CodeRunner language="python" title="Error off-by-one con range()" initialCode={`# Intención: imprimir del 1 al 5
+# ❌ range(5) genera 0, 1, 2, 3, 4  (no incluye el 5)
+print("Incorrecto:")
+for i in range(5):
+    print(i, end=" ")
+
+print()
+
+# ✅ range(1, 6) genera 1, 2, 3, 4, 5
+print("Correcto:")
+for i in range(1, 6):
+    print(i, end=" ")`} />
+
+---
+
+## Errores en estructuras de datos
+
+### KeyError en diccionarios
+
+<CodeRunner language="python" title="Acceder a clave inexistente" initialCode={`persona = {"nombre": "Ana", "edad": 28}
+
+# ❌ KeyError si la clave no existe
+try:
+    print(persona["email"])
+except KeyError as e:
+    print(f"KeyError: {e}")
+
+# ✅ Opción 1: comprobar antes de acceder
+if "email" in persona:
+    print(persona["email"])
+
+# ✅ Opción 2: usar get() con valor por defecto
+print(persona.get("email", "sin email"))`} />
+
+### IndexError en listas
+
+<CodeRunner language="python" title="Índice fuera de rango" initialCode={`frutas = ["manzana", "pera", "uva"]
+
+# ❌ IndexError: la lista tiene 3 elementos (índices 0, 1, 2)
+try:
+    print(frutas[5])
+except IndexError as e:
+    print(f"IndexError: {e}")
+
+# ✅ Comprobar longitud antes de acceder
+indice = 5
+if indice < len(frutas):
+    print(frutas[indice])
+else:
+    print(f"Índice {indice} fuera de rango (longitud: {len(frutas)})")`} />
+
+### Olvidar que los métodos de lista no devuelven la lista
+
+<CodeRunner language="python" title="sort() y reverse() modifican en su lugar" initialCode={`numeros = [3, 1, 4, 1, 5]
+
+# ❌ sort() devuelve None, no la lista ordenada
+resultado = numeros.sort()
+print(resultado)   # None
+
+# ✅ sort() modifica la lista en su lugar
+numeros = [3, 1, 4, 1, 5]
+numeros.sort()
+print(numeros)     # [1, 1, 3, 4, 5]
+
+# ✅ Si necesitas una nueva lista ordenada, usa sorted()
+numeros = [3, 1, 4, 1, 5]
+ordenados = sorted(numeros)
+print(numeros)     # [3, 1, 4, 1, 5]  (sin cambios)
+print(ordenados)   # [1, 1, 3, 4, 5]`} />
+
+---
+
+## Errores en entrada de datos
+
+### ValueError al convertir
+
+<CodeRunner language="python" title="Conversión de tipo fallida" initialCode={`entradas = ["42", "3.14", "hola", ""]
+
+for entrada in entradas:
+    try:
+        numero = int(entrada)
+        print(f"'{entrada}' → {numero}")
+    except ValueError as e:
+        print(f"'{entrada}' no es válido: {e}")`} />
+
+### Comparar sin normalizar
+
+<CodeRunner language="python" title="Comparación sin normalizar entrada" initialCode={`respuesta = "  Sí  "   # simula input() con espacios
+
+# ❌ La comparación falla por espacios y mayúsculas
+if respuesta == "sí":
+    print("Confirmado")
+else:
+    print("No confirmado")   # se ejecuta incorrectamente
+
+# ✅ Normalizar antes de comparar
+if respuesta.strip().lower() in ("sí", "si", "s"):
+    print("Confirmado")`} />
+
+---
+
+## Técnica de tracing: seguir el estado paso a paso
+
+Cuando un bucle produce un resultado inesperado, la técnica más eficaz es imprimir el estado de las variables en cada iteración:
+
+<CodeRunner language="python" title="Tracing de un bucle" initialCode={`# Encontrar el error en este cálculo de factorial
+def factorial_con_bug(n):
+    resultado = 0   # ← bug: debería ser 1
+    for i in range(1, n + 1):
+        print(f"  i={i}, resultado antes={resultado}", end=" → ")
+        resultado *= i
+        print(f"resultado después={resultado}")
+    return resultado
+
+print("Factorial de 5:", factorial_con_bug(5))
+# El tracing revela que resultado siempre es 0`} />
+
+<CodeRunner language="python" title="Versión corregida" initialCode={`def factorial(n):
+    resultado = 1   # ✅ valor neutro para la multiplicación
+    for i in range(1, n + 1):
+        resultado *= i
+    return resultado
+
+print("Factorial de 5:", factorial(5))    # 120
+print("Factorial de 0:", factorial(0))    # 1`} />
+
+---
+
+## Verificar invariantes con assert
+
+Un **invariante** es una condición que debe ser verdadera en todo momento durante la ejecución de un bucle. `assert` permite verificarla en cada iteración durante el desarrollo:
+
+<CodeRunner language="python" title="assert para verificar invariantes" initialCode={`numeros = [3, 5, 7, 2, 8]
+total = 0
+
+for i, n in enumerate(numeros):
+    total += n
+    # Invariante: total siempre es positivo (todos los números son positivos)
+    assert total > 0, f"Error en iteración {i}: total={total}"
+    print(f"  i={i}, n={n}, total acumulado={total}")
+
+print("Total final:", total)`} />
+
+---
+
+## Checklist de depuración para el capítulo 2
+
+Cuando un programa del capítulo 2 no funciona como se espera, seguir este orden:
+
+<table>
+  <thead>
+    <tr>
+      <th>Paso</th>
+      <th>Qué comprobar</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1. Lee el error completo</td>
+      <td>Tipo de error, línea, descripción. Empieza siempre por aquí.</td>
+    </tr>
+    <tr>
+      <td>2. Verifica los tipos</td>
+      <td><code>print(type(variable))</code> antes de operar con ella</td>
+    </tr>
+    <tr>
+      <td>3. Comprueba el orden de condiciones</td>
+      <td>En <code>if/elif</code>: de mayor a menor restricción</td>
+    </tr>
+    <tr>
+      <td>4. Verifica la condición del bucle</td>
+      <td>¿La variable de control cambia dentro del bucle?</td>
+    </tr>
+    <tr>
+      <td>5. Traza el estado en cada iteración</td>
+      <td>Añade <code>print()</code> dentro del bucle para ver cómo evolucionan las variables</td>
+    </tr>
+    <tr>
+      <td>6. Comprueba los límites</td>
+      <td>¿El rango de <code>range()</code> es correcto? ¿Los índices están dentro del rango?</td>
+    </tr>
+    <tr>
+      <td>7. Aísla el problema</td>
+      <td>Extrae la parte problemática y pruébala con el valor mínimo que reproduce el error</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## Referencia rápida de errores frecuentes
+
+<table>
+  <thead>
+    <tr>
+      <th>Error</th>
+      <th>Causa habitual</th>
+      <th>Solución</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>NameError</code></td>
+      <td>Variable usada antes de inicializarse</td>
+      <td>Inicializar antes del bucle o condicional</td>
+    </tr>
+    <tr>
+      <td><code>TypeError</code></td>
+      <td>Operar con tipos incompatibles</td>
+      <td><code>print(type(x))</code> y convertir si es necesario</td>
+    </tr>
+    <tr>
+      <td><code>ValueError</code></td>
+      <td><code>int()</code> o <code>float()</code> con texto no numérico</td>
+      <td>Usar <code>try/except ValueError</code></td>
+    </tr>
+    <tr>
+      <td><code>KeyError</code></td>
+      <td>Clave inexistente en diccionario</td>
+      <td>Usar <code>get()</code> o comprobar con <code>in</code></td>
+    </tr>
+    <tr>
+      <td><code>IndexError</code></td>
+      <td>Índice fuera del rango de la lista</td>
+      <td>Comprobar <code>len()</code> antes de acceder</td>
+    </tr>
+    <tr>
+      <td>Bucle infinito</td>
+      <td>La condición de <code>while</code> nunca se vuelve <code>False</code></td>
+      <td>Verificar que la variable de control se actualiza</td>
+    </tr>
+    <tr>
+      <td>Resultado incorrecto</td>
+      <td>Error semántico: lógica incorrecta</td>
+      <td>Tracing con <code>print()</code> en cada iteración</td>
+    </tr>
+    <tr>
+      <td>Off-by-one</td>
+      <td><code>range(n)</code> genera <code>0</code> a <code>n-1</code></td>
+      <td>Usar <code>range(1, n+1)</code> si se necesita incluir <code>n</code></td>
+    </tr>
+  </tbody>
+</table>

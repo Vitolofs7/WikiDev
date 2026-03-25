@@ -1,0 +1,186 @@
+# 4.7 Funciones de texto y números
+
+Python incluye funciones integradas para trabajar con la representación numérica de caracteres y para convertir números entre distintas bases. Estas funciones son útiles en criptografía básica, procesamiento de texto y manipulación de datos binarios.
+
+---
+
+## ord() / chr()
+
+Cada carácter tiene un número asociado en la tabla **Unicode** (que incluye ASCII). Las funciones `ord()` y `chr()` permiten convertir entre caracteres y sus códigos numéricos:
+
+<table>
+  <thead>
+    <tr>
+      <th>Función</th>
+      <th>Entrada</th>
+      <th>Salida</th>
+      <th>Dirección</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ord(c)</code></td>
+      <td>Carácter (str de longitud 1)</td>
+      <td>Código numérico (int)</td>
+      <td>Carácter → Número</td>
+    </tr>
+    <tr>
+      <td><code>chr(n)</code></td>
+      <td>Código numérico (int)</td>
+      <td>Carácter (str)</td>
+      <td>Número → Carácter</td>
+    </tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="ord() — carácter a número" initialCode={`# Letras
+print(ord("A"))      # 65
+print(ord("Z"))      # 90
+print(ord("a"))      # 97
+print(ord("z"))      # 122
+
+# Dígitos
+print(ord("0"))      # 48
+print(ord("9"))      # 57
+
+# Caracteres especiales
+print(ord(" "))      # 32
+print(ord("ñ"))      # 241
+print(ord("€"))      # 8364`} />
+
+<CodeRunner language="python" title="chr() — número a carácter" initialCode={`print(chr(65))       # A
+print(chr(97))       # a
+print(chr(48))       # 0
+print(chr(241))      # ñ
+print(chr(8364))     # €
+
+# Generar el alfabeto
+alfabeto = "".join(chr(i) for i in range(65, 91))
+print(f"Mayúsculas: {alfabeto}")
+
+alfabeto_min = "".join(chr(i) for i in range(97, 123))
+print(f"Minúsculas: {alfabeto_min}")`} />
+
+<CodeRunner language="python" title="Ejemplo: cifrado César simple" initialCode={`def cifrar_cesar(texto, desplazamiento):
+    """Cifra texto desplazando cada letra N posiciones."""
+    resultado = ""
+    for c in texto:
+        if c.isalpha():
+            base = ord("A") if c.isupper() else ord("a")
+            nueva = chr((ord(c) - base + desplazamiento) % 26 + base)
+            resultado += nueva
+        else:
+            resultado += c
+    return resultado
+
+mensaje = "Hola Mundo"
+cifrado = cifrar_cesar(mensaje, 3)
+descifrado = cifrar_cesar(cifrado, -3)
+
+print(f"Original:   {mensaje}")
+print(f"Cifrado:    {cifrado}")
+print(f"Descifrado: {descifrado}")`} />
+
+---
+
+## bin() / hex() / oct()
+
+Estas funciones convierten un entero a su representación como cadena en **base 2** (binario), **base 16** (hexadecimal) y **base 8** (octal):
+
+<CodeRunner language="python" title="Conversión de bases" initialCode={`numero = 255
+
+# Binario (base 2)
+print(bin(numero))     # 0b11111111
+
+# Hexadecimal (base 16)
+print(hex(numero))     # 0xff
+
+# Octal (base 8)
+print(oct(numero))     # 0o377
+
+# El prefijo indica la base: 0b, 0x, 0o
+print(type(bin(255)))  # <class 'str'>`} />
+
+<CodeRunner language="python" title="Conversión inversa con int()" initialCode={`# De cadena binaria/hex/octal a entero con int(cadena, base)
+print(int("11111111", 2))    # 255
+print(int("ff", 16))         # 255
+print(int("377", 8))         # 255
+
+# También se puede usar el prefijo
+print(int("0b11111111", 2))  # 255
+print(int("0xff", 16))       # 255
+print(int("0o377", 8))       # 255`} />
+
+<CodeRunner language="python" title="Ejemplo: tabla de conversiones" initialCode={`def tabla_conversiones(numeros):
+    print(f"{'Decimal':>8} {'Binario':>12} {'Hexadecimal':>12} {'Octal':>8}")
+    print("-" * 44)
+    for n in numeros:
+        print(f"{n:>8} {bin(n):>12} {hex(n):>12} {oct(n):>8}")
+
+tabla_conversiones([0, 1, 10, 16, 255, 1024])`} />
+
+<CodeRunner language="python" title="Ejemplo práctico: colores web" initialCode={`def rgb_a_hex(r, g, b):
+    """Convierte RGB a color hexadecimal web."""
+    return f"#{r:02x}{g:02x}{b:02x}"
+
+def hex_a_rgb(color_hex):
+    """Convierte color hexadecimal web a RGB."""
+    color_hex = color_hex.lstrip("#")
+    r = int(color_hex[0:2], 16)
+    g = int(color_hex[2:4], 16)
+    b = int(color_hex[4:6], 16)
+    return r, g, b
+
+# RGB a Hexadecimal
+print(rgb_a_hex(255, 128, 0))      # #ff8000
+print(rgb_a_hex(0, 255, 128))      # #00ff80
+
+# Hexadecimal a RGB
+print(hex_a_rgb("#ff8000"))        # (255, 128, 0)
+print(hex_a_rgb("#00ff80"))        # (0, 255, 128)`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Función</th>
+      <th>Descripción</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ord(c)</code></td>
+      <td>Carácter → código Unicode</td>
+      <td><code>ord("A") → 65</code></td>
+    </tr>
+    <tr>
+      <td><code>chr(n)</code></td>
+      <td>Código Unicode → carácter</td>
+      <td><code>chr(65) → "A"</code></td>
+    </tr>
+    <tr>
+      <td><code>bin(n)</code></td>
+      <td>Entero → binario (str)</td>
+      <td><code>bin(10) → "0b1010"</code></td>
+    </tr>
+    <tr>
+      <td><code>hex(n)</code></td>
+      <td>Entero → hexadecimal (str)</td>
+      <td><code>hex(255) → "0xff"</code></td>
+    </tr>
+    <tr>
+      <td><code>oct(n)</code></td>
+      <td>Entero → octal (str)</td>
+      <td><code>oct(8) → "0o10"</code></td>
+    </tr>
+    <tr>
+      <td><code>int(s, base)</code></td>
+      <td>Cadena en base → entero</td>
+      <td><code>int("ff", 16) → 255</code></td>
+    </tr>
+  </tbody>
+</table>

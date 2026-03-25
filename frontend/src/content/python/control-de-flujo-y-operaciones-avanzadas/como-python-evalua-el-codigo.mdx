@@ -1,0 +1,156 @@
+# 2.2 Cómo Python evalúa el código
+
+Cuando Python lee un programa, no trata todas las líneas de la misma forma. Algunas líneas **producen un valor**, otras **ejecutan una acción**. Entender esta distinción ayuda a predecir el comportamiento del código y a evitar errores sutiles.
+
+## Expresiones: código que produce un valor
+
+Una **expresión** es cualquier combinación de valores, variables y operadores que Python puede evaluar para obtener un resultado. Toda expresión produce exactamente un valor:
+
+<CodeRunner language="python" title="Expresiones y sus valores" initialCode={`# Cada línea es una expresión que produce un valor
+print(2 + 3)          # 5
+print(10 > 5)         # True
+print("Hola" + "!")   # Hola!
+print(type(42))       # <class 'int'>`} />
+
+Las expresiones pueden combinarse: el resultado de una expresión puede usarse como parte de otra. Python evalúa siempre desde la expresión más interna hacia la más externa:
+
+<CodeRunner language="python" title="Expresiones dentro de expresiones" initialCode={`# Python evalúa de dentro hacia fuera
+print(round(3.14159, 2))        # primero 3.14159 y 2, luego round()
+print(abs(-5) + 10)             # primero abs(-5) → 5, luego 5 + 10
+print(str(42) + " es la respuesta")  # primero str(42) → "42", luego concatena`} />
+
+## Sentencias: código que ejecuta una acción
+
+Una **sentencia** es una instrucción que produce un efecto en el programa pero no necesariamente un valor. Las sentencias de asignación vistas en 2.1 son el ejemplo más habitual:
+```python
+x = 10          # sentencia: crea la variable x
+x += 5          # sentencia: actualiza el valor de x
+```
+
+La diferencia práctica más importante es que **una sentencia no puede usarse donde se espera un valor**:
+
+<CodeRunner language="python" title="Las sentencias no producen valor" initialCode={`# Una asignación no puede usarse como argumento de una función
+# Descomentar produce SyntaxError:
+# print(x = 10)
+
+# Correcto: primero la sentencia, luego usar la variable
+x = 10
+print(x)   # 10`} />
+
+## El valor de retorno de print()
+
+`print()` es una función que produce un efecto (mostrar texto en pantalla) pero no devuelve un valor útil. Si se intenta usar su resultado como si fuera un valor, se obtiene `None`:
+
+<CodeRunner language="python" title="print() devuelve None" initialCode={`resultado = print("Hola")
+print(resultado)          # None
+
+# Error frecuente: encadenar print() como si devolviera el texto
+# print(print("Hola"))    # muestra "Hola" y luego "None"`} />
+
+> Las funciones que producen un efecto pero devuelven `None` se llaman **funciones nulas**. Las funciones que devuelven un valor útil se llaman **funciones productivas**. Esta distinción se desarrolla en detalle en el Capítulo 3.
+
+## Cuándo Python evalúa una expresión
+
+Python evalúa una expresión en el momento en que la necesita. En una asignación, el lado derecho se evalúa completamente antes de asignarse:
+
+<CodeRunner language="python" title="Orden de evaluación" initialCode={`x = 5
+y = x * 2 + 1   # Python evalúa x * 2 → 10, luego 10 + 1 → 11
+print(y)         # 11
+
+# El valor de x en el momento de la evaluación es lo que importa
+x = 100
+print(y)   # sigue siendo 11, no se recalcula automáticamente`} />
+
+> Una variable no recuerda la expresión con la que se calculó, solo el valor resultante. Si `x` cambia después de asignar `y`, `y` no se actualiza.
+
+## Sentencias en varias líneas
+
+Por defecto, una sentencia ocupa una línea. Python permite dividirla en varias líneas de dos formas:
+
+<CodeRunner language="python" title="Sentencias en varias líneas" initialCode={`# Con barra invertida
+total = 100 + 200 + \
+        300 + 400
+print(total)   # 1000
+
+# Con paréntesis abiertos (forma recomendada)
+total = (
+    100 + 200 +
+    300 + 400
+)
+print(total)   # 1000`} />
+
+> La forma con paréntesis es preferible porque no falla si hay un espacio accidental después de la barra invertida.
+
+## == vs =
+
+El operador `=` asigna un valor a una variable. El operador `==` compara dos valores y produce un resultado booleano. Son instrucciones completamente distintas:
+
+<CodeRunner language="python" title="Asignación vs comparación" initialCode={`x = 10          # sentencia: asigna 10 a x
+print(x == 10)  # expresión: compara x con 10 → True
+print(x == 5)   # expresión: compara x con 5  → False`} />
+
+Confundir uno con otro es uno de los errores más frecuentes en Python:
+
+<CodeRunner language="python" title="Error frecuente: = donde se espera ==" initialCode={`x = 10
+
+# Intentar asignar dentro de una condición produce SyntaxError:
+# if x = 10:
+#     print("es diez")
+
+# Correcto: usar == para comparar
+if x == 10:
+    print("es diez")`} />
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Concepto</th>
+      <th>Descripción</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Expresión</td>
+      <td>Produce un valor al evaluarse</td>
+      <td><code>2 + 3</code>, <code>abs(-5)</code>, <code>x > 0</code></td>
+    </tr>
+    <tr>
+      <td>Sentencia</td>
+      <td>Ejecuta una acción, no produce un valor usable</td>
+      <td><code>x = 10</code>, <code>x += 1</code></td>
+    </tr>
+    <tr>
+      <td>Expresión compuesta</td>
+      <td>Expresión que contiene otras expresiones</td>
+      <td><code>abs(-5) + 10</code></td>
+    </tr>
+    <tr>
+      <td>Función productiva</td>
+      <td>Devuelve un valor útil</td>
+      <td><code>abs()</code>, <code>round()</code>, <code>type()</code></td>
+    </tr>
+    <tr>
+      <td>Función nula</td>
+      <td>Produce un efecto, devuelve <code>None</code></td>
+      <td><code>print()</code></td>
+    </tr>
+    <tr>
+      <td><code>=</code></td>
+      <td>Asignación: vincula un nombre a un valor</td>
+      <td><code>x = 10</code></td>
+    </tr>
+    <tr>
+      <td><code>==</code></td>
+      <td>Comparación: comprueba si dos valores son iguales</td>
+      <td><code>x == 10</code> → <code>True</code></td>
+    </tr>
+    <tr>
+      <td>Línea múltiple</td>
+      <td>Divide una sentencia larga en varias líneas</td>
+      <td><code>(100 +</code> / <code>200)</code></td>
+    </tr>
+  </tbody>
+</table>

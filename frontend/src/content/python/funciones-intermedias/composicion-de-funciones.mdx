@@ -1,0 +1,160 @@
+# 4.1 Composición de funciones
+
+La **composición de funciones** consiste en usar el resultado de una función como entrada de otra. Es una técnica fundamental que permite construir operaciones complejas combinando funciones simples, manteniendo el código legible y modular.
+
+---
+
+## Expresiones como argumentos
+
+Cualquier expresión válida puede usarse como argumento de una función. Python evalúa la expresión **primero** y pasa el resultado:
+
+<CodeRunner language="python" title="Expresiones como argumentos" initialCode={`# El argumento puede ser una operación aritmética
+print(abs(3 - 10))          # 7
+
+# O una comparación
+print(str(10 > 5))          # "True"
+
+# O una expresión más compleja
+precio = 49.99
+print(round(precio * 1.21, 2))   # 60.49`} />
+
+Cuando una función aparece como argumento de otra, Python evalúa **de dentro hacia fuera**:
+
+<CodeRunner language="python" title="Evaluación de dentro hacia fuera" initialCode={`# Paso a paso:
+# 1. abs(-8)    → 8
+# 2. float(8)   → 8.0
+# 3. str(8.0)   → "8.0"
+resultado = str(float(abs(-8)))
+print(resultado)        # "8.0"
+print(type(resultado))  # <class 'str'>`} />
+
+---
+
+## Funciones como argumentos
+
+En Python, las funciones son **objetos de primera clase**: pueden asignarse a variables, almacenarse en listas y, lo más importante para la composición, **pasarse como argumentos** a otras funciones:
+
+<CodeRunner language="python" title="Pasar funciones como argumentos" initialCode={`def aplicar(funcion, valor):
+    """Aplica una función a un valor y muestra el resultado."""
+    resultado = funcion(valor)
+    print(f"{funcion.__name__}({valor}) = {resultado}")
+    return resultado
+
+# Pasamos funciones integradas como argumentos
+aplicar(abs, -7)
+aplicar(len, "Python")
+aplicar(type, 42)`} />
+
+<CodeRunner language="python" title="Funciones propias como argumentos" initialCode={`def doble(n):
+    return n * 2
+
+def cuadrado(n):
+    return n ** 2
+
+def negativo(n):
+    return -n
+
+def aplicar_a_lista(funcion, lista):
+    """Aplica una función a cada elemento de la lista."""
+    return [funcion(x) for x in lista]
+
+numeros = [1, 2, 3, 4, 5]
+print(aplicar_a_lista(doble, numeros))      # [2, 4, 6, 8, 10]
+print(aplicar_a_lista(cuadrado, numeros))   # [1, 4, 9, 16, 25]
+print(aplicar_a_lista(negativo, numeros))   # [-1, -2, -3, -4, -5]`} />
+
+> Al pasar una función como argumento, se escribe **sin paréntesis**: `doble` es la referencia a la función; `doble()` la ejecutaría inmediatamente.
+
+<CodeRunner language="python" title="Composición con map()" initialCode={`# map() aplica una función a cada elemento de un iterable
+numeros = [1, -3, 5, -7, 9]
+
+# Aplicar abs() a cada elemento
+positivos = list(map(abs, numeros))
+print(positivos)   # [1, 3, 5, 7, 9]
+
+# Aplicar str() a cada elemento
+textos = list(map(str, numeros))
+print(textos)      # ['1', '-3', '5', '-7', '9']`} />
+
+---
+
+## Cuándo componer vs separar
+
+La composición hace el código más conciso, pero en exceso lo hace ilegible. Estas guías ayudan a decidir:
+
+### ✅ Componer cuando la operación es clara en una línea
+
+<CodeRunner language="python" title="Composición clara" initialCode={`precios = [29.99, 15.50, 42.00]
+
+# ✅ Claro: la intención se entiende de un vistazo
+total = round(sum(precios), 2)
+print(f"Total: {total}€")
+
+# ✅ Claro: convertir y formatear
+edad = 25
+mensaje = "Edad: " + str(edad)
+print(mensaje)`} />
+
+### ❌ Separar cuando la composición es difícil de leer
+
+<CodeRunner language="python" title="Composición excesiva vs separada" initialCode={`import math
+
+# ❌ Demasiada composición: difícil de seguir
+resultado = str(round(math.sqrt(abs(int("-144"))), 2))
+print(resultado)
+
+# ✅ Separado: cada paso es claro
+texto = "-144"
+numero = int(texto)
+positivo = abs(numero)
+raiz = math.sqrt(positivo)
+resultado = str(round(raiz, 2))
+print(resultado)`} />
+
+### Regla práctica
+
+<table>
+  <thead>
+    <tr>
+      <th>Situación</th>
+      <th>Recomendación</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2 funciones anidadas</td>
+      <td>✅ Componer</td>
+      <td><code>str(abs(-5))</code></td>
+    </tr>
+    <tr>
+      <td>3 funciones anidadas</td>
+      <td>⚠️ Depende de la claridad</td>
+      <td><code>round(sum(precios), 2)</code></td>
+    </tr>
+    <tr>
+      <td>4+ funciones anidadas</td>
+      <td>❌ Separar en variables</td>
+      <td>Usar variables intermedias</td>
+    </tr>
+    <tr>
+      <td>Funciones con varios argumentos</td>
+      <td>❌ Separar</td>
+      <td>Difícil ver qué argumento va a cuál</td>
+    </tr>
+  </tbody>
+</table>
+
+<CodeRunner language="python" title="Ejemplo equilibrado" initialCode={`def procesar_pedido(precios, descuento_pct=0):
+    # Separar los pasos complejos
+    subtotal = sum(precios)
+    descuento = subtotal * (descuento_pct / 100)
+    
+    # Componer los pasos simples
+    total = round(subtotal - descuento, 2)
+    
+    return total
+
+precios = [29.99, 15.50, 42.00, 8.75]
+print(f"Sin descuento:  {procesar_pedido(precios)}€")
+print(f"Con 10% dto:    {procesar_pedido(precios, 10)}€")`} />

@@ -1,0 +1,85 @@
+# 1.2 Ejecutar Python
+
+Python ofrece dos modos de ejecución con comportamientos distintos. La elección entre uno y otro depende del contexto de uso y afecta directamente a cómo se evalúan y muestran los resultados.
+
+## Dos modos de ejecución
+
+<table>
+  <thead>
+    <tr>
+      <th>Modo</th>
+      <th>Descripción</th>
+      <th>Uso habitual</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Interactivo (REPL)</strong></td>
+      <td>Evalúa cada expresión de forma inmediata y muestra el resultado</td>
+      <td>Exploración, pruebas rápidas, depuración</td>
+    </tr>
+    <tr>
+      <td><strong>Script</strong></td>
+      <td>Ejecuta secuencialmente un archivo <code>.py</code> completo</td>
+      <td>Programas completos, código reutilizable</td>
+    </tr>
+  </tbody>
+</table>
+
+## Modo interactivo: el REPL
+
+REPL son las siglas de **Read-Eval-Print Loop**: el intérprete lee una expresión, la evalúa, imprime el resultado y repite el ciclo. Cada expresión introducida produce una salida inmediata sin necesidad de `print()`:
+```
+>>> 2 + 2
+4
+>>> "Hola" + " mundo"
+'Hola mundo'
+>>> type(3.14)
+<class 'float'>
+```
+
+## Modo script
+
+Un script es un archivo de texto con extensión `.py` que contiene un programa completo. El intérprete lo procesa de forma secuencial, ejecutando cada instrucción de arriba a abajo. Para ejecutarlo desde la terminal:
+```
+python3 mi_programa.py
+```
+
+En modo script, únicamente las expresiones pasadas a `print()` producen salida. Las expresiones no envueltas en `print()` se evalúan pero no generan ninguna salida visible:
+
+<CodeRunner language="python" title="Salida de expresiones en modo script" initialCode={`# En el REPL, esta expresión produce salida automáticamente:
+# >>> 2 + 2
+# 4
+
+# En modo script, la expresión se evalúa sin producir salida:
+2 + 2
+
+# La salida requiere el uso explícito de print():
+print(2 + 2)   # 4`} />
+
+Este comportamiento difiere del REPL, donde toda expresión evaluada produce salida de forma automática.
+
+## Verificar la versión de Python
+
+Para comprobar la versión activa desde la terminal:
+```
+python3 --version
+```
+
+Desde el propio intérprete, el módulo `sys` expone información detallada sobre la versión en ejecución:
+
+<CodeRunner language="python" title="Verificar versión desde el intérprete" initialCode={`import sys
+
+print("Versión:", sys.version)
+print("Versión principal:", sys.version_info.major)   # devuelve 3 en Python 3.x`} />
+
+## Errores al ejecutar
+
+El error más inmediato al iniciar Python es que el comando no se reconozca:
+```
+command not found: python3
+```
+
+Esto indica que el ejecutable no está registrado en el PATH del sistema. La solución es verificar la instalación o usar el comando correcto para la plataforma.
+
+> Los errores más frecuentes durante la ejecución de programas —errores de sintaxis, de ejecución y semánticos— se tratan en detalle en la sección **1.7 Depuración**.

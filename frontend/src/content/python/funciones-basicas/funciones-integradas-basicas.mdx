@@ -1,0 +1,365 @@
+# 3.6 Funciones integradas básicas (uso diario)
+
+Python incluye un conjunto de funciones que están disponibles sin importar ningún módulo. Estas **funciones integradas** (*built-in functions*) cubren las operaciones más habituales: medir, convertir, calcular y comparar datos. Dominarlas es la base para escribir código eficiente.
+
+---
+
+## Medición y tipo
+
+### len()
+
+Devuelve el número de elementos de un objeto: caracteres en una cadena, elementos en una lista, claves en un diccionario:
+
+<CodeRunner language="python" title="len() — medir longitud" initialCode={`# Cadenas: cuenta caracteres
+print(len("Python"))         # 6
+print(len(""))               # 0
+
+# Listas: cuenta elementos
+print(len([10, 20, 30]))     # 3
+
+# Diccionarios: cuenta claves
+print(len({"a": 1, "b": 2}))  # 2
+
+# Tuplas
+print(len((1, 2, 3, 4)))    # 4`} />
+
+### type()
+
+Devuelve el tipo del objeto. Es fundamental para depuración y validación:
+
+<CodeRunner language="python" title="type() — inspeccionar tipos" initialCode={`print(type(42))          # <class 'int'>
+print(type(3.14))        # <class 'float'>
+print(type("Hola"))      # <class 'str'>
+print(type(True))        # <class 'bool'>
+print(type([1, 2, 3]))   # <class 'list'>
+print(type(None))        # <class 'NoneType'>
+
+# Útil para verificar tipos en condicionales
+valor = "123"
+if type(valor) == str:
+    print(f"'{valor}' es una cadena, no un número")`} />
+
+---
+
+## Matemáticas básicas
+
+### abs()
+
+Devuelve el valor absoluto de un número (su distancia a cero, siempre positiva):
+
+<CodeRunner language="python" title="abs() — valor absoluto" initialCode={`print(abs(-7))       # 7
+print(abs(7))        # 7
+print(abs(-3.14))    # 3.14
+print(abs(0))        # 0
+
+# Ejemplo práctico: diferencia entre dos valores sin importar el orden
+temperatura_esperada = 22
+temperatura_real = 19
+diferencia = abs(temperatura_esperada - temperatura_real)
+print(f"Desviación: {diferencia}°C")`} />
+
+### round()
+
+Redondea un número al número de decimales indicado. Sin segundo argumento, redondea al entero más cercano:
+
+<CodeRunner language="python" title="round() — redondear" initialCode={`# Sin decimales: redondea al entero
+print(round(3.7))       # 4
+print(round(3.2))       # 3
+
+# Con decimales
+print(round(3.14159, 2))    # 3.14
+print(round(3.14159, 4))    # 3.1416
+
+# Redondeo bancario: .5 redondea al par más cercano
+print(round(2.5))       # 2
+print(round(3.5))       # 4
+print(round(4.5))       # 4`} />
+
+> Python usa **redondeo bancario** (*banker's rounding*): cuando el valor está exactamente a mitad de camino (`.5`), redondea al número **par** más cercano. Esto minimiza el sesgo acumulado en cálculos financieros.
+
+### pow()
+
+Eleva una base a un exponente. Con tres argumentos, calcula `base ** exp % mod` de forma eficiente:
+
+<CodeRunner language="python" title="pow() — potencia" initialCode={`# Dos argumentos: base ** exponente
+print(pow(2, 8))      # 256
+print(pow(3, 3))      # 27
+print(pow(10, -2))    # 0.01
+
+# Equivalente al operador **
+print(2 ** 8)         # 256
+
+# Tres argumentos: (base ** exp) % mod
+# Útil en criptografía y aritmética modular
+print(pow(2, 10, 100))    # (1024) % 100 = 24`} />
+
+### divmod()
+
+Devuelve el cociente y el resto de una división en una sola operación, como tupla:
+
+<CodeRunner language="python" title="divmod() — cociente y resto" initialCode={`# divmod(a, b) → (a // b, a % b)
+print(divmod(17, 5))     # (3, 2)
+print(divmod(100, 7))    # (14, 2)
+
+# Ejemplo práctico: convertir segundos a minutos y segundos
+segundos_totales = 754
+minutos, segundos = divmod(segundos_totales, 60)
+print(f"{segundos_totales}s = {minutos}min {segundos}s")
+
+# Ejemplo: convertir minutos a horas y minutos
+total_min = 185
+horas, mins = divmod(total_min, 60)
+print(f"{total_min} minutos = {horas}h {mins}min")`} />
+
+---
+
+## Operaciones sobre colecciones
+
+### sum()
+
+Suma todos los elementos de un iterable. Acepta un valor inicial opcional como segundo argumento:
+
+<CodeRunner language="python" title="sum() — sumar elementos" initialCode={`precios = [29.99, 15.50, 42.00, 8.75]
+
+print(sum(precios))          # 96.24
+
+# Con valor inicial (por ejemplo, gastos de envío)
+print(sum(precios, 5))       # 101.24
+
+# Funciona con cualquier iterable de números
+print(sum(range(1, 101)))    # 5050 (suma de 1 a 100)`} />
+
+### min() / max()
+
+Devuelven el menor y el mayor elemento respectivamente. Funcionan con cualquier número de argumentos o con un iterable:
+
+<CodeRunner language="python" title="min() y max()" initialCode={`# Con argumentos individuales
+print(min(3, 1, 4, 1, 5))    # 1
+print(max(3, 1, 4, 1, 5))    # 5
+
+# Con una lista
+temperaturas = [18, 22, 15, 28, 20]
+print(f"Mínima: {min(temperaturas)}°C")
+print(f"Máxima: {max(temperaturas)}°C")
+
+# Con cadenas (orden alfabético)
+print(min("banana", "apple", "cherry"))   # apple
+print(max("banana", "apple", "cherry"))   # cherry`} />
+
+---
+
+## Conversión de tipos
+
+### int()
+
+Convierte un valor a entero. Trunca los decimales en floats y convierte cadenas numéricas:
+
+<CodeRunner language="python" title="int() — convertir a entero" initialCode={`# Desde float: trunca (no redondea)
+print(int(3.9))      # 3
+print(int(-3.9))     # -3
+
+# Desde cadena numérica
+print(int("42"))     # 42
+
+# Desde booleano
+print(int(True))     # 1
+print(int(False))    # 0
+
+# ❌ No funciona con cadenas no numéricas
+try:
+    int("abc")
+except ValueError as e:
+    print(f"ValueError: {e}")
+
+# ❌ No funciona con cadenas decimales
+try:
+    int("3.14")
+except ValueError as e:
+    print(f"ValueError: {e}")`} />
+
+### float()
+
+Convierte un valor a número de punto flotante:
+
+<CodeRunner language="python" title="float() — convertir a decimal" initialCode={`# Desde entero
+print(float(42))       # 42.0
+
+# Desde cadena
+print(float("3.14"))   # 3.14
+print(float("42"))     # 42.0
+
+# Valores especiales
+print(float("inf"))    # inf
+print(float("-inf"))   # -inf
+
+# ❌ No funciona con cadenas no numéricas
+try:
+    float("abc")
+except ValueError as e:
+    print(f"ValueError: {e}")`} />
+
+### str()
+
+Convierte cualquier valor a su representación como cadena de texto:
+
+<CodeRunner language="python" title="str() — convertir a cadena" initialCode={`print(str(42))         # "42"
+print(str(3.14))       # "3.14"
+print(str(True))       # "True"
+print(str(None))       # "None"
+print(str([1, 2, 3]))  # "[1, 2, 3]"
+
+# Útil para concatenar números con texto
+edad = 25
+mensaje = "Tengo " + str(edad) + " años"
+print(mensaje)
+
+# Aunque las f-strings son más prácticas
+print(f"Tengo {edad} años")`} />
+
+---
+
+## Casos de uso
+
+### Validación de datos
+
+<CodeRunner language="python" title="Validación de datos de entrada" initialCode={`def validar_nombre(nombre):
+    if type(nombre) != str:
+        return "Error: el nombre debe ser texto"
+    if len(nombre) == 0:
+        return "Error: el nombre no puede estar vacío"
+    if len(nombre) > 50:
+        return "Error: el nombre es demasiado largo"
+    return f"Nombre válido: {nombre}"
+
+print(validar_nombre("Ana"))
+print(validar_nombre(""))
+print(validar_nombre(123))
+print(validar_nombre("A" * 60))`} />
+
+### Conteo de elementos
+
+<CodeRunner language="python" title="Conteo y análisis de datos" initialCode={`alumnos = ["Ana", "Carlos", "Lucía", "Pedro", "María"]
+notas = [8.5, 6.2, 9.1, 4.8, 7.3]
+
+print(f"Total alumnos: {len(alumnos)}")
+print(f"Nota más alta: {max(notas)}")
+print(f"Nota más baja: {min(notas)}")
+print(f"Media: {round(sum(notas) / len(notas), 2)}")
+
+# Contar aprobados
+aprobados = [n for n in notas if n >= 5]
+print(f"Aprobados: {len(aprobados)} de {len(notas)}")`} />
+
+### Cálculos financieros
+
+<CodeRunner language="python" title="Cálculos financieros" initialCode={`def resumen_compra(precios, descuento=0, iva=21):
+    subtotal = sum(precios)
+    ahorro = round(subtotal * descuento / 100, 2)
+    base = subtotal - ahorro
+    impuesto = round(base * iva / 100, 2)
+    total = round(base + impuesto, 2)
+    
+    print(f"Artículos:  {len(precios)}")
+    print(f"Subtotal:   {subtotal}€")
+    if descuento > 0:
+        print(f"Descuento:  -{ahorro}€ ({descuento}%)")
+    print(f"IVA ({iva}%):   {impuesto}€")
+    print(f"Total:      {total}€")
+
+precios = [29.99, 15.50, 42.00, 8.75]
+resumen_compra(precios, descuento=10)`} />
+
+### Comparaciones
+
+<CodeRunner language="python" title="Comparaciones y análisis" initialCode={`def comparar_rendimiento(equipo_a, equipo_b):
+    print(f"Equipo A — puntos: {sum(equipo_a)}, "
+          f"mejor: {max(equipo_a)}, peor: {min(equipo_a)}, "
+          f"media: {round(sum(equipo_a) / len(equipo_a), 1)}")
+    
+    print(f"Equipo B — puntos: {sum(equipo_b)}, "
+          f"mejor: {max(equipo_b)}, peor: {min(equipo_b)}, "
+          f"media: {round(sum(equipo_b) / len(equipo_b), 1)}")
+    
+    diff = abs(sum(equipo_a) - sum(equipo_b))
+    ganador = "Equipo A" if sum(equipo_a) > sum(equipo_b) else "Equipo B"
+    print(f"Ganador: {ganador} por {diff} puntos")
+
+equipo_a = [12, 8, 15, 10, 7]
+equipo_b = [9, 14, 11, 8, 13]
+comparar_rendimiento(equipo_a, equipo_b)`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Función</th>
+      <th>Descripción</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>len(x)</code></td>
+      <td>Número de elementos</td>
+      <td><code>len("abc") → 3</code></td>
+    </tr>
+    <tr>
+      <td><code>type(x)</code></td>
+      <td>Tipo del objeto</td>
+      <td><code>type(42) → int</code></td>
+    </tr>
+    <tr>
+      <td><code>abs(x)</code></td>
+      <td>Valor absoluto</td>
+      <td><code>abs(-7) → 7</code></td>
+    </tr>
+    <tr>
+      <td><code>round(x, n)</code></td>
+      <td>Redondear a <em>n</em> decimales</td>
+      <td><code>round(3.14159, 2) → 3.14</code></td>
+    </tr>
+    <tr>
+      <td><code>pow(b, e)</code></td>
+      <td>Potencia b<sup>e</sup></td>
+      <td><code>pow(2, 8) → 256</code></td>
+    </tr>
+    <tr>
+      <td><code>divmod(a, b)</code></td>
+      <td>Cociente y resto</td>
+      <td><code>divmod(17, 5) → (3, 2)</code></td>
+    </tr>
+    <tr>
+      <td><code>sum(iter)</code></td>
+      <td>Suma de elementos</td>
+      <td><code>sum([1, 2, 3]) → 6</code></td>
+    </tr>
+    <tr>
+      <td><code>min(iter)</code></td>
+      <td>Menor elemento</td>
+      <td><code>min(3, 1, 4) → 1</code></td>
+    </tr>
+    <tr>
+      <td><code>max(iter)</code></td>
+      <td>Mayor elemento</td>
+      <td><code>max(3, 1, 4) → 4</code></td>
+    </tr>
+    <tr>
+      <td><code>int(x)</code></td>
+      <td>Convertir a entero</td>
+      <td><code>int("42") → 42</code></td>
+    </tr>
+    <tr>
+      <td><code>float(x)</code></td>
+      <td>Convertir a decimal</td>
+      <td><code>float("3.14") → 3.14</code></td>
+    </tr>
+    <tr>
+      <td><code>str(x)</code></td>
+      <td>Convertir a cadena</td>
+      <td><code>str(42) → "42"</code></td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,128 @@
+# 4.8 Funciones adicionales
+
+Python incluye funciones integradas que, aunque no se usen a diario, son fundamentales para entender cómo funcionan internamente estructuras como diccionarios y conjuntos.
+
+---
+
+## hash()
+
+La función `hash()` devuelve un **valor entero** que representa de forma única a un objeto. Este valor es utilizado internamente por Python para almacenar y buscar elementos en **diccionarios** y **conjuntos** de forma eficiente.
+
+<CodeRunner language="python" title="hash() básico" initialCode={`# Los tipos inmutables tienen hash
+print(hash(42))            # 42
+print(hash(3.14))          # un entero grande
+print(hash("Python"))      # un entero grande
+print(hash(True))          # 1
+print(hash((1, 2, 3)))     # un entero grande
+
+# El hash es consistente dentro de la misma ejecución
+print(hash("hola") == hash("hola"))   # True`} />
+
+### Objetos hashables vs no hashables
+
+Solo los objetos **inmutables** son hashables. Los objetos mutables (listas, diccionarios, conjuntos) no tienen hash:
+
+<CodeRunner language="python" title="Hashable vs no hashable" initialCode={`# ✅ Hashables (inmutables)
+print(f"int:    {hash(42)}")
+print(f"str:    {hash('abc')}")
+print(f"tuple:  {hash((1, 2))}")
+print(f"bool:   {hash(True)}")
+print(f"float:  {hash(2.5)}")
+print(f"None:   {hash(None)}")
+
+print()
+
+# ❌ No hashables (mutables)
+for obj, nombre in [([1,2], "list"), ({"a":1}, "dict"), ({1,2}, "set")]:
+    try:
+        hash(obj)
+    except TypeError as e:
+        print(f"{nombre}: TypeError — {e}")`} />
+
+### ¿Por qué importa?
+
+Los diccionarios y conjuntos usan el hash para buscar elementos en tiempo constante (O(1)):
+
+<CodeRunner language="python" title="hash() y diccionarios" initialCode={`# Las claves de un diccionario DEBEN ser hashables
+diccionario = {
+    "nombre": "Ana",    # ✅ str es hashable
+    42: "respuesta",    # ✅ int es hashable
+    (1, 2): "coord",    # ✅ tuple es hashable
+}
+
+for clave, valor in diccionario.items():
+    print(f"  {clave} (hash: {hash(clave)}) → {valor}")
+
+# ❌ Una lista no puede ser clave
+try:
+    malo = {[1, 2]: "valor"}
+except TypeError as e:
+    print(f"\\nTypeError: {e}")`} />
+
+<CodeRunner language="python" title="hash() y conjuntos" initialCode={`# Los conjuntos solo aceptan elementos hashables
+mi_set = {1, "hola", (1, 2), True}
+print(f"Conjunto: {mi_set}")
+
+# ❌ No se puede meter una lista en un conjunto
+try:
+    malo = {[1, 2, 3]}
+except TypeError as e:
+    print(f"TypeError: {e}")
+
+# ✅ Se puede usar frozenset (inmutable)
+conjunto_inmutable = frozenset([1, 2, 3])
+print(f"hash(frozenset): {hash(conjunto_inmutable)}")`} />
+
+### Objetos con el mismo valor, mismo hash
+
+<CodeRunner language="python" title="Igualdad y hash" initialCode={`# Objetos iguales SIEMPRE tienen el mismo hash
+print(hash(1) == hash(1.0) == hash(True))   # True
+
+# Porque en Python: 1 == 1.0 == True
+print(1 == 1.0 == True)   # True
+
+# Objetos distintos GENERALMENTE tienen hash diferente
+print(hash("abc"))
+print(hash("abd"))
+print(hash("abc") == hash("abd"))   # False (casi seguro)`} />
+
+> **Regla fundamental**: si dos objetos son iguales (`a == b`), sus hashes **deben** ser iguales (`hash(a) == hash(b)`). El inverso no siempre se cumple: dos hashes iguales no garantizan objetos iguales (colisión de hash).
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Concepto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>hash(obj)</code></td>
+      <td>Devuelve el hash entero del objeto</td>
+    </tr>
+    <tr>
+      <td>Hashable</td>
+      <td>Objeto inmutable: <code>int</code>, <code>str</code>, <code>tuple</code>, <code>float</code>, <code>bool</code>, <code>None</code>, <code>frozenset</code></td>
+    </tr>
+    <tr>
+      <td>No hashable</td>
+      <td>Objeto mutable: <code>list</code>, <code>dict</code>, <code>set</code></td>
+    </tr>
+    <tr>
+      <td>Uso en diccionarios</td>
+      <td>Las claves deben ser hashables</td>
+    </tr>
+    <tr>
+      <td>Uso en conjuntos</td>
+      <td>Los elementos deben ser hashables</td>
+    </tr>
+    <tr>
+      <td>Igualdad → hash</td>
+      <td><code>a == b</code> implica <code>hash(a) == hash(b)</code></td>
+    </tr>
+  </tbody>
+</table>

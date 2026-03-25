@@ -1,0 +1,216 @@
+# 5.2 Funciones anidadas y closures
+
+Python permite definir funciones **dentro** de otras funciones. Estas funciones internas pueden acceder a las variables de la función que las contiene, creando un mecanismo poderoso llamado **closure**.
+
+---
+
+## Funciones dentro de funciones
+
+Una función definida dentro de otra solo existe dentro del ámbito de la función contenedora. No es accesible desde fuera:
+
+<CodeRunner language="python" title="Funciones anidadas" initialCode={`def operacion_compleja(x, y):
+    def sumar():
+        return x + y
+    
+    def multiplicar():
+        return x * y
+    
+    # Las funciones internas se usan dentro de la contenedora
+    print(f"{x} + {y} = {sumar()}")
+    print(f"{x} × {y} = {multiplicar()}")
+
+operacion_compleja(5, 3)
+
+# ❌ Las funciones internas no existen fuera
+try:
+    sumar()
+except NameError as e:
+    print(f"NameError: {e}")`} />
+
+<CodeRunner language="python" title="Funciones anidadas para organizar lógica" initialCode={`def generar_informe(ventas):
+    """Genera un informe de ventas organizado con funciones internas."""
+    
+    def calcular_total():
+        return sum(ventas)
+    
+    def calcular_promedio():
+        return round(calcular_total() / len(ventas), 2)
+    
+    def mejor_venta():
+        return max(ventas)
+    
+    def peor_venta():
+        return min(ventas)
+    
+    print("═" * 30)
+    print("  INFORME DE VENTAS")
+    print("═" * 30)
+    print(f"  Ventas:   {len(ventas)}")
+    print(f"  Total:    {calcular_total()}€")
+    print(f"  Promedio: {calcular_promedio()}€")
+    print(f"  Mejor:    {mejor_venta()}€")
+    print(f"  Peor:     {peor_venta()}€")
+    print("═" * 30)
+
+generar_informe([150, 230, 80, 340, 190])`} />
+
+---
+
+## Captura de variables
+
+Lo más interesante de las funciones anidadas es que **capturan** las variables de la función contenedora. Esto se llama **closure**: la función interna "recuerda" el entorno donde fue creada, incluso después de que la función contenedora haya terminado:
+
+<CodeRunner language="python" title="Closure: captura de variables" initialCode={`def crear_contador(inicio=0):
+    """Crea una función que cuenta desde 'inicio'."""
+    cuenta = [inicio]   # lista para poder modificar desde el closure
+    
+    def contar():
+        cuenta[0] += 1
+        return cuenta[0]
+    
+    return contar
+
+# La función 'contar' recuerda su propia 'cuenta'
+contador_a = crear_contador(0)
+contador_b = crear_contador(100)
+
+print(contador_a())   # 1
+print(contador_a())   # 2
+print(contador_a())   # 3
+
+print(contador_b())   # 101
+print(contador_b())   # 102`} />
+
+<CodeRunner language="python" title="Closure con nonlocal" initialCode={`def crear_acumulador(inicio=0):
+    """Crea una función que acumula valores."""
+    total = inicio
+    
+    def agregar(valor):
+        nonlocal total   # permite modificar 'total' del closure
+        total += valor
+        return total
+    
+    return agregar
+
+cuenta = crear_acumulador()
+print(cuenta(10))    # 10
+print(cuenta(25))    # 35
+print(cuenta(5))     # 40
+
+# Cada acumulador es independiente
+otra_cuenta = crear_acumulador(100)
+print(otra_cuenta(50))   # 150`} />
+
+> La palabra clave `nonlocal` permite que una función anidada **modifique** una variable de la función contenedora. Sin `nonlocal`, solo puede leerla.
+
+<CodeRunner language="python" title="Closure: la función recuerda su entorno" initialCode={`def crear_formateador(moneda, decimales):
+    """Crea un formateador de precios con moneda fija."""
+    def formatear(precio):
+        return f"{round(precio, decimales)}{moneda}"
+    return formatear
+
+# Cada formateador recuerda su moneda y decimales
+formato_eur = crear_formateador("€", 2)
+formato_usd = crear_formateador("$", 2)
+formato_jpy = crear_formateador("¥", 0)
+
+precios = [29.999, 150.5, 1234.567]
+for p in precios:
+    print(f"  EUR: {formato_eur(p)}  USD: {formato_usd(p)}  JPY: {formato_jpy(p)}")`} />
+
+---
+
+## Generadores de funciones
+
+Los closures permiten crear **fábricas de funciones**: funciones que generan funciones especializadas según los parámetros recibidos:
+
+<CodeRunner language="python" title="Fábrica de funciones matemáticas" initialCode={`def crear_potencia(exponente):
+    """Crea una función que eleva a un exponente fijo."""
+    def potencia(base):
+        return base ** exponente
+    return potencia
+
+cuadrado = crear_potencia(2)
+cubo = crear_potencia(3)
+raiz_cuadrada = crear_potencia(0.5)
+
+print(cuadrado(5))          # 25
+print(cubo(3))              # 27
+print(raiz_cuadrada(16))    # 4.0
+
+# Se pueden usar en listas
+numeros = [2, 3, 4, 5]
+print(list(map(cuadrado, numeros)))   # [4, 9, 16, 25]
+print(list(map(cubo, numeros)))       # [8, 27, 64, 125]`} />
+
+<CodeRunner language="python" title="Fábrica de filtros" initialCode={`def crear_filtro_rango(minimo, maximo):
+    """Crea una función que filtra valores fuera de rango."""
+    def filtrar(valor):
+        return minimo <= valor <= maximo
+    return filtrar
+
+# Filtros especializados
+filtro_nota = crear_filtro_rango(0, 10)
+filtro_edad = crear_filtro_rango(18, 65)
+filtro_temp = crear_filtro_rango(-10, 45)
+
+edades = [15, 22, 67, 8, 45, 30, 70]
+edades_validas = list(filter(filtro_edad, edades))
+print(f"Edades válidas (18-65): {edades_validas}")
+
+notas = [11, 7.5, -2, 9, 10, 15, 3]
+notas_validas = list(filter(filtro_nota, notas))
+print(f"Notas válidas (0-10): {notas_validas}")`} />
+
+<CodeRunner language="python" title="Fábrica de decoradores de texto" initialCode={`def crear_decorador(prefijo, sufijo):
+    """Crea una función que decora texto con prefijo y sufijo."""
+    def decorar(texto):
+        return f"{prefijo}{texto}{sufijo}"
+    return decorar
+
+negrita = crear_decorador("**", "**")
+cursiva = crear_decorador("_", "_")
+alerta = crear_decorador("⚠️ ", " ⚠️")
+exito = crear_decorador("✅ ", "")
+
+print(negrita("importante"))
+print(cursiva("énfasis"))
+print(alerta("cuidado"))
+print(exito("completado"))`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Concepto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Función anidada</strong></td>
+      <td>Función definida dentro de otra función</td>
+    </tr>
+    <tr>
+      <td><strong>Closure</strong></td>
+      <td>Función anidada que captura variables de su entorno</td>
+    </tr>
+    <tr>
+      <td><code>nonlocal</code></td>
+      <td>Permite modificar variables del closure (no solo leerlas)</td>
+    </tr>
+    <tr>
+      <td><strong>Fábrica de funciones</strong></td>
+      <td>Función que crea y devuelve funciones especializadas</td>
+    </tr>
+    <tr>
+      <td>Ámbito</td>
+      <td>La función interna no es accesible fuera de la contenedora</td>
+    </tr>
+  </tbody>
+</table>
+
+> Los closures son la base de muchos patrones avanzados en Python, como decoradores, callbacks y programación funcional. Cada función retornada tiene su propio "entorno privado" con las variables capturadas.

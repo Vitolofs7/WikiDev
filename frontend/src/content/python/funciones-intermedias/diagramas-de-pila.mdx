@@ -1,0 +1,240 @@
+# 4.9 Diagramas de pila
+
+Cuando un programa ejecuta funciones, Python mantiene un registro interno de qué función está activa, dónde se pausó la anterior y qué variables existen en cada una. Este registro se visualiza como un **diagrama de pila** (*stack diagram*), una herramienta fundamental para entender y depurar programas.
+
+---
+
+## Marcos
+
+Cada vez que se llama a una función, Python crea un **marco** (*frame*) que contiene:
+
+- El **nombre** de la función
+- Las **variables locales** (incluidos los parámetros)
+- La **línea** donde debe regresar cuando termine
+
+<CodeRunner language="python" title="Variables locales en cada marco" initialCode={`def calcular_iva(precio):
+    tasa = 0.21
+    impuesto = precio * tasa
+    return impuesto
+
+def precio_final(base):
+    iva = calcular_iva(base)
+    total = base + iva
+    return round(total, 2)
+
+resultado = precio_final(100)
+print(f"Precio final: {resultado}€")`} />
+
+El diagrama de pila en el momento en que se ejecuta `calcular_iva` sería:
+
+```
+┌─────────────────────────────────┐
+│ calcular_iva                    │  ← marco superior (activo)
+│   precio = 100                  │
+│   tasa = 0.21                   │
+│   impuesto = 21.0               │
+├─────────────────────────────────┤
+│ precio_final                    │  ← esperando a que calcular_iva termine
+│   base = 100                    │
+│   iva = (pendiente)             │
+├─────────────────────────────────┤
+│ __main__                        │  ← programa principal
+│   resultado = (pendiente)       │
+└─────────────────────────────────┘
+```
+
+---
+
+## Pila de llamadas
+
+La **pila de llamadas** (*call stack*) funciona como una pila de platos: el último marco en entrar es el primero en salir (**LIFO** — Last In, First Out):
+
+<CodeRunner language="python" title="Pila de llamadas en acción" initialCode={`def paso_3():
+    print("      [3] Ejecutando paso_3")
+    print("      [3] Fin paso_3 → se elimina su marco")
+
+def paso_2():
+    print("    [2] Ejecutando paso_2")
+    paso_3()   # se apila el marco de paso_3
+    print("    [2] Vuelve a paso_2 → se elimina su marco")
+
+def paso_1():
+    print("  [1] Ejecutando paso_1")
+    paso_2()   # se apila el marco de paso_2
+    print("  [1] Vuelve a paso_1 → se elimina su marco")
+
+print("[main] Inicio")
+paso_1()       # se apila el marco de paso_1
+print("[main] Fin")`} />
+
+La pila crece y decrece durante la ejecución:
+
+```
+Momento 1: paso_1() se ejecuta     → pila: [__main__, paso_1]
+Momento 2: paso_2() se ejecuta     → pila: [__main__, paso_1, paso_2]
+Momento 3: paso_3() se ejecuta     → pila: [__main__, paso_1, paso_2, paso_3]
+Momento 4: paso_3() termina        → pila: [__main__, paso_1, paso_2]
+Momento 5: paso_2() termina        → pila: [__main__, paso_1]
+Momento 6: paso_1() termina        → pila: [__main__]
+```
+
+<CodeRunner language="python" title="Inspeccionar la pila con inspect" initialCode={`import inspect
+
+def funcion_c():
+    print("Pila de llamadas actual:")
+    for frame_info in inspect.stack():
+        nombre = frame_info.function
+        linea = frame_info.lineno
+        print(f"  → {nombre} (línea {linea})")
+
+def funcion_b():
+    funcion_c()
+
+def funcion_a():
+    funcion_b()
+
+funcion_a()`} />
+
+---
+
+## Traceback
+
+Cuando ocurre un error dentro de funciones anidadas, Python muestra un **traceback**: la lista completa de marcos desde `__main__` hasta el punto del error. Se lee **de arriba abajo** (la llamada más externa primero, el error al final):
+
+<CodeRunner language="python" title="Traceback completo" initialCode={`def dividir(a, b):
+    return a / b
+
+def calcular_promedio(numeros):
+    total = sum(numeros)
+    return dividir(total, len(numeros))
+
+def procesar_datos(datos):
+    return calcular_promedio(datos)
+
+# Con datos válidos
+print(procesar_datos([10, 20, 30]))   # 20.0
+
+# Con lista vacía → error en dividir()
+try:
+    procesar_datos([])
+except ZeroDivisionError:
+    import traceback
+    traceback.print_exc()`} />
+
+El traceback muestra la **cadena de responsabilidad**:
+
+```
+Traceback (most recent call last):
+  File "...", line X, in <module>        ← __main__ llamó a procesar_datos
+    procesar_datos([])
+  File "...", line X, in procesar_datos  ← procesar_datos llamó a calcular_promedio
+    return calcular_promedio(datos)
+  File "...", line X, in calcular_promedio  ← calcular_promedio llamó a dividir
+    return dividir(total, len(numeros))
+  File "...", line X, in dividir         ← aquí ocurrió el error
+    return a / b
+ZeroDivisionError: division by zero
+```
+
+<CodeRunner language="python" title="Leer un traceback paso a paso" initialCode={`def validar_edad(edad):
+    if edad < 0:
+        raise ValueError(f"Edad negativa: {edad}")
+    return edad
+
+def registrar_usuario(nombre, edad):
+    edad_validada = validar_edad(edad)
+    return {"nombre": nombre, "edad": edad_validada}
+
+def procesar_formulario(datos):
+    return registrar_usuario(datos["nombre"], datos["edad"])
+
+# El traceback muestra exactamente dónde y por qué falló
+try:
+    procesar_formulario({"nombre": "Ana", "edad": -5})
+except ValueError:
+    import traceback
+    traceback.print_exc()`} />
+
+---
+
+## \_\_main\_\_
+
+El marco `__main__` representa el **nivel superior** del programa: el código que no está dentro de ninguna función. Es el punto de partida de la pila de llamadas:
+
+<CodeRunner language="python" title="__main__ — el marco raíz" initialCode={`print(f"Nombre del módulo: {__name__}")   # __main__
+
+def funcion_ejemplo():
+    print(f"Dentro de función: {__name__}")  # sigue siendo __main__
+
+funcion_ejemplo()`} />
+
+<CodeRunner language="python" title="El patrón if __name__" initialCode={`# Este patrón es muy común en Python
+# Permite que un archivo funcione tanto como script como módulo
+
+def saludar(nombre):
+    """Función que puede importarse desde otros módulos."""
+    return f"Hola, {nombre}"
+
+def despedir(nombre):
+    return f"Adiós, {nombre}"
+
+# Este bloque SOLO se ejecuta si el archivo se ejecuta directamente
+# No se ejecuta si se importa como módulo
+if __name__ == "__main__":
+    print(saludar("Ana"))
+    print(despedir("Ana"))
+    print("Este código solo corre cuando ejecutas el archivo directamente")`} />
+
+<CodeRunner language="python" title="Diagrama de pila completo con __main__" initialCode={`def multiplicar(a, b):
+    return a * b
+
+def calcular_area(base, altura):
+    return multiplicar(base, altura)
+
+def describir_rectangulo(base, altura):
+    area = calcular_area(base, altura)
+    perimetro = 2 * (base + altura)
+    print(f"Base: {base}, Altura: {altura}")
+    print(f"Área: {area}")
+    print(f"Perímetro: {perimetro}")
+
+# Desde __main__, comienza la cadena de llamadas:
+# __main__ → describir_rectangulo → calcular_area → multiplicar
+describir_rectangulo(5, 3)`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Concepto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Marco</strong> (<em>frame</em>)</td>
+      <td>Registro con nombre de función, variables locales y línea de retorno</td>
+    </tr>
+    <tr>
+      <td><strong>Pila de llamadas</strong></td>
+      <td>Estructura LIFO que apila marcos con cada llamada</td>
+    </tr>
+    <tr>
+      <td><strong>Traceback</strong></td>
+      <td>Volcado de la pila cuando ocurre un error; se lee de arriba a abajo</td>
+    </tr>
+    <tr>
+      <td><code>__main__</code></td>
+      <td>Marco raíz: el código fuera de cualquier función</td>
+    </tr>
+    <tr>
+      <td><code>if __name__ == "__main__":</code></td>
+      <td>Bloque que solo se ejecuta cuando el archivo se corre directamente</td>
+    </tr>
+  </tbody>
+</table>
+
+> Aprender a leer tracebacks es una de las habilidades más valiosas para depurar. Lee siempre **la última línea** primero (el error concreto) y luego sube para entender la cadena de llamadas que lo provocó.

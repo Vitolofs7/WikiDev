@@ -1,0 +1,160 @@
+# 5.1 Funciones como objetos
+
+En Python, las funciones son **objetos de primera clase** (*first-class objects*). Esto significa que una función es un valor como cualquier otro: se puede asignar a una variable, almacenar en una estructura de datos, pasar como argumento y devolver como resultado.
+
+---
+
+## Pasar funciones como argumentos
+
+Ya hemos visto que las funciones integradas como `map()` reciben funciones como argumento. Esta misma técnica se puede usar con funciones propias:
+
+<CodeRunner language="python" title="Funciones como argumentos" initialCode={`def aplicar(funcion, valor):
+    """Aplica una función a un valor."""
+    return funcion(valor)
+
+def doble(n):
+    return n * 2
+
+def cuadrado(n):
+    return n ** 2
+
+def negativo(n):
+    return -n
+
+# La misma función 'aplicar' con distintos comportamientos
+print(aplicar(doble, 5))       # 10
+print(aplicar(cuadrado, 5))    # 25
+print(aplicar(negativo, 5))    # -5`} />
+
+<CodeRunner language="python" title="Patrón: transformar colecciones" initialCode={`def transformar_lista(lista, funcion):
+    """Aplica una función a cada elemento de la lista."""
+    return [funcion(x) for x in lista]
+
+numeros = [1, -3, 5, -7, 9]
+
+print(transformar_lista(numeros, abs))       # [1, 3, 5, 7, 9]
+print(transformar_lista(numeros, str))       # ['1', '-3', '5', '-7', '9']
+
+def triplicar(n):
+    return n * 3
+
+print(transformar_lista(numeros, triplicar)) # [3, -9, 15, -21, 27]`} />
+
+<CodeRunner language="python" title="Patrón: estrategia de procesamiento" initialCode={`def procesar_datos(datos, estrategia):
+    """Procesa datos según la estrategia proporcionada."""
+    resultado = estrategia(datos)
+    print(f"Resultado: {resultado}")
+    return resultado
+
+notas = [7.5, 8.0, 6.5, 9.2, 5.8]
+
+# Diferentes estrategias para los mismos datos
+procesar_datos(notas, max)                          # 9.2
+procesar_datos(notas, min)                          # 5.8
+procesar_datos(notas, sum)                          # 37.0
+procesar_datos(notas, lambda x: round(sum(x)/len(x), 2))  # 7.4`} />
+
+> Pasar funciones como argumentos permite escribir código **genérico** que cambia su comportamiento según la función que recibe. Este patrón se conoce como **estrategia**.
+
+---
+
+## Retornar funciones
+
+Una función puede **crear y devolver** otra función. La función retornada se puede asignar a una variable y llamar normalmente:
+
+<CodeRunner language="python" title="Retornar funciones" initialCode={`def crear_multiplicador(factor):
+    """Crea una función que multiplica por un factor fijo."""
+    def multiplicar(n):
+        return n * factor
+    return multiplicar
+
+# crear_multiplicador devuelve una función
+doble = crear_multiplicador(2)
+triple = crear_multiplicador(3)
+por_diez = crear_multiplicador(10)
+
+print(doble(5))      # 10
+print(triple(5))     # 15
+print(por_diez(5))   # 50
+
+# Son funciones normales
+print(type(doble))   # <class 'function'>`} />
+
+<CodeRunner language="python" title="Fábrica de saludos" initialCode={`def crear_saludo(idioma):
+    """Crea una función de saludo en el idioma indicado."""
+    saludos = {
+        "es": "Hola",
+        "en": "Hello",
+        "fr": "Bonjour",
+        "de": "Hallo",
+    }
+    prefijo = saludos.get(idioma, "Hi")
+    
+    def saludar(nombre):
+        return f"{prefijo}, {nombre}!"
+    
+    return saludar
+
+saludo_es = crear_saludo("es")
+saludo_en = crear_saludo("en")
+saludo_fr = crear_saludo("fr")
+
+print(saludo_es("Ana"))       # Hola, Ana!
+print(saludo_en("Ana"))       # Hello, Ana!
+print(saludo_fr("Ana"))       # Bonjour, Ana!`} />
+
+<CodeRunner language="python" title="Fábrica de validadores" initialCode={`def crear_validador(minimo, maximo):
+    """Crea una función que valida si un valor está en rango."""
+    def validar(valor):
+        if valor < minimo:
+            return f"❌ {valor} es menor que {minimo}"
+        if valor > maximo:
+            return f"❌ {valor} es mayor que {maximo}"
+        return f"✅ {valor} está en rango [{minimo}, {maximo}]"
+    return validar
+
+validar_edad = crear_validador(0, 120)
+validar_nota = crear_validador(0, 10)
+validar_temp = crear_validador(-20, 50)
+
+print(validar_edad(25))
+print(validar_edad(150))
+print(validar_nota(7.5))
+print(validar_nota(-1))
+print(validar_temp(35))`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Técnica</th>
+      <th>Descripción</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Función como argumento</td>
+      <td>Pasar una función a otra función</td>
+      <td><code>map(abs, lista)</code></td>
+    </tr>
+    <tr>
+      <td>Función como retorno</td>
+      <td>Una función crea y devuelve otra</td>
+      <td><code>doble = crear_mult(2)</code></td>
+    </tr>
+    <tr>
+      <td>Sin paréntesis</td>
+      <td>Referencia al objeto función</td>
+      <td><code>f = abs</code></td>
+    </tr>
+    <tr>
+      <td>Con paréntesis</td>
+      <td>Llamada que ejecuta la función</td>
+      <td><code>f(5)</code></td>
+    </tr>
+  </tbody>
+</table>

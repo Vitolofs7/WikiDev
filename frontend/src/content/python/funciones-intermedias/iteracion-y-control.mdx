@@ -1,0 +1,165 @@
+# 4.5 Iteración y control
+
+Las funciones `range()` y `enumerate()` son la base de la iteración controlada en Python. Permiten generar secuencias numéricas y recorrer colecciones con acceso al índice de cada elemento.
+
+---
+
+## range()
+
+`range()` genera una secuencia de números enteros. No crea una lista en memoria, sino un objeto que produce los valores uno a uno (es un **iterador**):
+
+<CodeRunner language="python" title="range() básico" initialCode={`# range(n): genera 0, 1, 2, ..., n-1
+print(list(range(5)))        # [0, 1, 2, 3, 4]
+
+# range(inicio, fin): desde inicio hasta fin-1
+print(list(range(2, 8)))     # [2, 3, 4, 5, 6, 7]
+
+# range(inicio, fin, paso): con incremento personalizado
+print(list(range(0, 20, 5)))  # [0, 5, 10, 15]
+
+# Paso negativo: cuenta hacia atrás
+print(list(range(10, 0, -1)))  # [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]`} />
+
+<CodeRunner language="python" title="range() en bucles for" initialCode={`# Repetir una acción N veces
+for i in range(3):
+    print(f"Iteración {i}")
+
+print()
+
+# Generar tabla de multiplicar
+n = 7
+for i in range(1, 11):
+    print(f"{n} × {i} = {n * i}")`} />
+
+<CodeRunner language="python" title="range() — ejemplos prácticos" initialCode={`# Sumar los primeros 100 números
+total = sum(range(1, 101))
+print(f"Suma 1-100: {total}")    # 5050
+
+# Números pares del 0 al 20
+pares = list(range(0, 21, 2))
+print(f"Pares: {pares}")
+
+# Cuenta regresiva
+for i in range(5, 0, -1):
+    print(f"{i}...")
+print("¡Despegue!")`} />
+
+<table>
+  <thead>
+    <tr>
+      <th>Forma</th>
+      <th>Genera</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>range(n)</code></td>
+      <td>0 a n-1</td>
+      <td><code>range(5) → 0,1,2,3,4</code></td>
+    </tr>
+    <tr>
+      <td><code>range(a, b)</code></td>
+      <td>a a b-1</td>
+      <td><code>range(2, 6) → 2,3,4,5</code></td>
+    </tr>
+    <tr>
+      <td><code>range(a, b, p)</code></td>
+      <td>a a b-1, de p en p</td>
+      <td><code>range(0, 10, 2) → 0,2,4,6,8</code></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## enumerate()
+
+`enumerate()` recorre un iterable devolviendo **pares (índice, elemento)**. Elimina la necesidad de usar `range(len(...))` para acceder al índice:
+
+<CodeRunner language="python" title="enumerate() básico" initialCode={`frutas = ["manzana", "pera", "naranja"]
+
+# ❌ Sin enumerate: engorroso
+for i in range(len(frutas)):
+    print(f"{i}: {frutas[i]}")
+
+print()
+
+# ✅ Con enumerate: limpio y claro
+for i, fruta in enumerate(frutas):
+    print(f"{i}: {fruta}")`} />
+
+Se puede cambiar el **índice inicial** con el parámetro `start`:
+
+<CodeRunner language="python" title="enumerate() con start" initialCode={`alumnos = ["Ana", "Carlos", "Lucía", "Pedro"]
+
+# Empezar desde 1 en lugar de 0
+for num, alumno in enumerate(alumnos, start=1):
+    print(f"  {num}. {alumno}")`} />
+
+<CodeRunner language="python" title="enumerate() — ejemplos prácticos" initialCode={`# Encontrar la posición de un elemento
+notas = [6.5, 8.0, 4.5, 9.2, 7.0]
+
+print("Notas por debajo del aprobado:")
+for i, nota in enumerate(notas):
+    if nota < 5:
+        print(f"  Posición {i}: {nota}")
+
+print()
+
+# Crear un diccionario con posiciones
+colores = ["rojo", "verde", "azul"]
+diccionario = {i: color for i, color in enumerate(colores)}
+print(diccionario)   # {0: 'rojo', 1: 'verde', 2: 'azul'}`} />
+
+<CodeRunner language="python" title="enumerate() para menús interactivos" initialCode={`def mostrar_menu(opciones):
+    """Muestra un menú numerado."""
+    print("Seleccione una opción:")
+    for i, opcion in enumerate(opciones, 1):
+        print(f"  {i}. {opcion}")
+
+opciones = ["Nuevo archivo", "Abrir archivo", "Guardar", "Salir"]
+mostrar_menu(opciones)`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Función</th>
+      <th>Descripción</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>range(n)</code></td>
+      <td>Secuencia de 0 a n-1</td>
+      <td><code>range(5) → 0,1,2,3,4</code></td>
+    </tr>
+    <tr>
+      <td><code>range(a, b)</code></td>
+      <td>Secuencia de a a b-1</td>
+      <td><code>range(2, 6) → 2,3,4,5</code></td>
+    </tr>
+    <tr>
+      <td><code>range(a, b, p)</code></td>
+      <td>Secuencia con paso p</td>
+      <td><code>range(0, 10, 3) → 0,3,6,9</code></td>
+    </tr>
+    <tr>
+      <td><code>enumerate(iter)</code></td>
+      <td>Pares (índice, elemento)</td>
+      <td><code>enumerate(["a","b"]) → (0,"a"),(1,"b")</code></td>
+    </tr>
+    <tr>
+      <td><code>enumerate(iter, start=n)</code></td>
+      <td>Pares con índice desde n</td>
+      <td><code>enumerate(["a"], start=1) → (1,"a")</code></td>
+    </tr>
+  </tbody>
+</table>
+
+> Usa `enumerate()` en lugar de `range(len(...))` siempre que necesites el índice y el elemento al mismo tiempo. Es más legible, más seguro y más *pythónico*.

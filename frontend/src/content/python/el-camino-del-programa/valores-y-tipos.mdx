@@ -1,0 +1,205 @@
+# 1.4 Valores y tipos
+
+En Python, todo dato con el que trabaja un programa es un **valor**: un número, un texto, un resultado de un cálculo. Cada valor tiene un **tipo**, que determina qué operaciones pueden realizarse sobre él y cómo se almacena en memoria.
+
+La función `type()` permite consultar el tipo de cualquier valor:
+
+<CodeRunner language="python" title="Consultar el tipo de un valor" initialCode={`print(type(42))       # <class 'int'>
+print(type(3.14))     # <class 'float'>
+print(type("Hola"))   # <class 'str'>
+print(type(True))     # <class 'bool'>`} />
+
+La palabra `class` en la salida indica la categoría a la que pertenece el valor. No es necesario saber más sobre clases en este punto.
+
+---
+
+## Números enteros: int
+
+Un `int` es un número sin parte decimal. Python los representa con precisión arbitraria: no tienen límite de tamaño práctico.
+
+<CodeRunner language="python" title="Números enteros" initialCode={`print(42)
+print(-7)
+print(type(1000))   # <class 'int'>`} />
+
+---
+
+## Números decimales: float
+
+Un `float` es un número con parte decimal, representado internamente en formato de punto flotante de 64 bits.
+
+<CodeRunner language="python" title="Números decimales" initialCode={`print(3.14)
+print(-0.5)
+print(type(2.0))   # <class 'float'>`} />
+
+El punto decimal es lo que distingue un `float` de un `int`. Aunque `42` y `42.0` representan el mismo valor matemático, Python los trata como tipos distintos:
+
+<CodeRunner language="python" title="int vs float" initialCode={`print(42 == 42.0)              # True  (mismo valor)
+print(type(42) == type(42.0))  # False (distinto tipo)`} />
+
+---
+
+## Cadenas de texto: str
+
+Una cadena (`str`) es una secuencia de caracteres delimitada por comillas simples o dobles. Puede contener letras, números, espacios y símbolos, pero todo su contenido se trata como texto, no como datos numéricos.
+
+<CodeRunner language="python" title="Cadenas de texto" initialCode={`print("Hola, mundo")
+print('Python')
+print(type("42"))   # <class 'str'>  ← no es un número`} />
+
+Un número entre comillas es una cadena, no un valor numérico. Esta distinción es importante porque afecta al comportamiento de los operadores:
+
+<CodeRunner language="python" title="Número vs cadena numérica" initialCode={`print(42 + 8)       # 50   (suma aritmética)
+print("42" + "8")   # 428  (concatenación de texto)`} />
+
+Mezclar tipos incompatibles con `+` produce un error:
+
+<CodeRunner language="python" title="Error al mezclar str e int" initialCode={`try:
+    print("42" + 8)
+except TypeError as e:
+    print(f"Error: {e}")`} />
+
+La solución es convertir el tipo antes de operar:
+
+<CodeRunner language="python" title="Conversión antes de operar" initialCode={`print(int("42") + 8)    # 50
+print("42" + str(8))    # 428`} />
+
+---
+
+## Valores lógicos: bool
+
+El tipo `bool` solo tiene dos valores posibles: `True` y `False`. Son el resultado de las comparaciones y la base de toda la lógica condicional en Python.
+
+<CodeRunner language="python" title="Valores booleanos" initialCode={`print(5 > 3)          # True
+print(5 < 3)          # False
+print(type(True))     # <class 'bool'>`} />
+
+> `True` y `False` se escriben siempre con la primera letra en mayúscula. `true` o `false` en minúscula producen un `NameError`.
+
+En Python, `bool` es una subclase de `int`: `True` equivale a `1` y `False` a `0`. Esto permite operaciones aritméticas con booleanos, aunque raramente es lo que se busca:
+
+<CodeRunner language="python" title="Booleanos como enteros" initialCode={`print(True + True)     # 2
+print(False + 10)      # 10
+print(type(True + 1))  # <class 'int'>`} />
+
+---
+
+## Variables
+
+Una **variable** es un nombre que hace referencia a un valor almacenado en memoria. Permite asociar valores a nombres y reutilizarlos en distintos puntos del programa:
+```python
+numero = 7
+```
+
+En este caso, `numero` es el nombre de la variable y `7` es el valor al que hace referencia.
+
+Cuando se asigna un valor a una variable, esta adopta el tipo de ese valor. Python determina el tipo automáticamente, sin necesidad de declararlo:
+
+<CodeRunner language="python" title="Variables y sus tipos" initialCode={`nombre = "Ana"
+edad   = 28
+altura = 1.65
+activo = True
+
+print(type(nombre))   # <class 'str'>
+print(type(edad))     # <class 'int'>
+print(type(altura))   # <class 'float'>
+print(type(activo))   # <class 'bool'>`} />
+
+Una variable puede cambiar de tipo si se le asigna un valor de tipo distinto. Esto es posible en Python, aunque cambiar el tipo de una variable con frecuencia dificulta la legibilidad del código:
+
+<CodeRunner language="python" title="Cambio de tipo en una variable" initialCode={`x = 10
+print(type(x))   # <class 'int'>
+
+x = "texto"
+print(type(x))   # <class 'str'>`} />
+
+---
+
+## Trampas frecuentes
+
+### Comas en números grandes
+
+En matemáticas es habitual escribir `1,000,000` para mejorar la legibilidad. En Python, las comas tienen un significado distinto y producen resultados inesperados:
+
+<CodeRunner language="python" title="Comas en números grandes" initialCode={`print(1,000,000)   # muestra: 1 0 0  (tres valores separados)
+print(1000000)     # correcto: 1000000
+print(1_000_000)   # también correcto: guion bajo como separador visual`} />
+
+### Cadenas numéricas en operaciones
+
+Un número entre comillas es una cadena y no puede usarse directamente en operaciones aritméticas:
+
+<CodeRunner language="python" title="Cadena numérica en operación" initialCode={`valor = "99"
+
+try:
+    print(valor + 1)
+except TypeError as e:
+    print(f"Error: {e}")
+
+print(int(valor) + 1)      # 100
+print(float(valor) + 0.5)  # 99.5`} />
+
+### Multiplicar una cadena por un número
+
+El operador `*` aplicado a una cadena no multiplica: repite el texto:
+
+<CodeRunner language="python" title="Repetición de cadena" initialCode={`valor = "99"
+print(valor * 2)       # 9999  (repetición, no multiplicación)
+print(int(valor) * 2)  # 198   (multiplicación aritmética)`} />
+
+---
+
+## Nota: números complejos
+
+Python soporta de forma nativa los números complejos mediante el tipo `complex`, con la unidad imaginaria representada como `j`. Su uso es específico de contextos matemáticos o científicos:
+
+<CodeRunner language="python" title="Números complejos" initialCode={`z = 2 + 3j
+print(z)          # (2+3j)
+print(type(z))    # <class 'complex'>
+print(z.real)     # 2.0
+print(z.imag)     # 3.0`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Tipo</th>
+      <th>Nombre</th>
+      <th>Ejemplo</th>
+      <th>Cómo reconocerlo</th>
+      <th>Conversión</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>int</code></td>
+      <td>Entero</td>
+      <td><code>42</code></td>
+      <td>Sin punto decimal</td>
+      <td><code>int(x)</code></td>
+    </tr>
+    <tr>
+      <td><code>float</code></td>
+      <td>Decimal</td>
+      <td><code>42.0</code></td>
+      <td>Con punto decimal</td>
+      <td><code>float(x)</code></td>
+    </tr>
+    <tr>
+      <td><code>str</code></td>
+      <td>Cadena de texto</td>
+      <td><code>"42"</code></td>
+      <td>Entre comillas</td>
+      <td><code>str(x)</code></td>
+    </tr>
+    <tr>
+      <td><code>bool</code></td>
+      <td>Booleano</td>
+      <td><code>True</code></td>
+      <td><code>True</code> o <code>False</code> con mayúscula</td>
+      <td><code>bool(x)</code></td>
+    </tr>
+  </tbody>
+</table>

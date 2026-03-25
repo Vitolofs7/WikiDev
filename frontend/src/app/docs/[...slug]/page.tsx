@@ -1,21 +1,66 @@
 import { langIcons, langColors } from "@/shared/components/LangIcons";
 import { notFound } from "next/navigation";
-import { navConfig } from "@/navigation/config/nav.config";
+import { navConfig, NavItem } from "@/navigation/config/nav.config";
 import { DocPageClient } from "./DocPageClient";
 
 const validDocs = [
   "javascript/arrays",
   "javascript/promises",
-
-  "python/introduccion",
-  "python/operaciones-basicas-numeros",
-  "python/operadores-expresiones",
-  "python/variables",
-  "python/strings",
-  "python/lists",
-  "python/decorators",
-
   "algorithms/sorting",
+  // python/el-camino-del-programa
+  "python/el-camino-del-programa/que-es-un-programa",
+  "python/el-camino-del-programa/ejecutar-python",
+  "python/el-camino-del-programa/el-primer-programa",
+  "python/el-camino-del-programa/valores-y-tipos",
+  "python/el-camino-del-programa/operadores-aritmeticos",
+  "python/el-camino-del-programa/lenguajes-formales-y-naturales",
+  "python/el-camino-del-programa/depuracion",
+  // python/control-de-flujo-y-operaciones-avanzadas
+  "python/control-de-flujo-y-operaciones-avanzadas/sentencias-de-asignacion",
+  "python/control-de-flujo-y-operaciones-avanzadas/como-python-evalua-el-codigo",
+  "python/control-de-flujo-y-operaciones-avanzadas/condicionales",
+  "python/control-de-flujo-y-operaciones-avanzadas/operaciones-con-cadenas-de-texto",
+  "python/control-de-flujo-y-operaciones-avanzadas/entrada-de-datos-y-validacion",
+  "python/control-de-flujo-y-operaciones-avanzadas/bucles",
+  "python/control-de-flujo-y-operaciones-avanzadas/compresion-en-python",
+  "python/control-de-flujo-y-operaciones-avanzadas/estructuras-de-datos-basicas",
+  "python/control-de-flujo-y-operaciones-avanzadas/depuracion-aplicada",
+  // python/funciones-basicas
+  "python/funciones-basicas/que-es-una-funcion",
+  "python/funciones-basicas/sintaxis-y-estructura",
+  "python/funciones-basicas/llamadas-a-funciones",
+  "python/funciones-basicas/parametros-y-argumentos",
+  "python/funciones-basicas/valores-de-retorno",
+  "python/funciones-basicas/funciones-integradas-basicas",
+  "python/funciones-basicas/variables-y-ambito",
+  "python/funciones-basicas/funciones-matematicas",
+  "python/funciones-basicas/documentacion",
+  "python/funciones-basicas/flujo-de-ejecucion",
+  // python/funciones-intemedias
+  "python/funciones-intermedias/composicion-de-funciones",
+  "python/funciones-intermedias/argumentos-avanzados",
+  "python/funciones-intermedias/funciones-integradas-intermedias",
+  "python/funciones-intermedias/logica-booleana-global-any-all",
+  "python/funciones-intermedias/iteracion-y-control",
+  "python/funciones-intermedias/iteracion-inversa-reversed",
+  "python/funciones-intermedias/funciones-de-texto-y-numeros",
+  "python/funciones-intermedias/funciones-adicionales",
+  "python/funciones-intermedias/diagramas-de-pila",
+  // python/funciones-avanzadas
+  "python/funciones-avanzadas/funciones-como-objetos",
+  "python/funciones-avanzadas/funciones-anidadas-y-closures",
+  "python/funciones-avanzadas/funciones-integradas-avanzadas",
+  "python/funciones-avanzadas/evaluacion-dinamica",
+  "python/funciones-avanzadas/depuracion",
+  "python/funciones-avanzadas/lambda-introduccion",
+  "python/funciones-avanzadas/lambda-uso-basico",
+  "python/funciones-avanzadas/lambda-funciones-integradas",
+  "python/funciones-avanzadas/lambda-con-estructuras",
+  "python/funciones-avanzadas/lambda-avanzada",
+  "python/funciones-avanzadas/lambda-programacion-funcional",
+  "python/funciones-avanzadas/lambda-casos-reales",
+  "python/funciones-avanzadas/lambda-buenas-practicas",
+  "python/funciones-avanzadas/lambda-trucos-avanzados",
 ];
 
 interface Props {
@@ -24,67 +69,49 @@ interface Props {
 
 export default async function DocPage({ params }: Props) {
   const { slug } = await params;
-  const [category, page] = slug ?? [];
+  const [category, page, subpage] = slug ?? [];
 
-  if (!page) {
+  // Nivel 3: /docs/python/el-camino-del-programa/que-es-un-programa
+  if (subpage) {
+    const docKey = `${category}/${page}/${subpage}`;
+    if (!validDocs.includes(docKey)) notFound();
+    return <DocPageClient docKey={docKey} />;
+  }
+
+  // Nivel 2: /docs/python/el-camino-del-programa
+  if (page) {
     const cat = navConfig.categories.find((c) => c.slug === category);
-    if (!cat) notFound();
+    const item = cat?.items.find((i) => i.slug === page) as NavItem | undefined;
 
-    return (
-      <div className="max-w-2xl">
-        {/* Hero */}
-        <div className="mb-12 pb-8 border-b border-white/5">
-          <div
-            className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6"
-            style={{
-              background: `${langColors[cat!.slug]}15`,
-              border: `1px solid ${langColors[cat!.slug]}30`,
-            }}
-          >
-            {(() => {
-              const Icon = langIcons[cat!.slug];
-              return Icon ? (
-                <Icon className="w-8 h-8" color={langColors[cat.slug]} />
-              ) : (
-                <span className="text-4xl">{cat!.emoji}</span>
-              );
-            })()}
-          </div>
-          <h1
-            className="text-6xl font-extrabold text-white mb-3 tracking-tight"
-            style={{ fontFamily: "Outfit, sans-serif" }}
-          >
-            {cat!.title}
-          </h1>
-          <p
-            className="text-zinc-500 text-xl leading-relaxed"
-            style={{ fontFamily: "Outfit, sans-serif" }}
-          >
-            {cat!.description}
-          </p>
-          <div className="flex items-center gap-2 mt-4">
-            <span
-              className="px-3 py-1.5 rounded-full text-sm font-medium"
-              style={{
-                background: "rgba(124,109,250,0.1)",
-                color: "#a89cf7",
-                border: "1px solid rgba(124,109,250,0.2)",
-                fontFamily: "Outfit, sans-serif",
-              }}
+    if (item?.subItems && item.subItems.length > 0) {
+      return (
+        <div className="max-w-2xl">
+          <div className="mb-12 pb-8 border-b border-white/5">
+            <h1
+              className="text-6xl font-extrabold text-white mb-3 tracking-tight"
+              style={{ fontFamily: "Outfit, sans-serif" }}
             >
-              {cat!.items.length} artículos
-            </span>
+              {item.title}
+            </h1>
+            <div className="flex items-center gap-2 mt-4">
+              <span
+                className="px-3 py-1.5 rounded-full text-sm font-medium"
+                style={{
+                  background: "rgba(124,109,250,0.1)",
+                  color: "#a89cf7",
+                  border: "1px solid rgba(124,109,250,0.2)",
+                  fontFamily: "Outfit, sans-serif",
+                }}
+              >
+                {item.subItems.length} apartados
+              </span>
+            </div>
           </div>
-        </div>
-
-        {/* Articles */}
-        <div className="space-y-3">
-          {cat!.items.map((item, i) => {
-            const href = `/docs/${cat!.slug}/${item.slug}`;
-            return (
+          <div className="space-y-3">
+            {item.subItems.map((sub, i) => (
               <a
-                key={item.slug}
-                href={href}
+                key={sub.slug}
+                href={`/docs/${category}/${page}/${sub.slug}`}
                 className="flex items-center gap-5 p-6 rounded-2xl border border-white/5 hover:border-violet-500/30 transition-all group"
                 style={{ background: "rgba(255,255,255,0.02)" }}
               >
@@ -105,7 +132,7 @@ export default async function DocPage({ params }: Props) {
                     className="text-white font-semibold text-xl group-hover:text-violet-300 transition-colors"
                     style={{ fontFamily: "Outfit, sans-serif" }}
                   >
-                    {item.title}
+                    {sub.title}
                   </p>
                 </div>
                 <div
@@ -118,17 +145,114 @@ export default async function DocPage({ params }: Props) {
                   →
                 </div>
               </a>
-            );
-          })}
+            ))}
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+
+    // Capítulo sin subapartados — doc directo
+    const docKey = `${category}/${page}`;
+    if (!validDocs.includes(docKey)) notFound();
+    return <DocPageClient docKey={docKey} />;
   }
 
-  const docKey = `${category}/${page}`;
-  if (!validDocs.includes(docKey)) notFound();
+  // Nivel 1: /docs/python
+  const cat = navConfig.categories.find((c) => c.slug === category);
+  if (!cat) notFound();
 
-  return <DocPageClient docKey={docKey} />;
+  return (
+    <div className="max-w-2xl">
+      <div className="mb-12 pb-8 border-b border-white/5">
+        <div
+          className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6"
+          style={{
+            background: `${langColors[cat!.slug]}15`,
+            border: `1px solid ${langColors[cat!.slug]}30`,
+          }}
+        >
+          {(() => {
+            const Icon = langIcons[cat!.slug];
+            return Icon ? (
+              <Icon className="w-8 h-8" color={langColors[cat!.slug]} />
+            ) : (
+              <span className="text-4xl">{cat!.emoji}</span>
+            );
+          })()}
+        </div>
+        <h1
+          className="text-6xl font-extrabold text-white mb-3 tracking-tight"
+          style={{ fontFamily: "Outfit, sans-serif" }}
+        >
+          {cat!.title}
+        </h1>
+        <p
+          className="text-zinc-500 text-xl leading-relaxed"
+          style={{ fontFamily: "Outfit, sans-serif" }}
+        >
+          {cat!.description}
+        </p>
+        <div className="flex items-center gap-2 mt-4">
+          <span
+            className="px-3 py-1.5 rounded-full text-sm font-medium"
+            style={{
+              background: "rgba(124,109,250,0.1)",
+              color: "#a89cf7",
+              border: "1px solid rgba(124,109,250,0.2)",
+              fontFamily: "Outfit, sans-serif",
+            }}
+          >
+            {cat!.items.length} capítulos
+          </span>
+        </div>
+      </div>
+      <div className="space-y-3">
+        {cat!.items.map((item: NavItem, i: number) => (
+          <a
+            key={item.slug}
+            href={`/docs/${cat!.slug}/${item.slug}`}
+            className="flex items-center gap-5 p-6 rounded-2xl border border-white/5 hover:border-violet-500/30 transition-all group"
+            style={{ background: "rgba(255,255,255,0.02)" }}
+          >
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-base"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(124,109,250,0.15), rgba(6,214,160,0.1))",
+                border: "1px solid rgba(124,109,250,0.2)",
+                color: "#a89cf7",
+                fontFamily: "JetBrains Mono, monospace",
+              }}
+            >
+              {String(i + 1).padStart(2, "0")}
+            </div>
+            <div className="flex-1">
+              <p
+                className="text-white font-semibold text-xl group-hover:text-violet-300 transition-colors"
+                style={{ fontFamily: "Outfit, sans-serif" }}
+              >
+                {item.title}
+              </p>
+              {item.subItems && (
+                <p
+                  className="text-sm text-zinc-600 mt-1"
+                  style={{ fontFamily: "Outfit, sans-serif" }}
+                >
+                  {item.subItems.length} apartados
+                </p>
+              )}
+            </div>
+            <div
+              className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0"
+              style={{ background: "rgba(124,109,250,0.15)", color: "#a89cf7" }}
+            >
+              →
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export async function generateStaticParams() {
@@ -137,6 +261,11 @@ export async function generateStaticParams() {
     paths.push({ slug: [category.slug] });
     for (const item of category.items) {
       paths.push({ slug: [category.slug, item.slug] });
+      if (item.subItems) {
+        for (const sub of item.subItems) {
+          paths.push({ slug: [category.slug, item.slug, sub.slug] });
+        }
+      }
     }
   }
   return paths;

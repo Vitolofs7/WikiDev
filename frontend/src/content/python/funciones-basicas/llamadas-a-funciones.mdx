@@ -1,0 +1,198 @@
+# 3.3 Llamadas a funciones
+
+Definir una función no ejecuta su código. Para que el cuerpo se ejecute hay que **llamar** a la función. Esta sección formaliza cómo funciona una llamada y qué ocurre cuando Python la encuentra.
+
+---
+
+## Anatomía de una llamada
+
+La sintaxis de una llamada a función es siempre la misma:
+```python
+nombre_función(argumento1, argumento2, ...)
+```
+
+- **Nombre**: identifica qué función ejecutar
+- **Paréntesis**: indican que es una llamada, no una referencia al objeto
+- **Argumentos**: valores que se pasan a la función para que trabaje con ellos
+
+<CodeRunner language="python" title="Anatomía de una llamada" initialCode={`# type() recibe un argumento y devuelve su tipo
+resultado = type(42)
+print(resultado)        # <class 'int'>
+
+# El argumento puede ser cualquier expresión
+print(type(3.14))       # <class 'float'>
+print(type("Hola"))     # <class 'str'>
+print(type(True))       # <class 'bool'>`} />
+
+---
+
+## Argumentos
+
+El **argumento** es el valor que se pasa a la función en el momento de la llamada. Puede ser un literal, una variable o cualquier expresión: Python la evalúa primero y pasa el resultado:
+
+<CodeRunner language="python" title="Argumentos como expresiones" initialCode={`import math
+
+# Argumento literal
+print(abs(-5))           # 5
+
+# Argumento: variable
+x = -3.7
+print(abs(x))            # 3.7
+
+# Argumento: expresión aritmética
+print(abs(3 - 7))        # 4
+
+# Argumento: resultado de otra función
+print(abs(int(-3.9)))    # 3`} />
+
+> El argumento se evalúa **una sola vez** antes de entrar en la función. Si pasas `abs(int(-3.9))`, Python calcula primero `int(-3.9) → -3` y luego `abs(-3) → 3`.
+
+---
+
+## Valor de retorno
+
+Se dice que una función **toma** argumentos y **devuelve** un resultado. El resultado se llama **valor de retorno** y puede usarse como cualquier otra expresión: asignarlo a una variable, pasarlo a otra función o usarlo directamente en un cálculo:
+
+<CodeRunner language="python" title="Usar el valor de retorno" initialCode={`# Asignar a variable
+raiz = abs(-16)
+print(raiz)              # 16
+
+# Usar directamente en expresión
+print(abs(-5) + 10)      # 15
+
+# Pasar como argumento a otra función
+print(type(abs(-5)))     # <class 'int'>`} />
+
+---
+
+## Funciones sin valor de retorno
+
+No todas las funciones devuelven un valor útil. `print()`, por ejemplo, produce un efecto (mostrar texto) pero devuelve `None`. Si se intenta usar su resultado como un valor, se obtiene `None`:
+
+<CodeRunner language="python" title="Funciones que devuelven None" initialCode={`# print() devuelve None, no el texto que muestra
+resultado = print("Hola")
+print(resultado)          # None
+print(type(resultado))    # <class 'NoneType'>`} />
+
+> Las funciones que producen un efecto pero devuelven `None` se llaman **funciones nulas**. Las que devuelven un valor útil se llaman **funciones productivas**. Esta distinción se desarrolla en detalle en la sección **3.5 Valores de retorno**.
+
+---
+
+## Funciones con varios argumentos
+
+Algunas funciones aceptan más de un argumento, separados por comas. Los argumentos se asignan en el orden en que se pasan:
+
+<CodeRunner language="python" title="Funciones con varios argumentos" initialCode={`# round() acepta el número y el número de decimales
+print(round(3.14159, 2))    # 3.14
+print(round(3.14159, 4))    # 3.1416
+
+# pow() eleva el primer argumento al segundo
+print(pow(2, 8))            # 256
+print(pow(3, 3))            # 27`} />
+
+---
+
+## Llamadas a funciones propias
+
+Las funciones que definimos nosotros se llaman exactamente igual que las funciones integradas de Python:
+
+<CodeRunner language="python" title="Llamar a funciones propias" initialCode={`def saludar():
+    print("Hola, mundo")
+
+def despedir(nombre):
+    print(f"Hasta luego, {nombre}")
+
+def sumar(a, b):
+    return a + b
+
+# Las llamadas son idénticas en forma a las funciones integradas
+saludar()
+despedir("Ana")
+resultado = sumar(3, 4)
+print(resultado)   # 7`} />
+
+---
+
+## El flujo durante una llamada
+
+Cuando Python encuentra una llamada, **pausa** el flujo actual, **salta** al cuerpo de la función, lo ejecuta y **regresa** exactamente donde lo dejó:
+
+<CodeRunner language="python" title="Flujo durante una llamada" initialCode={`def saludar():
+    print("  → dentro de saludar()")
+
+print("Antes de la llamada")
+saludar()                           # desvío al cuerpo
+print("Después de la llamada")      # continúa aquí al volver`} />
+
+---
+
+## Errores comunes
+
+<CodeRunner language="python" title="Usar el resultado de una función nula" initialCode={`# ❌ Error frecuente: usar print() como si devolviera el texto
+texto = print("Hola")
+try:
+    print(texto.upper())   # AttributeError: None no tiene .upper()
+except AttributeError as e:
+    print(f"AttributeError: {e}")
+
+# ✅ Correcto: print() solo muestra, no devuelve
+print("Hola".upper())     # HOLA`} />
+
+<CodeRunner language="python" title="Número incorrecto de argumentos" initialCode={`def sumar(a, b):
+    return a + b
+
+# ❌ Demasiado pocos argumentos
+try:
+    sumar(5)
+except TypeError as e:
+    print(f"TypeError: {e}")
+
+# ❌ Demasiados argumentos
+try:
+    sumar(5, 3, 2)
+except TypeError as e:
+    print(f"TypeError: {e}")
+
+# ✅ Número correcto
+print(sumar(5, 3))   # 8`} />
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Concepto</th>
+      <th>Descripción</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Llamada a función</td>
+      <td>Ejecuta el cuerpo con los argumentos dados</td>
+      <td><code>abs(-5)</code></td>
+    </tr>
+    <tr>
+      <td>Argumento</td>
+      <td>Valor que se pasa en la llamada</td>
+      <td>El <code>-5</code> en <code>abs(-5)</code></td>
+    </tr>
+    <tr>
+      <td>Valor de retorno</td>
+      <td>Resultado que devuelve la función</td>
+      <td><code>abs(-5) → 5</code></td>
+    </tr>
+    <tr>
+      <td>Función productiva</td>
+      <td>Devuelve un valor útil</td>
+      <td><code>abs()</code>, <code>round()</code>, <code>type()</code></td>
+    </tr>
+    <tr>
+      <td>Función nula</td>
+      <td>Produce un efecto, devuelve <code>None</code></td>
+      <td><code>print()</code></td>
+    </tr>
+  </tbody>
+</table>

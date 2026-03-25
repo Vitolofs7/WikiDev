@@ -1,0 +1,375 @@
+# 4.4 Lógica booleana global con any() y all()
+
+Las funciones `any()` y `all()` permiten evaluar condiciones sobre **colecciones enteras** de una sola vez. Son herramientas esenciales para validación, filtrado y toma de decisiones en programas reales.
+
+---
+
+## Conceptos clave
+
+### Definición
+
+<table>
+  <thead>
+    <tr>
+      <th>Función</th>
+      <th>Devuelve <code>True</code> si...</th>
+      <th>Equivalente lógico</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>any(iterable)</code></td>
+      <td><strong>Al menos un</strong> elemento es verdadero</td>
+      <td>OR entre todos los elementos</td>
+    </tr>
+    <tr>
+      <td><code>all(iterable)</code></td>
+      <td><strong>Todos</strong> los elementos son verdaderos</td>
+      <td>AND entre todos los elementos</td>
+    </tr>
+  </tbody>
+</table>
+
+### Valores falsy
+
+Python considera **falsy** (equivalentes a `False`) los siguientes valores. Todo lo demás es **truthy**:
+
+<CodeRunner language="python" title="Valores falsy en Python" initialCode={`valores_falsy = [0, "", [], {}, None, False, 0.0, (), set()]
+
+for v in valores_falsy:
+    print(f"{str(v):10} → bool: {bool(v)}")
+
+print()
+
+valores_truthy = [1, "texto", [1], {"a": 1}, True, 0.1, -1]
+for v in valores_truthy:
+    print(f"{str(v):10} → bool: {bool(v)}")`} />
+
+---
+
+## any()
+
+Devuelve `True` si **al menos uno** de los elementos es truthy. Devuelve `False` solo si **todos** son falsy:
+
+### Ejemplos básicos
+
+<CodeRunner language="python" title="any() — ejemplos básicos" initialCode={`# Al menos un elemento truthy → True
+print(any([False, False, True]))    # True
+print(any([0, 0, 1]))              # True
+print(any([None, "", "hola"]))     # True
+
+# Todos falsy → False
+print(any([False, False, False]))   # False
+print(any([0, 0, 0]))              # False
+print(any([]))                      # False (vacío)`} />
+
+### Listas booleanas
+
+<CodeRunner language="python" title="any() con listas booleanas" initialCode={`resultados_examen = [True, False, True, True, False]
+print(f"¿Alguien aprobó? {any(resultados_examen)}")   # True
+
+todos_suspendidos = [False, False, False]
+print(f"¿Alguien aprobó? {any(todos_suspendidos)}")    # False`} />
+
+### Strings
+
+<CodeRunner language="python" title="any() con strings" initialCode={`# Las cadenas vacías son falsy, las no vacías son truthy
+campos = ["Ana", "", "ana@correo.com"]
+print(any(campos))    # True — al menos un campo tiene valor
+
+campos_vacios = ["", "", ""]
+print(any(campos_vacios))   # False — todos vacíos`} />
+
+### Condiciones
+
+<CodeRunner language="python" title="any() con condiciones" initialCode={`numeros = [2, 4, 6, 7, 8]
+
+# ¿Hay algún número impar?
+hay_impar = any(n % 2 != 0 for n in numeros)
+print(f"¿Hay impar? {hay_impar}")   # True (el 7)
+
+# ¿Hay algún negativo?
+hay_negativo = any(n < 0 for n in numeros)
+print(f"¿Hay negativo? {hay_negativo}")   # False`} />
+
+### Validación de formularios
+
+<CodeRunner language="python" title="any() — validación de formularios" initialCode={`def hay_campo_vacio(formulario):
+    """Verifica si algún campo obligatorio está vacío."""
+    return any(valor == "" for valor in formulario.values())
+
+form_completo = {"nombre": "Ana", "email": "ana@mail.com", "edad": "28"}
+form_incompleto = {"nombre": "Ana", "email": "", "edad": "28"}
+
+print(f"¿Campo vacío? {hay_campo_vacio(form_completo)}")     # False
+print(f"¿Campo vacío? {hay_campo_vacio(form_incompleto)}")    # True`} />
+
+---
+
+## all()
+
+Devuelve `True` si **todos** los elementos son truthy. Devuelve `False` si **al menos uno** es falsy:
+
+### Ejemplos básicos
+
+<CodeRunner language="python" title="all() — ejemplos básicos" initialCode={`# Todos truthy → True
+print(all([True, True, True]))     # True
+print(all([1, 2, 3]))             # True
+print(all(["a", "b", "c"]))      # True
+
+# Al menos un falsy → False
+print(all([True, False, True]))    # False
+print(all([1, 0, 3]))             # False
+
+# Vacío → True (vacuamente verdadero)
+print(all([]))                     # True`} />
+
+### Validación completa
+
+<CodeRunner language="python" title="all() — validación completa" initialCode={`def formulario_completo(campos):
+    """Verifica que TODOS los campos tengan valor."""
+    return all(campos.values())
+
+form_ok = {"nombre": "Ana", "email": "ana@mail.com", "edad": "28"}
+form_mal = {"nombre": "Ana", "email": "", "edad": "28"}
+
+print(f"Completo: {formulario_completo(form_ok)}")    # True
+print(f"Completo: {formulario_completo(form_mal)}")   # False`} />
+
+### Condiciones numéricas
+
+<CodeRunner language="python" title="all() — condiciones numéricas" initialCode={`notas = [7.5, 6.0, 8.2, 5.5, 9.0]
+
+# ¿Todos aprobados (>= 5)?
+todos_aprobados = all(nota >= 5 for nota in notas)
+print(f"¿Todos aprobados? {todos_aprobados}")   # True
+
+# ¿Todos sobresalientes (>= 9)?
+todos_sobresalientes = all(nota >= 9 for nota in notas)
+print(f"¿Todos sobresalientes? {todos_sobresalientes}")   # False`} />
+
+### Validación de contraseñas
+
+<CodeRunner language="python" title="all() — validación de contraseña" initialCode={`def validar_contraseña(password):
+    """Verifica que la contraseña cumpla TODOS los requisitos."""
+    requisitos = [
+        len(password) >= 8,
+        any(c.isupper() for c in password),
+        any(c.islower() for c in password),
+        any(c.isdigit() for c in password),
+    ]
+    
+    nombres = ["8+ caracteres", "mayúscula", "minúscula", "número"]
+    
+    for nombre, cumple in zip(nombres, requisitos):
+        estado = "✅" if cumple else "❌"
+        print(f"  {estado} {nombre}")
+    
+    return all(requisitos)
+
+print("Contraseña: 'abc'")
+print(f"Válida: {validar_contraseña('abc')}")
+print()
+print("Contraseña: 'MiClave42'")
+print(f"Válida: {validar_contraseña('MiClave42')}")`} />
+
+---
+
+## Comparación directa
+
+<CodeRunner language="python" title="Comparación any() vs all()" initialCode={`# Caso especial: lista con un truthy entre ceros
+print(f"any([0, 0, 1]) = {any([0, 0, 1])}")    # True — hay un truthy
+print(f"all([0, 0, 1]) = {all([0, 0, 1])}")    # False — no todos son truthy
+
+# Caso especial: lista vacía
+print(f"any([])       = {any([])}")              # False — no hay ningún truthy
+print(f"all([])       = {all([])}")              # True  — vacuamente verdadero
+
+# Caso: todos truthy
+print(f"any([1, 2, 3]) = {any([1, 2, 3])}")    # True
+print(f"all([1, 2, 3]) = {all([1, 2, 3])}")    # True
+
+# Caso: todos falsy
+print(f"any([0, 0, 0]) = {any([0, 0, 0])}")    # False
+print(f"all([0, 0, 0]) = {all([0, 0, 0])}")    # False`} />
+
+---
+
+## Usos combinados
+
+### Diccionarios
+
+<CodeRunner language="python" title="any() y all() con diccionarios" initialCode={`inventario = {"manzanas": 5, "peras": 0, "naranjas": 12}
+
+# ¿Hay algún producto con stock?
+hay_stock = any(inventario.values())
+print(f"¿Hay stock de algo? {hay_stock}")   # True
+
+# ¿Todos los productos tienen stock?
+todo_stock = all(inventario.values())
+print(f"¿Todo con stock? {todo_stock}")     # False (peras = 0)`} />
+
+### Permisos
+
+<CodeRunner language="python" title="Verificación de permisos" initialCode={`def verificar_acceso(usuario):
+    permisos = usuario.get("permisos", [])
+    
+    # ¿Tiene al menos un permiso?
+    tiene_permisos = any(permisos)
+    
+    # ¿Tiene TODOS los permisos necesarios?
+    requeridos = ["leer", "escribir"]
+    todos_requeridos = all(p in permisos for p in requeridos)
+    
+    print(f"  ¿Tiene permisos? {tiene_permisos}")
+    print(f"  ¿Acceso completo? {todos_requeridos}")
+
+print("Admin:")
+verificar_acceso({"permisos": ["leer", "escribir", "borrar"]})
+
+print("Lector:")
+verificar_acceso({"permisos": ["leer"]})
+
+print("Sin permisos:")
+verificar_acceso({"permisos": []})`} />
+
+### zip()
+
+<CodeRunner language="python" title="Combinación con zip()" initialCode={`esperado = [True, True, False, True]
+obtenido = [True, True, False, False]
+
+# ¿Todos los resultados coinciden?
+coinciden = all(a == b for a, b in zip(esperado, obtenido))
+print(f"¿Todos coinciden? {coinciden}")   # False
+
+# ¿Al menos uno coincide?
+alguno_coincide = any(a == b for a, b in zip(esperado, obtenido))
+print(f"¿Alguno coincide? {alguno_coincide}")   # True`} />
+
+### Comprensiones
+
+<CodeRunner language="python" title="Comprensiones con any() y all()" initialCode={`palabras = ["Python", "Java", "C++", "Rust"]
+
+# ¿Alguna palabra tiene más de 5 caracteres?
+print(any(len(p) > 5 for p in palabras))    # True (Python)
+
+# ¿Todas empiezan con mayúscula?
+print(all(p[0].isupper() for p in palabras))   # True
+
+# ¿Todas son alfanuméricas?
+print(all(p.isalpha() for p in palabras))   # False (C++)`} />
+
+---
+
+## Casos profesionales
+
+### Formularios
+
+<CodeRunner language="python" title="Validación de formulario completo" initialCode={`def validar_formulario(datos):
+    errores = []
+    
+    # Verificar campos obligatorios
+    obligatorios = ["nombre", "email", "edad"]
+    if not all(datos.get(campo) for campo in obligatorios):
+        faltantes = [c for c in obligatorios if not datos.get(c)]
+        errores.append(f"Campos faltantes: {', '.join(faltantes)}")
+    
+    # Verificar formato email
+    email = datos.get("email", "")
+    if email and not ("@" in email and "." in email):
+        errores.append("Email no válido")
+    
+    if errores:
+        for e in errores:
+            print(f"  ❌ {e}")
+        return False
+    
+    print("  ✅ Formulario válido")
+    return True
+
+print("Formulario 1:")
+validar_formulario({"nombre": "Ana", "email": "ana@mail.com", "edad": "28"})
+print("Formulario 2:")
+validar_formulario({"nombre": "Ana", "email": "", "edad": ""})`} />
+
+### Autenticación
+
+<CodeRunner language="python" title="Verificación de autenticación" initialCode={`def verificar_sesion(usuario):
+    condiciones = {
+        "autenticado": usuario.get("autenticado", False),
+        "no expirado": usuario.get("minutos_restantes", 0) > 0,
+        "no bloqueado": not usuario.get("bloqueado", False),
+    }
+    
+    for nombre, cumple in condiciones.items():
+        estado = "✅" if cumple else "❌"
+        print(f"  {estado} {nombre}")
+    
+    return all(condiciones.values())
+
+print("Usuario activo:")
+user1 = {"autenticado": True, "minutos_restantes": 30, "bloqueado": False}
+print(f"  Acceso: {verificar_sesion(user1)}")
+
+print("Usuario expirado:")
+user2 = {"autenticado": True, "minutos_restantes": 0, "bloqueado": False}
+print(f"  Acceso: {verificar_sesion(user2)}")`} />
+
+### Procesamiento de datos
+
+<CodeRunner language="python" title="Procesamiento de datos" initialCode={`registros = [
+    {"nombre": "Ana", "edad": 28, "activo": True},
+    {"nombre": "Carlos", "edad": 35, "activo": True},
+    {"nombre": "Lucía", "edad": 22, "activo": False},
+    {"nombre": "Pedro", "edad": 40, "activo": True},
+]
+
+# ¿Todos los usuarios son mayores de edad?
+todos_mayores = all(r["edad"] >= 18 for r in registros)
+print(f"¿Todos mayores? {todos_mayores}")
+
+# ¿Hay algún usuario inactivo?
+hay_inactivo = any(not r["activo"] for r in registros)
+print(f"¿Hay inactivo? {hay_inactivo}")
+
+# ¿Todos los activos son mayores de 25?
+activos_mayores = all(r["edad"] > 25 for r in registros if r["activo"])
+print(f"¿Activos > 25? {activos_mayores}")`} />
+
+---
+
+## Buenas prácticas
+
+<table>
+  <thead>
+    <tr>
+      <th>Usar</th>
+      <th>Cuando necesitas saber si...</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>any()</code></td>
+      <td><strong>Al menos uno</strong> cumple una condición</td>
+      <td>¿Hay errores? ¿Algún campo vacío?</td>
+    </tr>
+    <tr>
+      <td><code>all()</code></td>
+      <td><strong>Todos</strong> cumplen una condición</td>
+      <td>¿Todo validado? ¿Todos aprobados?</td>
+    </tr>
+    <tr>
+      <td><code>not any()</code></td>
+      <td><strong>Ninguno</strong> cumple</td>
+      <td>¿Sin errores?</td>
+    </tr>
+    <tr>
+      <td><code>not all()</code></td>
+      <td><strong>Al menos uno no</strong> cumple</td>
+      <td>¿Algo falta?</td>
+    </tr>
+  </tbody>
+</table>
+
+> Usa **expresiones generadoras** `(x for x in ...)` en lugar de listas `[x for x in ...]` dentro de `any()` y `all()`. Son más eficientes porque `any()` se detiene en el primer `True` y `all()` en el primer `False`, sin evaluar el resto.

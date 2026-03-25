@@ -1,0 +1,173 @@
+# 5.10 Lambda avanzada
+
+Las funciones lambda en Python pueden ir más allá de operaciones simples. Esta sección explora técnicas avanzadas: múltiples parámetros, condicionales inline, generación dinámica de funciones y composición de lambdas.
+
+---
+
+## Múltiples parámetros
+
+<CodeRunner language="python" title="Lambda con múltiples parámetros" initialCode={`# Dos parámetros
+distancia = lambda x1, x2: abs(x2 - x1)
+print(distancia(3, 10))   # 7
+
+# Tres parámetros
+volumen = lambda largo, ancho, alto: largo * ancho * alto
+print(f"Volumen: {volumen(3, 4, 5)} m³")   # 60
+
+# Con *args
+suma_total = lambda *args: sum(args)
+print(suma_total(1, 2, 3, 4, 5))   # 15
+
+# Con valor por defecto
+potencia = lambda base, exp=2: base ** exp
+print(potencia(5))      # 25
+print(potencia(2, 10))  # 1024`} />
+
+---
+
+## Condicionales
+
+Las lambdas pueden usar expresiones condicionales (operador ternario) para tomar decisiones:
+
+<CodeRunner language="python" title="Lambda con condicional" initialCode={`# Condicional simple
+signo = lambda x: "positivo" if x > 0 else "negativo o cero"
+print(signo(5))    # positivo
+print(signo(-3))   # negativo o cero
+
+# Condicional con else encadenado
+clasificar = lambda x: "positivo" if x > 0 else ("cero" if x == 0 else "negativo")
+print(clasificar(5))    # positivo
+print(clasificar(0))    # cero
+print(clasificar(-3))   # negativo
+
+# Aplicar descuento condicional
+precio = lambda p, premium: round(p * 0.8, 2) if premium else round(p * 0.95, 2)
+print(f"Premium: {precio(100, True)}€")     # 80.0
+print(f"Normal: {precio(100, False)}€")`} />
+
+<CodeRunner language="python" title="Condicionales en sorted()" initialCode={`# Ordenar poniendo los None al final
+datos = [3, None, 1, None, 5, 2, None, 4]
+ordenados = sorted(datos, key=lambda x: (x is None, x if x is not None else 0))
+print(ordenados)   # [1, 2, 3, 4, 5, None, None, None]`} />
+
+---
+
+## Funciones dinámicas
+
+Se pueden usar lambdas para generar funciones en tiempo de ejecución:
+
+<CodeRunner language="python" title="Generar funciones con lambda" initialCode={`# Fábrica de multiplicadores
+def crear_multiplicador(n):
+    return lambda x: x * n
+
+doble = crear_multiplicador(2)
+triple = crear_multiplicador(3)
+decimo = crear_multiplicador(0.1)
+
+print(doble(5))     # 10
+print(triple(5))    # 15
+print(decimo(5))    # 0.5`} />
+
+<CodeRunner language="python" title="Diccionario de operaciones dinámicas" initialCode={`# Crear operaciones dinámicamente
+operaciones = {
+    "+": lambda a, b: a + b,
+    "-": lambda a, b: a - b,
+    "*": lambda a, b: a * b,
+    "/": lambda a, b: round(a / b, 2) if b != 0 else "Error: div/0",
+    "**": lambda a, b: a ** b,
+    "%": lambda a, b: a % b,
+}
+
+def calcular(a, operador, b):
+    if operador in operaciones:
+        resultado = operaciones[operador](a, b)
+        print(f"  {a} {operador} {b} = {resultado}")
+    else:
+        print(f"  Operador '{operador}' no válido")
+
+calcular(10, "+", 5)
+calcular(10, "-", 3)
+calcular(10, "*", 4)
+calcular(10, "/", 3)
+calcular(2, "**", 8)
+calcular(17, "%", 5)`} />
+
+<CodeRunner language="python" title="Lista de funciones generadas" initialCode={`# Generar una serie de funciones potencia
+potencias = [lambda x, n=i: x ** n for i in range(6)]
+
+# Cada función eleva a una potencia diferente
+for i, f in enumerate(potencias):
+    print(f"  5^{i} = {f(5)}")
+
+# Nota: el n=i en la lambda es necesario para "capturar" el valor
+# de i en cada iteración (closure gotcha)`} />
+
+---
+
+## Lambda dentro de lambda
+
+Las lambdas se pueden anidar, aunque se recomienda moderación para mantener la legibilidad:
+
+<CodeRunner language="python" title="Lambda anidada" initialCode={`# Lambda que devuelve lambda
+multiplicador = lambda n: lambda x: x * n
+
+doble = multiplicador(2)
+triple = multiplicador(3)
+
+print(doble(5))    # 10
+print(triple(5))   # 15
+
+# Llamada directa (sin variable intermedia)
+print(multiplicador(4)(10))   # 40`} />
+
+<CodeRunner language="python" title="Composición de lambdas" initialCode={`# Componer dos funciones
+componer = lambda f, g: lambda x: f(g(x))
+
+# Componer abs y int
+abs_int = componer(abs, int)
+print(abs_int(-3.7))   # 3
+
+# Componer str y len
+str_len = componer(str, len)
+print(str_len([1, 2, 3]))   # "3"
+
+# Componer más funciones
+doble_abs = componer(lambda x: x * 2, abs)
+print(doble_abs(-5))   # 10`} />
+
+> Las lambdas anidadas son potentes pero pueden sacrificar legibilidad. Si la lógica requiere más de una capa, considera usar `def` con nombres descriptivos.
+
+---
+
+## Referencia rápida
+
+<table>
+  <thead>
+    <tr>
+      <th>Técnica</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Múltiples params</td>
+      <td><code>lambda a, b, c: a + b + c</code></td>
+    </tr>
+    <tr>
+      <td>Condicional</td>
+      <td><code>lambda x: "sí" if x else "no"</code></td>
+    </tr>
+    <tr>
+      <td>*args</td>
+      <td><code>lambda *a: sum(a)</code></td>
+    </tr>
+    <tr>
+      <td>Función dinámica</td>
+      <td><code>lambda n: lambda x: x * n</code></td>
+    </tr>
+    <tr>
+      <td>Composición</td>
+      <td><code>lambda f, g: lambda x: f(g(x))</code></td>
+    </tr>
+  </tbody>
+</table>
