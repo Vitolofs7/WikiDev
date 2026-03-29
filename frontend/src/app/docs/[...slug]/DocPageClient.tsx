@@ -70,6 +70,8 @@ interface Props {
 }
 
 export function DocPageClient({ docKey }: Props) {
+  console.log('docKey recibido:', docKey)
+  console.log('existe en docs:', docKey in docs)
   const Content = docs[docKey]
   if (!Content) return null
 

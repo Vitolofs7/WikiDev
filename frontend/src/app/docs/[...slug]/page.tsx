@@ -2,6 +2,7 @@ import { langIcons, langColors } from "@/shared/components/LangIcons";
 import { notFound } from "next/navigation";
 import { navConfig, NavItem } from "@/navigation/config/nav.config";
 import { DocPageClient } from "./DocPageClient";
+import { SubItemsIndex } from "./SubItemsIndex";
 
 const validDocs = [
   "javascript/arrays",
@@ -36,7 +37,7 @@ const validDocs = [
   "python/funciones-basicas/funciones-matematicas",
   "python/funciones-basicas/documentacion",
   "python/funciones-basicas/flujo-de-ejecucion",
-  // python/funciones-intemedias
+  // python/funciones-intermedias
   "python/funciones-intermedias/composicion-de-funciones",
   "python/funciones-intermedias/argumentos-avanzados",
   "python/funciones-intermedias/funciones-integradas-intermedias",
@@ -85,69 +86,12 @@ export default async function DocPage({ params }: Props) {
 
     if (item?.subItems && item.subItems.length > 0) {
       return (
-        <div className="max-w-2xl">
-          <div className="mb-12 pb-8 border-b border-white/5">
-            <h1
-              className="text-6xl font-extrabold text-white mb-3 tracking-tight"
-              style={{ fontFamily: "Outfit, sans-serif" }}
-            >
-              {item.title}
-            </h1>
-            <div className="flex items-center gap-2 mt-4">
-              <span
-                className="px-3 py-1.5 rounded-full text-sm font-medium"
-                style={{
-                  background: "rgba(124,109,250,0.1)",
-                  color: "#a89cf7",
-                  border: "1px solid rgba(124,109,250,0.2)",
-                  fontFamily: "Outfit, sans-serif",
-                }}
-              >
-                {item.subItems.length} apartados
-              </span>
-            </div>
-          </div>
-          <div className="space-y-3">
-            {item.subItems.map((sub, i) => (
-              <a
-                key={sub.slug}
-                href={`/docs/${category}/${page}/${sub.slug}`}
-                className="flex items-center gap-5 p-6 rounded-2xl border border-white/5 hover:border-violet-500/30 transition-all group"
-                style={{ background: "rgba(255,255,255,0.02)" }}
-              >
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-base"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, rgba(124,109,250,0.15), rgba(6,214,160,0.1))",
-                    border: "1px solid rgba(124,109,250,0.2)",
-                    color: "#a89cf7",
-                    fontFamily: "JetBrains Mono, monospace",
-                  }}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-                <div className="flex-1">
-                  <p
-                    className="text-white font-semibold text-xl group-hover:text-violet-300 transition-colors"
-                    style={{ fontFamily: "Outfit, sans-serif" }}
-                  >
-                    {sub.title}
-                  </p>
-                </div>
-                <div
-                  className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0"
-                  style={{
-                    background: "rgba(124,109,250,0.15)",
-                    color: "#a89cf7",
-                  }}
-                >
-                  →
-                </div>
-              </a>
-            ))}
-          </div>
-        </div>
+        <SubItemsIndex
+          title={item.title}
+          category={category}
+          page={page}
+          subItems={item.subItems}
+        />
       );
     }
 
@@ -162,7 +106,7 @@ export default async function DocPage({ params }: Props) {
   if (!cat) notFound();
 
   return (
-    <div className="max-w-2xl">
+    <div className="w-full">
       <div className="mb-12 pb-8 border-b border-white/5">
         <div
           className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6"
@@ -206,16 +150,16 @@ export default async function DocPage({ params }: Props) {
           </span>
         </div>
       </div>
-      <div className="space-y-3">
+      <div className="grid grid-cols-3 gap-3">
         {cat!.items.map((item: NavItem, i: number) => (
           <a
             key={item.slug}
             href={`/docs/${cat!.slug}/${item.slug}`}
-            className="flex items-center gap-5 p-6 rounded-2xl border border-white/5 hover:border-violet-500/30 transition-all group"
+            className="flex items-center gap-4 p-5 rounded-2xl border border-white/5 hover:border-violet-500/30 transition-all group"
             style={{ background: "rgba(255,255,255,0.02)" }}
           >
             <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-base"
+              className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm"
               style={{
                 background:
                   "linear-gradient(135deg, rgba(124,109,250,0.15), rgba(6,214,160,0.1))",
@@ -228,14 +172,14 @@ export default async function DocPage({ params }: Props) {
             </div>
             <div className="flex-1">
               <p
-                className="text-white font-semibold text-xl group-hover:text-violet-300 transition-colors"
+                className="text-base text-zinc-300 group-hover:text-white transition-colors leading-snug"
                 style={{ fontFamily: "Outfit, sans-serif" }}
               >
                 {item.title}
               </p>
               {item.subItems && (
                 <p
-                  className="text-sm text-zinc-600 mt-1"
+                  className="text-xs text-zinc-600 mt-1"
                   style={{ fontFamily: "Outfit, sans-serif" }}
                 >
                   {item.subItems.length} apartados
@@ -243,7 +187,7 @@ export default async function DocPage({ params }: Props) {
               )}
             </div>
             <div
-              className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0"
+              className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0 text-sm"
               style={{ background: "rgba(124,109,250,0.15)", color: "#a89cf7" }}
             >
               →
