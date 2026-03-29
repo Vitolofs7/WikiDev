@@ -1,6 +1,7 @@
 'use client'
 import { CodeRunner } from '@/code-execution/components/CodeRunner'
 import dynamic from 'next/dynamic'
+import { TableOfContents } from '@/documentation/components/TableOfContents'
 
 const components = { CodeRunner }
 
@@ -70,14 +71,15 @@ interface Props {
 }
 
 export function DocPageClient({ docKey }: Props) {
-  console.log('docKey recibido:', docKey)
-  console.log('existe en docs:', docKey in docs)
   const Content = docs[docKey]
   if (!Content) return null
 
   return (
-    <article className="prose-docs">
-      <Content components={components} />
-    </article>
+    <div className="flex gap-12 items-start">
+      <article className="prose-docs flex-1 min-w-0">
+        <Content components={components} />
+      </article>
+      <TableOfContents />
+    </div>
   )
 }
