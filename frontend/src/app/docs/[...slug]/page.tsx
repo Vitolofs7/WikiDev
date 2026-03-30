@@ -41,10 +41,10 @@ const validDocs = [
   "python/funciones-intermedias/composicion-de-funciones",
   "python/funciones-intermedias/argumentos-avanzados",
   "python/funciones-intermedias/funciones-integradas-intermedias",
-  "python/funciones-intermedias/logica-booleana-global-any-all",
+  "python/funciones-intermedias/logica-booleana-any-all",
   "python/funciones-intermedias/iteracion-y-control",
   "python/funciones-intermedias/iteracion-inversa-reversed",
-  "python/funciones-intermedias/funciones-de-texto-y-numeros",
+  "python/funciones-intermedias/funciones-texto-y-numeros",
   "python/funciones-intermedias/funciones-adicionales",
   "python/funciones-intermedias/diagramas-de-pila",
   // python/funciones-avanzadas

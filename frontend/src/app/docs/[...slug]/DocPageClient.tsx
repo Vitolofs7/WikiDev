@@ -59,10 +59,10 @@ const docs: Record<string, React.ComponentType<any>> = {
   'python/funciones-avanzadas/lambda-funciones-integradas': dynamic(() => import('@/content/python/funciones-avanzadas/lambda-funciones-integradas.mdx')),
   'python/funciones-avanzadas/lambda-con-estructuras': dynamic(() => import('@/content/python/funciones-avanzadas/lambda-con-estructuras.mdx')),
   'python/funciones-avanzadas/lambda-avanzada': dynamic(() => import('@/content/python/funciones-avanzadas/lambda-avanzada.mdx')),
-  'python/funciones-avanzadas/programacion-funcional': dynamic(() => import('@/content/python/funciones-avanzadas/lambda-programacion-funcional.mdx')),
-  'python/funciones-avanzadas/casos-reales': dynamic(() => import('@/content/python/funciones-avanzadas/lambda-casos-reales.mdx')),
-  'python/funciones-avanzadas/buenas-practicas': dynamic(() => import('@/content/python/funciones-avanzadas/lambda-buenas-practicas.mdx')),
-  'python/funciones-avanzadas/trucos-avanzados': dynamic(() => import('@/content/python/funciones-avanzadas/lambda-trucos-avanzados.mdx')),
+  'python/funciones-avanzadas/lambda-programacion-funcional': dynamic(() => import('@/content/python/funciones-avanzadas/lambda-programacion-funcional.mdx')),
+  'python/funciones-avanzadas/lambda-casos-reales': dynamic(() => import('@/content/python/funciones-avanzadas/lambda-casos-reales.mdx')),
+  'python/funciones-avanzadas/lambda-buenas-practicas': dynamic(() => import('@/content/python/funciones-avanzadas/lambda-buenas-practicas.mdx')),
+  'python/funciones-avanzadas/lambda-trucos-avanzados': dynamic(() => import('@/content/python/funciones-avanzadas/lambda-trucos-avanzados.mdx')),
 
 }
 
@@ -72,7 +72,8 @@ interface Props {
 
 export function DocPageClient({ docKey }: Props) {
   const Content = docs[docKey]
-  if (!Content) return null
+  console.log('docKey:', docKey, '| existe:', !!Content)
+  if (!Content) return <p style={{color:'red'}}>Doc no encontrado: {docKey}</p>
 
   return (
     <div className="flex gap-12 items-start">
