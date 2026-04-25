@@ -37,13 +37,13 @@ Python considera **falsy** (equivalentes a `False`) los siguientes valores. Todo
 <CodeRunner language="python" title="Valores falsy en Python" initialCode={`valores_falsy = [0, "", [], {}, None, False, 0.0, (), set()]
 
 for v in valores_falsy:
-    print(f"{str(v):10} → bool: {bool(v)}")
+    print(f"{str(v):10} -> bool: {bool(v)}")
 
 print()
 
 valores_truthy = [1, "texto", [1], {"a": 1}, True, 0.1, -1]
 for v in valores_truthy:
-    print(f"{str(v):10} → bool: {bool(v)}")`} />
+    print(f"{str(v):10} -> bool: {bool(v)}")`} />
 
 ---
 
@@ -162,7 +162,7 @@ print(f"¿Todos sobresalientes? {todos_sobresalientes}")   # False`} />
     nombres = ["8+ caracteres", "mayúscula", "minúscula", "número"]
     
     for nombre, cumple in zip(nombres, requisitos):
-        estado = "✅" if cumple else "❌"
+        estado = "[OK]" if cumple else "[X]"
         print(f"  {estado} {nombre}")
     
     return all(requisitos)
@@ -281,10 +281,10 @@ print(all(p.isalpha() for p in palabras))   # False (C++)`} />
     
     if errores:
         for e in errores:
-            print(f"  ❌ {e}")
+            print(f"  [X] {e}")
         return False
     
-    print("  ✅ Formulario válido")
+    print("  [OK] Formulario válido")
     return True
 
 print("Formulario 1:")
@@ -302,7 +302,7 @@ validar_formulario({"nombre": "Ana", "email": "", "edad": ""})`} />
     }
     
     for nombre, cumple in condiciones.items():
-        estado = "✅" if cumple else "❌"
+        estado = "[OK]" if cumple else "[X]"
         print(f"  {estado} {nombre}")
     
     return all(condiciones.values())

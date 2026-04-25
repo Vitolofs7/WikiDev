@@ -63,13 +63,15 @@ print("en la misma línea")             # Sin salto en la misma línea`} />
 
 Por defecto, cada llamada a `print()` añade un salto de línea al final de la salida. Para incluir saltos de línea dentro de una misma cadena, se utiliza la secuencia de escape `\n`:
 
-<CodeRunner language="python" title="Saltos de línea" initialCode={`# Tres llamadas independientes producen tres líneas
-print("Línea 1")
-print("Línea 2")
-print("Línea 3")
+<CodeRunner language="python" title="Saltos de línea" initialCode={`
+  # Tres llamadas independientes producen tres líneas
+  print("Línea 1")
+  print("Línea 2")
+  print("Línea 3")
 
-# Una sola cadena con \n produce el mismo resultado
-print("Línea 1\nLínea 2\nLínea 3")`} />
+  # Una sola cadena con \\n produce el mismo resultado
+  print("Línea 1\\nLínea 2\\nLínea 3")
+`} />
 
 ## Comentarios
 

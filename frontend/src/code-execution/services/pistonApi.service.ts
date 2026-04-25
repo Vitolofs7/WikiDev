@@ -10,13 +10,14 @@ export interface ExecutionResult {
 export interface RunCodeParams {
   language: 'javascript' | 'python'
   code: string
+  stdin?: string
 }
 
-export async function runCode({ language, code }: RunCodeParams): Promise<ExecutionResult> {
+export async function runCode({ language, code, stdin }: RunCodeParams): Promise<ExecutionResult> {
   const response = await fetch(`${API_URL}/api/execute`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ language, code }),
+    body: JSON.stringify({ language, code, stdin: stdin ?? '' }),
   })
 
   if (!response.ok) {

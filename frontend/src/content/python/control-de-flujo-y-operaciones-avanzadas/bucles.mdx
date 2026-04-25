@@ -41,13 +41,18 @@ print("Suma de 1 a 5:", total)   # 15`} />
 
 `while True` crea un bucle que no termina por su condición, sino mediante `break`. Es el patrón habitual para menús interactivos y procesos que deben ejecutarse hasta que ocurra algo:
 
-<CodeRunner language="python" title="while True con break" initialCode={`while True:
+<CodeRunner
+  language="python"
+  title="while True con break"
+  stdin
+  initialCode={`while True:
     entrada = input("Escribe 'salir' para terminar: ")
     if entrada == "salir":
         break
     print("Escribiste:", entrada)
 
-print("Programa terminado")`} />
+print("Programa terminado")`}
+/>
 
 ### break y continue
 
@@ -86,7 +91,11 @@ while activo:
 
 Python permite añadir un bloque `else` a un `while`. Se ejecuta únicamente si el bucle termina de forma natural (sin `break`):
 
-<CodeRunner language="python" title="while / else" initialCode={`password_correcta = "python123"
+<CodeRunner
+  language="python"
+  title="while / else"
+  stdin
+  initialCode={`password_correcta = "python123"
 intentos = 0
 max_intentos = 3
 
@@ -98,7 +107,8 @@ while intentos < max_intentos:
     intentos += 1
     print(f"Incorrecto. Intentos restantes: {max_intentos - intentos}")
 else:
-    print("Número máximo de intentos superado")`} />
+    print("Número máximo de intentos superado")`}
+/>
 
 ---
 

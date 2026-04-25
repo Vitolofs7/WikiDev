@@ -76,7 +76,7 @@ saludar()
 # Esta línea está fuera de la función (no indentada)
 print("Esto siempre se ejecuta")`} />
 
-<CodeRunner language="python" title="IndentationError" initialCode={`# ❌ Indentación inconsistente → IndentationError
+<CodeRunner language="python" title="IndentationError" initialCode={`# ❌ Indentación inconsistente -> IndentationError
 try:
     exec("""
 def funcion_mal():
@@ -108,7 +108,7 @@ Cuando Python lee una definición `def`, **no ejecuta el cuerpo**: simplemente r
 <CodeRunner language="python" title="Definición vs ejecución" initialCode={`print("1 — antes de la definición")
 
 def saludar():
-    print("   → dentro de saludar()")
+    print("   -> dentro de saludar()")
 
 print("2 — después de la definición")
 
@@ -116,7 +116,7 @@ saludar()   # aquí se ejecuta el cuerpo
 
 print("3 — después de la llamada")`} />
 
-El orden de salida es `1 → 2 → dentro → 3`. La definición no produce ninguna salida.
+El orden de salida es `1 -> 2 -> dentro -> 3`. La definición no produce ninguna salida.
 
 ---
 
@@ -164,17 +164,21 @@ imprimir_resultado(calcular_area_circulo(5), "m²")`} />
 
 ## Errores comunes
 
-<CodeRunner language="python" title="Olvidar los dos puntos" initialCode={`# ❌ SyntaxError: falta el : al final del encabezado
-try:
-    exec("def saludar()\n    print('Hola')")
-except SyntaxError as e:
-    print(f"SyntaxError: {e}")
-
-# ✅ Correcto
+<CodeRunner
+  language="python"
+  title="Olvidar los dos puntos"
+  initialCode={`# ✅ Correcto
 def saludar():
     print("Hola")
 
-saludar()`} />
+saludar()
+
+# ❌ SyntaxError: falta el : al final del encabezado
+try:
+    exec("def saludar()\n    print('Hola')")
+except SyntaxError as e:
+    print(f"SyntaxError: {e}")`}
+/>
 
 <CodeRunner language="python" title="Llamar antes de definir" initialCode={`# ❌ NameError: la función no existe todavía
 try:

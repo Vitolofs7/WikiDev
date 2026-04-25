@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Play, RotateCcw, Copy, Check } from "lucide-react";
+import { Play, RotateCcw, Copy, Check, Terminal } from "lucide-react";
 import { useCodeExecution } from "../hooks/useCodeExecution";
 import { CodeOutput } from "./CodeOutput";
 import { cn } from "@/shared/utils/cn";
@@ -9,6 +9,7 @@ interface CodeRunnerProps {
   initialCode: string;
   language: "javascript" | "python";
   title?: string;
+  stdin?: boolean;
 }
 
 const LANGUAGE_CONFIG = {
@@ -22,15 +23,24 @@ const LANGUAGE_CONFIG = {
   },
 };
 
-export function CodeRunner({ initialCode, language, title }: CodeRunnerProps) {
+export function CodeRunner({
+  initialCode,
+  language,
+  title,
+  stdin: hasStdin,
+}: CodeRunnerProps) {
   const [code, setCode] = useState(initialCode.trim());
+  const [stdinValue, setStdinValue] = useState("");
   const [copied, setCopied] = useState(false);
   const { result, isRunning, error, execute, reset } = useCodeExecution();
   const lang = LANGUAGE_CONFIG[language];
 
-  const handleRun = () => execute({ language, code });
+  const handleRun = () => {
+    execute({ language, code, stdin: hasStdin ? stdinValue : undefined });
+  };
   const handleReset = () => {
     setCode(initialCode.trim());
+    setStdinValue("");
     reset();
   };
   const handleCopy = async () => {
@@ -56,15 +66,12 @@ export function CodeRunner({ initialCode, language, title }: CodeRunnerProps) {
         }}
       >
         <div className="flex items-center gap-3">
-          {/* Traffic lights */}
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded-full bg-red-500/60" />
             <span className="w-3 h-3 rounded-full bg-yellow-500/60" />
             <span className="w-3 h-3 rounded-full bg-emerald-500/60" />
           </div>
-
           <div className="w-px h-4 bg-white/10" />
-
           <span
             className={cn(
               "text-sm font-medium px-2.5 py-0.5 rounded-md border",
@@ -74,7 +81,6 @@ export function CodeRunner({ initialCode, language, title }: CodeRunnerProps) {
           >
             {lang.label}
           </span>
-
           {title && (
             <span
               className="text-zinc-600 text-sm"
@@ -84,7 +90,6 @@ export function CodeRunner({ initialCode, language, title }: CodeRunnerProps) {
             </span>
           )}
         </div>
-
         <div className="flex items-center gap-1">
           <button
             onClick={handleCopy}
@@ -125,6 +130,45 @@ export function CodeRunner({ initialCode, language, title }: CodeRunnerProps) {
           }}
         />
       </div>
+
+      {/* Stdin — solo si el CodeRunner lo requiere */}
+      {hasStdin && (
+        <div
+          style={{
+            background: "#080810",
+            borderTop: "1px solid rgba(255,255,255,0.04)",
+          }}
+        >
+          <div className="flex items-center gap-2 px-6 pt-3 pb-1">
+            <Terminal className="w-3.5 h-3.5 text-zinc-600" />
+            <span
+              className="text-xs text-zinc-600 uppercase tracking-widest font-bold"
+              style={{ fontFamily: "Outfit, sans-serif" }}
+            >
+              Entrada (stdin)
+            </span>
+          </div>
+          <textarea
+            value={stdinValue}
+            onChange={(e) => setStdinValue(e.target.value)}
+            placeholder="Escribe aquí la entrada del programa antes de ejecutar..."
+            className="w-full bg-transparent text-zinc-400 text-sm px-6 pb-2 resize-none outline-none leading-relaxed"
+            style={{
+              fontFamily: "JetBrains Mono, monospace",
+              minHeight: "60px",
+            }}
+            spellCheck={false}
+          />
+          {!stdinValue.trim() && (
+            <p
+              className="px-6 pb-3 text-xs text-amber-500/70"
+              style={{ fontFamily: "Outfit, sans-serif" }}
+            >
+              ⚠ Escribe la entrada antes de ejecutar para evitar errores
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Footer / Run bar */}
       <div
