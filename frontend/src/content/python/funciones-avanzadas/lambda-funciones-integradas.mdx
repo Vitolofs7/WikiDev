@@ -89,7 +89,7 @@ productos = [
 # Ordenar por precio, y si empatan, por valoración descendente
 ordenados = sorted(productos, key=lambda p: (p[1], -p[2]))
 for nombre, precio, val in ordenados:
-    print(f"  {nombre}: {precio}€ (★{val})")`} />
+    print(f"  {nombre}: {precio}€ ({val})")`} />
 
 ---
 

@@ -2,6 +2,7 @@ import subprocess
 import sys
 import tempfile
 import os
+from typing import Optional
 from .schemas import RunCodeRequest, RunCodeResponse
 
 # Tamaño máximo permitido para el código recibido.
@@ -12,15 +13,7 @@ TIMEOUT = 5  # segundos
 
 
 async def execute_code(req: RunCodeRequest) -> RunCodeResponse:
-    """
-    Ejecuta código según el lenguaje especificado en la petición.
-
-    Args:
-        req: Objeto con el lenguaje y el código fuente.
-    Returns:
-        RunCodeResponse: Resultado de la ejecución.
-    """
-    # Valida que el tamaño del código no supere el límite establecido.
+    print(f"stdin recibido: '{req.stdin}'")  # log temporal
     if len(req.code) > MAX_CODE_LENGTH:
         return RunCodeResponse(
             stdout="",
@@ -29,35 +22,22 @@ async def execute_code(req: RunCodeRequest) -> RunCodeResponse:
         )
 
     try:
-        # Selecciona el motor de ejecución según el lenguaje indicado.
         if req.language == "python":
-            result = _run_python(req.code)
+            result = _run_python(req.code, req.stdin)
         elif req.language == "javascript":
-            result = _run_javascript(req.code)
+            result = _run_javascript(req.code, req.stdin)
         else:
-            # Protección adicional ante lenguajes no soportados.
             return RunCodeResponse(
                 stdout="", stderr="Lenguaje no soportado", exit_code=1
             )
         return result
     except Exception as e:
-        # Captura cualquier error inesperado y lo devuelve como stderr.
         return RunCodeResponse(stdout="", stderr=str(e), exit_code=1)
 
 
-def _run(cmd: list[str], code: str, suffix: str) -> RunCodeResponse:
-    """
-    Ejecuta código fuente escribiéndolo primero en un archivo temporal.
-
-    Args:
-        cmd: Comando base que se utilizará para ejecutar el archivo.
-        code: Código fuente recibido.
-        suffix: Extensión del archivo temporal (.py, .js, etc.).
-    Returns:
-        RunCodeResponse: Resultado de la ejecución.
-    """
-
-    # Crea un archivo temporal en disco para almacenar el código.
+def _run(
+    cmd: list[str], code: str, suffix: str, stdin: Optional[str] = None
+) -> RunCodeResponse:
     with tempfile.NamedTemporaryFile(
         suffix=suffix, delete=False, mode="w", encoding="utf-8"
     ) as f:
@@ -65,45 +45,31 @@ def _run(cmd: list[str], code: str, suffix: str) -> RunCodeResponse:
         tmp_path = f.name
 
     try:
-        # Ejecuta el archivo temporal mediante un proceso externo.
         result = subprocess.run(
             cmd + [tmp_path],
-            # Captura stdout y stderr.
             capture_output=True,
-            # Devuelve la salida como texto en lugar de bytes.
             text=True,
-            # Cancela la ejecución si supera el tiempo permitido.
             timeout=TIMEOUT,
+            input=stdin or "",
         )
-        # Devuelve el resultado limitando el tamaño máximo de salida.
         return RunCodeResponse(
-            stdout=result.stdout[:50_000],  # Máximo 50 KB
-            stderr=result.stderr[:10_000],  # Máximo 10 KB
+            stdout=result.stdout[:50_000],
+            stderr=result.stderr[:10_000],
             exit_code=result.returncode,
         )
     except subprocess.TimeoutExpired:
-        # Maneja específicamente el caso en que el programa tarda demasiado.
         return RunCodeResponse(
             stdout="",
             stderr=f"Tiempo de ejecución excedido ({TIMEOUT}s)",
             exit_code=1,
         )
     finally:
-        # Elimina el archivo temporal independientemente del resultado.
-        # Esto evita acumular archivos innecesarios en el sistema.
         os.unlink(tmp_path)
 
 
-def _run_python(code: str) -> RunCodeResponse:
-    """
-    Ejecuta código Python usando el intérprete actual.
-    """
-    # sys.executable apunta al binario de Python actualmente en uso.
-    return _run([sys.executable], code, ".py")
+def _run_python(code: str, stdin: Optional[str] = None) -> RunCodeResponse:
+    return _run([sys.executable], code, ".py", stdin)
 
 
-def _run_javascript(code: str) -> RunCodeResponse:
-    """
-    Ejecuta código JavaScript usando Node.js.
-    """
-    return _run(["node"], code, ".js")
+def _run_javascript(code: str, stdin: Optional[str] = None) -> RunCodeResponse:
+    return _run(["node"], code, ".js", stdin)

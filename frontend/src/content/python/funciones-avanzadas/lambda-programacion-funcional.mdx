@@ -29,7 +29,7 @@ for v in valores:
 
 <CodeRunner language="python" title="Pipeline encadenado" initialCode={`numeros = range(1, 21)
 
-# Pipeline: filtrar pares → elevar al cuadrado → convertir a string
+# Pipeline: filtrar pares → elevar al cuadrado -> convertir a string
 resultado = list(
     map(lambda x: f"[{x}]",
         map(lambda x: x ** 2,
@@ -76,7 +76,7 @@ aprobados = [True, True, True]
 
 # Combinar datos paralelos
 for nombre, nota, aprobado in zip(nombres, notas, aprobados):
-    estado = "✅" if aprobado else "❌"
+    estado = "[OK]" if aprobado else "[X]"
     print(f"  {estado} {nombre}: {nota}")
 
 print()

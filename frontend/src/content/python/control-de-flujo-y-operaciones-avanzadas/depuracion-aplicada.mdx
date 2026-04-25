@@ -240,7 +240,7 @@ Cuando un bucle produce un resultado inesperado, la técnica más eficaz es impr
 def factorial_con_bug(n):
     resultado = 0   # ← bug: debería ser 1
     for i in range(1, n + 1):
-        print(f"  i={i}, resultado antes={resultado}", end=" → ")
+        print(f"  i={i}, resultado antes={resultado}", end=" -> ")
         resultado *= i
         print(f"resultado después={resultado}")
     return resultado

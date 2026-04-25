@@ -8,6 +8,7 @@ class RunCodeRequest(BaseModel):
     language: Literal["python", "javascript"]
     # Código fuente que será ejecutado.
     code: str
+    stdin: Optional[str] = None
 
 
 # Modelo de salida con el resultado de la ejecución.
