@@ -1,18 +1,15 @@
+
 /**
-
-ruta: frontend/src/navigation/components/Navbar.tsx
-
-* Define la barra de navegación principal de WikiDev, proporcionando acceso a la página
-* de inicio, la documentación, el módulo de notas y el área de búsqueda. Permite adaptar
-* su tamaño mediante la propiedad opcional `compact`, ajustando la altura de la barra,
-* las dimensiones del logotipo, la tipografía, los iconos y el espaciado entre elementos.
-* Utiliza componentes de navegación de Next.js, optimiza la carga del logotipo mediante
-* `next/image` y aplica los estilos globales de la aplicación para mantener una identidad
-* visual coherente. Su diseño adaptable reorganiza los elementos según el espacio
-* disponible y destaca las interacciones mediante transiciones y estados visuales.
-
-**/
-
+ * Ruta: frontend/src/navigation/components/Navbar.tsx
+ *
+ * Define la barra de navegación principal de WikiDev, proporcionando acceso a la página
+ * de inicio, la documentación, el módulo de notas y el área de búsqueda. Permite adaptar
+ * su tamaño mediante la propiedad opcional compact, ajustando la altura de la barra, las
+ * dimensiones del logotipo, la tipografía, los iconos y el espaciado entre elementos.
+ * Utiliza componentes de navegación de Next.js y optimiza la carga del logotipo mediante
+ * next/image. El buscador se controla desde el contexto global SearchProvider, evitando
+ * instancias duplicadas del modal y manteniendo una experiencia de navegación coherente.
+ */
 
 "use client";
 
@@ -20,12 +17,15 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { Search, StickyNote, BookOpen } from "lucide-react";
+import { useSearchModal } from "@/search/components/SearchProvider";
 
 type NavbarProps = {
   compact?: boolean;
 };
 
 export function Navbar({ compact = false }: NavbarProps) {
+  const { open } = useSearchModal();
+
   return (
     <header className="sticky top-0 z-50 border-b border-white/6 bg-transparent">
       <div
@@ -131,6 +131,7 @@ export function Navbar({ compact = false }: NavbarProps) {
         <div className={`ml-auto ${compact ? "ml-6 flex-1 max-w-130" : ""}`}>
           <button
             type="button"
+            onClick={open}
             className={`group flex w-full items-center rounded-xl border border-(--border-hover) bg-(--bg-3)/80 transition-all hover:border-(--accent)/40 hover:bg-(--bg-3) focus:border-(--accent)/60 focus:outline-none ${
               compact ? "h-10 gap-3 px-4" : "h-12 w-95 gap-3.5 px-5"
             }`}

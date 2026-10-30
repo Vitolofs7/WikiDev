@@ -66,6 +66,7 @@ export function CodeRunner({
   return (
     <div
       className="rounded-2xl overflow-hidden my-8 shadow-2xl"
+      data-code-runner
       style={{
         border: "1px solid rgba(255,255,255,0.06)",
         boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
@@ -122,6 +123,7 @@ export function CodeRunner({
       {/* Editor */}
       <div style={{ background: "#080810" }}>
         <textarea
+          data-code-editor
           value={code}
           onChange={(e) => setCode(e.target.value)}
           className="w-full bg-transparent text-zinc-300 text-base p-6 resize-none outline-none min-h-[160px] leading-relaxed"

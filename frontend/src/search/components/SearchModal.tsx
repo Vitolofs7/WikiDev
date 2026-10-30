@@ -1,21 +1,15 @@
+
 /**
-
-ruta: frontend/src/search/components/SearchModal.tsx
-
-* Renderiza un modal de búsqueda que permite localizar contenidos de la
-* documentación y navegar directamente a los resultados seleccionados. Integra
-* el hook `useSearch` para gestionar la consulta y obtener coincidencias, y
-* proporciona navegación mediante teclado con las flechas, Enter y Escape,
-* además del atajo Ctrl+K o Cmd+K para controlar el modal. Gestiona el foco del
-* campo de búsqueda al abrirse, reinicia la selección en cada apertura y permite
-* seleccionar resultados mediante clic o movimiento del ratón. Incluye estados
-* visuales para los resultados, las búsquedas sin coincidencias y las indicaciones
-* de uso, manteniendo la navegación integrada con el enrutador de Next.js.
-
-**/
-
+ * Renderiza el modal de búsqueda de documentación.
+ * Integra useSearch para consultar contenidos y permite navegar
+ * por los resultados mediante las flechas, Enter y Escape.
+ *
+ * El control de apertura y el atajo Ctrl+K / Cmd+K pertenecen
+ * exclusivamente a SearchProvider.
+ */
 
 "use client";
+
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, X, ArrowRight } from "lucide-react";
@@ -30,46 +24,62 @@ interface SearchModalProps {
 export function SearchModal({ open, onClose }: SearchModalProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
+
   const { query, results, search, clear } = useSearch();
   const [selected, setSelected] = useState(0);
 
-  // Reinicia `selected` cuando `open` cambia a true, ajustando el estado
-  // durante el render en vez de en un efecto (evita el render en cascada
-  // que marca react-hooks/set-state-in-effect).
+  // Reinicia la selección cuando el modal vuelve a abrirse.
   const [wasOpen, setWasOpen] = useState(open);
+
   if (open !== wasOpen) {
     setWasOpen(open);
-    if (open) setSelected(0);
+
+    if (open) {
+      setSelected(0);
+    }
   }
 
-  // El foco del input SÍ es un efecto legítimo: es una sincronización con el
-  // DOM, no un simple reflejo de estado.
+  // Gestiona el foco del campo de búsqueda.
   useEffect(() => {
     if (open) {
       const id = setTimeout(() => inputRef.current?.focus(), 50);
+
       return () => clearTimeout(id);
     }
+
     clear();
   }, [open, clear]);
 
+  // Gestiona la navegación interna del modal.
   useEffect(() => {
+    if (!open) return;
+
     const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        if (open) onClose();
+      if (e.key === "Escape") {
+        onClose();
       }
-      if (!open) return;
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowDown")
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
         setSelected((s) => Math.min(s + 1, results.length - 1));
-      if (e.key === "ArrowUp") setSelected((s) => Math.max(s - 1, 0));
+      }
+
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSelected((s) => Math.max(s - 1, 0));
+      }
+
       if (e.key === "Enter" && results[selected]) {
         router.push(results[selected].href);
         onClose();
       }
     };
+
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+
+    return () => {
+      window.removeEventListener("keydown", handler);
+    };
   }, [open, results, selected, onClose, router]);
 
   if (!open) return null;
@@ -77,7 +87,10 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center pt-24"
-      style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}
+      style={{
+        background: "rgba(0,0,0,0.7)",
+        backdropFilter: "blur(4px)",
+      }}
       onClick={onClose}
     >
       <div
@@ -90,7 +103,8 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
       >
         {/* Input */}
         <div className="flex items-center gap-4 px-5 py-5 border-b border-white/5">
-          <Search className="w-5 h-5 text-violet-400 flex-shrink-0" />
+          <Search className="w-5 h-5 text-violet-400 shrink-0" />
+
           <input
             ref={inputRef}
             value={query}
@@ -102,6 +116,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
             className="flex-1 bg-transparent text-white text-base outline-none placeholder-zinc-600"
             style={{ fontFamily: "Outfit, sans-serif" }}
           />
+
           {query && (
             <button
               onClick={clear}
@@ -125,12 +140,15 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
                   onMouseEnter={() => setSelected(i)}
                   className={cn(
                     "w-full flex items-center gap-4 px-5 py-3.5 text-left transition-colors",
-                    selected === i ? "bg-violet-500/10" : "hover:bg-white/5",
+                    selected === i
+                      ? "bg-violet-500/10"
+                      : "hover:bg-white/5"
                   )}
                 >
-                  <span className="text-xl flex-shrink-0">
+                  <span className="text-xl shrink-0">
                     {result.categoryEmoji}
                   </span>
+
                   <div className="flex-1 min-w-0">
                     <p
                       className="text-base text-white font-medium truncate"
@@ -138,6 +156,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
                     >
                       {result.title}
                     </p>
+
                     <p
                       className="text-sm text-zinc-600"
                       style={{ fontFamily: "Outfit, sans-serif" }}
@@ -145,8 +164,9 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
                       {result.category}
                     </p>
                   </div>
+
                   {selected === i && (
-                    <ArrowRight className="w-4 h-4 text-violet-400 flex-shrink-0" />
+                    <ArrowRight className="w-4 h-4 text-violet-400 shrink-0" />
                   )}
                 </button>
               </li>
@@ -179,6 +199,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
               </kbd>
               navegar
             </span>
+
             <span
               className="flex items-center gap-1.5 text-xs text-zinc-500"
               style={{ fontFamily: "JetBrains Mono, monospace" }}
@@ -188,6 +209,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
               </kbd>
               abrir
             </span>
+
             <span
               className="flex items-center gap-1.5 text-xs text-zinc-500"
               style={{ fontFamily: "JetBrains Mono, monospace" }}

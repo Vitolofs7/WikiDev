@@ -67,7 +67,7 @@ export function NotesList({ notes, selectedId, onSelect }: Props) {
                 {note.title || 'Sin título'}
               </p>
               {note.images.length > 0 && (
-                <div className="flex items-center gap-1 flex-shrink-0">
+                <div className="flex items-center gap-1 shrink-0">
                   <ImageIcon className="w-4 h-4 text-zinc-600" />
                   <span className="text-xs text-zinc-600">{note.images.length}</span>
                 </div>

@@ -1,24 +1,21 @@
 /**
-
-ruta: frontend/src/documentation/components/PdfExport.tsx
-
-* Gestiona la exportación del contenido de una página de documentación a un archivo PDF,
-* utilizando `html2pdf.js` para generar un documento descargable en formato A4. Clona el
-* contenido del artículo para adaptar sus estilos a la impresión sin modificar la
-* presentación original de la página y transforma los editores interactivos de código
-* en bloques estáticos que incluyen el código fuente y, cuando está disponible, su salida.
-* Aplica una hoja de estilos específica para mejorar la legibilidad de títulos, párrafos,
-* tablas, bloques de código y cajas informativas sobre fondo claro. Finalmente, configura
-* los márgenes, la calidad de renderizado y la orientación del documento, y genera el PDF
-* utilizando el nombre de la página como nombre del archivo.
-
-**/
-
+ * Ruta: frontend/src/documentation/components/PdfExport.tsx
+ *
+ * Gestiona la exportación del contenido de una página de documentación a un archivo PDF,
+ * utilizando `html2pdf.js` para generar un documento descargable en formato A4. Clona el
+ * contenido del artículo para adaptar sus estilos a la impresión sin modificar la
+ * presentación original de la página y transforma los editores interactivos de código
+ * en bloques estáticos que incluyen el código fuente y, cuando está disponible, su salida.
+ * Aplica una hoja de estilos específica para mejorar la legibilidad de títulos, párrafos,
+ * tablas, bloques de código y cajas informativas sobre fondo claro. Finalmente, configura
+ * los márgenes, la calidad de renderizado y la orientación del documento, y genera el PDF
+ * utilizando el nombre de la página como nombre del archivo.
+ */
 
 export async function downloadPdf(docKey: string) {
   const html2pdf = (await import("html2pdf.js")).default;
 
-  const article = document.querySelector("article.prose-docs");
+  const article = document.querySelector("[data-doc-article]");
 
   if (!article) return;
 
@@ -27,155 +24,120 @@ export async function downloadPdf(docKey: string) {
   const style = document.createElement("style");
 
   style.textContent = `
-    * { font-family: 'Outfit', sans-serif; }
+  * {
+    color: #000000 !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    border-color: #999999 !important;
+    font-family: Arial, Helvetica, sans-serif !important;
+  }
 
-    h1 {
-      color: #0a0a0a !important;
-      font-size: 2.2rem !important;
-      margin-bottom: 1.5rem !important;
-      padding-bottom: 0.75rem !important;
-      border-bottom: 2px solid #e0e0e0 !important;
-    }
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
 
-    h1::after { display: none !important; }
+  h1, h2, h3, h4, h5, h6 {
+    color: #000000 !important;
+    font-weight: bold !important;
+    page-break-after: avoid;
+  }
 
-    h2 {
-      color: #1a1a1a !important;
-      font-size: 1.3rem !important;
-      margin-top: 2rem !important;
-      margin-bottom: 1rem !important;
-      padding-left: 0 !important;
-      border-left: none !important;
-      border-bottom: 1px solid #e8e8e8 !important;
-      padding-bottom: 0.4rem !important;
-    }
+  h1 {
+    font-size: 28px !important;
+    border-bottom: 2px solid #000000 !important;
+    padding-bottom: 10px !important;
+  }
 
-    h3 {
-      color: #1a1a1a !important;
-      font-size: 1.1rem !important;
-      margin-top: 1.5rem !important;
-      margin-bottom: 0.75rem !important;
-    }
+  h2 {
+    font-size: 22px !important;
+    border-bottom: 1px solid #999999 !important;
+    padding-bottom: 6px !important;
+  }
 
-    p, li {
-      color: #2a2a2a !important;
-      line-height: 1.8 !important;
-      margin-bottom: 0.75rem !important;
-    }
+  h3 {
+    font-size: 18px !important;
+  }
 
-    strong {
-      color: #0a0a0a !important;
-      font-weight: 700;
-    }
+  p, li, span, strong, em {
+    color: #000000 !important;
+    line-height: 1.6 !important;
+  }
 
-    code:not(pre code) {
-      background: #f0f0f0 !important;
-      color: #333 !important;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-family: 'JetBrains Mono', monospace !important;
-      font-size: 0.85em !important;
-      border: 1px solid #ddd !important;
-    }
+  a {
+    color: #000000 !important;
+    text-decoration: underline !important;
+  }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0 !important;
-      font-size: 0.9rem !important;
-    }
+  code {
+    color: #000000 !important;
+    background: #eeeeee !important;
+    font-family: Consolas, monospace !important;
+  }
 
-    th {
-      color: #0a0a0a !important;
-      border-bottom: 2px solid #333 !important;
-      padding: 10px 12px !important;
-      text-align: left !important;
-      font-weight: 700 !important;
-      background: #f5f5f5 !important;
-    }
+  pre {
+    color: #000000 !important;
+    background: #eeeeee !important;
+    border: 1px solid #cccccc !important;
+    padding: 12px !important;
+    white-space: pre-wrap !important;
+    overflow-wrap: anywhere !important;
+  }
 
-    td {
-      color: #2a2a2a !important;
-      border-bottom: 1px solid #e0e0e0 !important;
-      padding: 10px 12px !important;
-      vertical-align: top !important;
-    }
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
 
-    tr:last-child td {
-      border-bottom: none !important;
-    }
+  th, td {
+    color: #000000 !important;
+    background: #ffffff !important;
+    border: 1px solid #999999 !important;
+    padding: 8px !important;
+  }
 
-    blockquote {
-      border-left: 3px solid #333 !important;
-      padding-left: 16px !important;
-      color: #555 !important;
-      margin: 1rem 0 !important;
-      font-style: italic !important;
-    }
+  th {
+    background: #eeeeee !important;
+    font-weight: bold !important;
+  }
 
-    /* Callout: mantiene el borde de color por tipo, pero pasa a fondo claro para imprimir */
-    aside[role="note"] {
-      background: #ffffff !important;
-      border-top: 1px solid #e0e0e0 !important;
-      border-right: 1px solid #e0e0e0 !important;
-      border-bottom: 1px solid #e0e0e0 !important;
-      border-radius: 12px !important;
-      overflow: hidden !important;
-      margin: 1.25rem 0 !important;
-      box-shadow: none !important;
-      color: #2a2a2a !important;
-    }
+  blockquote,
+  aside[role="note"] {
+    color: #000000 !important;
+    background: #f2f2f2 !important;
+    border-left: 4px solid #666666 !important;
+    padding: 12px !important;
+  }
 
-    aside[role="note"] > div {
-      background: #ffffff !important;
-    }
+  img {
+    max-width: 100% !important;
+  }
 
-    aside[role="note"] p {
-      color: #2a2a2a !important;
-      margin-bottom: 0 !important;
-    }
-
-    aside[role="note"] [class*="text-blue-300"] {
-      color: #1d4ed8 !important;
-      background: rgba(29, 78, 216, 0.08) !important;
-      border-color: rgba(29, 78, 216, 0.25) !important;
-    }
-
-    aside[role="note"] [class*="text-violet-300"] {
-      color: #6d28d9 !important;
-      background: rgba(109, 40, 217, 0.08) !important;
-      border-color: rgba(109, 40, 217, 0.25) !important;
-    }
-
-    aside[role="note"] [class*="text-red-300"] {
-      color: #b91c1c !important;
-      background: rgba(185, 28, 28, 0.08) !important;
-      border-color: rgba(185, 28, 28, 0.25) !important;
-    }
-
-    aside[role="note"] [class*="text-emerald-300"] {
-      color: #047857 !important;
-      background: rgba(4, 120, 87, 0.08) !important;
-      border-color: rgba(4, 120, 87, 0.25) !important;
-    }
-  `;
+  hr {
+    border: none !important;
+    border-top: 1px solid #999999 !important;
+  }
+`;
 
   clone.prepend(style);
 
-  const filename =
-    docKey.split("/").pop()?.replace(/-/g, " ") ?? "documento";
+  const filename = docKey.split("/").pop()?.replace(/-/g, " ") ?? "documento";
 
-  const runners = Array.from(
-    article.querySelectorAll(".rounded-2xl")
-  );
+  // Localizar los editores originales y sus correspondientes clones.
+  const runners = Array.from(article.querySelectorAll("[data-code-runner]"));
 
-  const cloneRunners = Array.from(
-    clone.querySelectorAll(".rounded-2xl")
-  );
+  const cloneRunners = Array.from(clone.querySelectorAll("[data-code-runner]"));
 
+  // Sustituir los editores interactivos por bloques estáticos.
   runners.forEach((runner, index) => {
-    const textarea = runner.querySelector("textarea");
-    const output = runner.querySelector("pre.text-emerald-300");
+    const textarea =
+      runner.querySelector<HTMLTextAreaElement>("[data-code-editor]");
+
+    const output = runner.querySelector("[data-code-output='stdout']");
+
     const cloneRunner = cloneRunners[index];
 
     if (!textarea || !cloneRunner) return;
@@ -184,6 +146,7 @@ export async function downloadPdf(docKey: string) {
 
     wrapper.style.cssText = "margin-bottom: 1.5rem;";
 
+    // Etiqueta del código.
     const codeLabel = document.createElement("div");
 
     codeLabel.textContent = "Código";
@@ -198,6 +161,7 @@ export async function downloadPdf(docKey: string) {
       margin-bottom: 4px;
     `;
 
+    // Bloque de código.
     const codeBlock = document.createElement("pre");
 
     codeBlock.style.cssText = `
@@ -218,6 +182,7 @@ export async function downloadPdf(docKey: string) {
     wrapper.appendChild(codeLabel);
     wrapper.appendChild(codeBlock);
 
+    // Incluir la salida si existe.
     if (
       output?.textContent?.trim() &&
       !output.textContent.includes("output aparecerá")
@@ -262,7 +227,8 @@ export async function downloadPdf(docKey: string) {
     cloneRunner.replaceWith(wrapper);
   });
 
-  html2pdf()
+  // Configuración y generación del PDF.
+  await html2pdf()
     .set({
       margin: [15, 15, 15, 15],
       filename: `${filename}.pdf`,

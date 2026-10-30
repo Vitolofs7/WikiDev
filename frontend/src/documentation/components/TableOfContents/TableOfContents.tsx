@@ -152,7 +152,7 @@ export function TableOfContents({ docKey }: TableOfContentsProps) {
   }
 
   return (
-    <aside className="w-90 flex-shrink-0 sticky top-10 h-fit hidden xl:block">
+    <aside className="w-90 shrink-0 sticky top-10 h-fit hidden xl:block">
       <ul className="space-y-1">
         {headings.map((heading) => {
           const isActive = activeId === heading.id;

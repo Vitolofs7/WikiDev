@@ -68,19 +68,19 @@ const docs: Record<string, DocComponent> = {
 export const docsMetadata: DocMetadata[] = [
   {
     slug: "algorithms/sorting",
-    unit: "algorithms/sorting",
+    unit: "algorithms",
     order: 1,
     title: "Sorting",
   },
   {
     slug: "javascript/arrays",
-    unit: "javascript/arrays",
+    unit: "javascript",
     order: 1,
     title: "Arrays",
   },
   {
     slug: "javascript/promises",
-    unit: "javascript/promises",
+    unit: "javascript",
     order: 2,
     title: "Promises",
   },

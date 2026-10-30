@@ -11,7 +11,6 @@ ruta: frontend/src/app/docs/%5B...slug%5D/DocPageClient.tsx
 
 **/
 
-
 "use client";
 
 import { useRef } from "react";
@@ -49,11 +48,6 @@ function formatBreadcrumb(segment: string): string {
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
-/** Las dos primeras partes identifican la unidad: "python/el-camino-del-programa" */
-function getUnitKey(docKey: string): string {
-  return docKey.split("/").slice(0, 2).join("/");
-}
-
 export function DocPageClient({ docKey }: Props) {
   const router = useRouter();
   const articleRef = useRef<HTMLElement>(null);
@@ -63,7 +57,7 @@ export function DocPageClient({ docKey }: Props) {
   if (!Content) return null;
 
   // Anterior / Siguiente dentro de la misma unidad.
-  const unitDocs = docsByUnit[getUnitKey(docKey)] ?? [];
+  const unitDocs = docsByUnit[docsBySlug[docKey]?.unit ?? ""] ?? [];
   const currentIndex = unitDocs.findIndex((doc) => doc.slug === docKey);
 
   const prevDoc = currentIndex > 0 ? unitDocs[currentIndex - 1] : null;
@@ -146,7 +140,7 @@ export function DocPageClient({ docKey }: Props) {
             </div>
           </div>
 
-          <article ref={articleRef} className="prose-docs">
+          <article ref={articleRef} className="prose-docs" data-doc-article>
             <Content components={components} />
           </article>
 

@@ -42,7 +42,7 @@ export function CodeOutput({ result, isRunning, error }: CodeOutputProps) {
   if (error) {
     return (
       <div className="p-5 flex items-start gap-2.5">
-        <XCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+        <XCircle className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />
         <span className="text-red-400 text-sm" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
           {error}
         </span>
@@ -65,8 +65,9 @@ export function CodeOutput({ result, isRunning, error }: CodeOutputProps) {
     <div className="p-5">
       {result.stdout && (
         <div className="flex items-start gap-3">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
           <pre className="text-emerald-300 text-sm whitespace-pre-wrap leading-relaxed"
+            data-code-output="stdout"
             style={{ fontFamily: 'JetBrains Mono, monospace' }}>
             {result.stdout}
           </pre>
@@ -74,8 +75,9 @@ export function CodeOutput({ result, isRunning, error }: CodeOutputProps) {
       )}
       {result.stderr && (
         <div className="flex items-start gap-3 mt-2">
-          <XCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+          <XCircle className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />
           <pre className="text-red-400 text-sm whitespace-pre-wrap leading-relaxed"
+            data-code-output="stderr"
             style={{ fontFamily: 'JetBrains Mono, monospace' }}>
             {result.stderr}
           </pre>

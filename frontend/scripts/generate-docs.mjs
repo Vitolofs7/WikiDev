@@ -32,11 +32,11 @@ function getMdxFiles(dir) {
   });
 }
 
-const validatedOrderFiles = new Set();
+const orderCache = new Map();
 
 function validateOrderFile(orderFile) {
-  if (validatedOrderFiles.has(orderFile)) {
-    return;
+  if (orderCache.has(orderFile)) {
+    return orderCache.get(orderFile);
   }
 
   const directory = path.dirname(orderFile);
@@ -70,7 +70,7 @@ function validateOrderFile(orderFile) {
     }
   }
 
-  validatedOrderFiles.add(orderFile);
+  orderCache.set(orderFile, data);
 
   return data;
 }
@@ -141,7 +141,7 @@ const entries = files.map((file) => {
 
   const slug = relativePath.replace(/\.mdx$/, "");
   const importPath = `@/content/${relativePath}`;
-  const unit = slug.split("/").slice(0, 2).join("/");
+  const unit = path.posix.dirname(slug);
   const metadata = getMetadata(file);
 
   return {

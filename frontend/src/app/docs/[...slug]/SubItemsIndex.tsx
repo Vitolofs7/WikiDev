@@ -97,7 +97,7 @@ export function SubItemsIndex({ title, category, page, subItems }: Props) {
                 style={{ background: "rgba(255,255,255,0.02)" }}
               >
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm"
+                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm"
                   style={{
                     background:
                       "linear-gradient(135deg, rgba(124,109,250,0.15), rgba(6,214,160,0.1))",
@@ -115,7 +115,7 @@ export function SubItemsIndex({ title, category, page, subItems }: Props) {
                   {sub.title}
                 </p>
                 <div
-                  className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0 text-sm"
+                  className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0 text-sm"
                   style={{
                     background: "rgba(124,109,250,0.15)",
                     color: "#a89cf7",

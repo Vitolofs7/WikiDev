@@ -70,7 +70,7 @@ export default function NotesPage() {
   return (
     <div className="relative -mt-16 flex min-h-screen bg-[#080810]">
       {/* Sidebar */}
-      <div className="w-80 flex-shrink-0 border-r border-white/5 flex flex-col bg-[#0a0a14]">
+      <div className="w-80 shrink-0 border-r border-white/5 flex flex-col bg-[#0a0a14]">
         {/* Header */}
         <div className="px-5 pt-7 pb-5">
           <div className="flex items-center justify-between mb-5">

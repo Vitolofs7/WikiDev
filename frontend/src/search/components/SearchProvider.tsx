@@ -1,41 +1,83 @@
+
 /**
+ * Proporciona un contexto global para controlar el modal de búsqueda.
+ * Centraliza el estado de apertura, el atajo Ctrl+K / Cmd+K y el
+ * renderizado de SearchModal.
+ *
+ * Expone useSearchModal() para que cualquier componente descendiente
+ * pueda abrir o cerrar el buscador sin gestionar estados independientes.
+ */
 
-ruta: frontend/src/search/components/SearchProvider.tsx
+"use client";
 
-* Proporciona un contexto global para controlar la apertura del modal de búsqueda
-* en la aplicación. Mantiene el estado de visibilidad del buscador y registra un
-* manejador de teclado que permite abrirlo mediante el atajo Ctrl+K o Cmd+K,
-* evitando el comportamiento predeterminado del navegador. Renderiza los componentes
-* hijos junto con `SearchModal`, al que transmite el estado de apertura y la función
-* para cerrarlo. Gestiona el registro y la limpieza del evento de teclado durante
-* el ciclo de vida del componente, permitiendo acceder a la búsqueda desde cualquier
-* sección envuelta por este proveedor.
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { SearchModal } from "./SearchModal";
 
-**/
+interface SearchModalContextValue {
+  open: () => void;
+  close: () => void;
+}
 
+const SearchModalContext = createContext<SearchModalContextValue | null>(null);
 
-'use client'
-import { useState, useEffect } from 'react'
-import { SearchModal } from './SearchModal'
+export function useSearchModal() {
+  const context = useContext(SearchModalContext);
 
-export function SearchProvider({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false)
+  if (!context) {
+    throw new Error(
+      "useSearchModal debe utilizarse dentro de SearchProvider."
+    );
+  }
+
+  return context;
+}
+
+export function SearchProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const open = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
+  const close = useCallback(() => {
+    setIsOpen(false);
+  }, []);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
-        setOpen(true)
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        open();
       }
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [])
+    };
+
+    window.addEventListener("keydown", handler);
+
+    return () => {
+      window.removeEventListener("keydown", handler);
+    };
+  }, [open]);
+
+  const value = useMemo(
+    () => ({ open, close }),
+    [open, close]
+  );
 
   return (
-    <>
+    <SearchModalContext.Provider value={value}>
       {children}
-      <SearchModal open={open} onClose={() => setOpen(false)} />
-    </>
-  )
+      <SearchModal open={isOpen} onClose={close} />
+    </SearchModalContext.Provider>
+  );
 }
