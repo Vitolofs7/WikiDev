@@ -1,4 +1,3 @@
-
 /**
  * Ruta: frontend/src/navigation/components/Navbar.tsx
  *
@@ -30,7 +29,7 @@ export function Navbar({ compact = false }: NavbarProps) {
     <header className="sticky top-0 z-50 border-b border-white/6 bg-transparent">
       <div
         className={`mx-auto flex max-w-7xl items-center px-6 lg:px-8 ${
-          compact ? "h-16" : "h-20"
+          compact ? "h-(--navbar-h)" : "h-20"
         }`}
       >
         {/* Logo */}
@@ -59,7 +58,6 @@ export function Navbar({ compact = false }: NavbarProps) {
             className={`font-extrabold tracking-tight text-(--text) ${
               compact ? "text-xl" : "text-[26px]"
             }`}
-            style={{ fontFamily: "Outfit, sans-serif" }}
           >
             Wiki
             <span
@@ -91,7 +89,6 @@ export function Navbar({ compact = false }: NavbarProps) {
             className={`flex items-center rounded-xl text-(--text-secondary) transition-all hover:bg-white/4 hover:text-(--text) ${
               compact ? "gap-2 px-3.5 py-2" : "gap-3 px-5 py-3"
             }`}
-            style={{ fontFamily: "Outfit, sans-serif" }}
           >
             <BookOpen
               className={
@@ -111,7 +108,6 @@ export function Navbar({ compact = false }: NavbarProps) {
             className={`flex items-center rounded-xl text-(--text-secondary) transition-all hover:bg-white/4 hover:text-(--text) ${
               compact ? "gap-2 px-3.5 py-2" : "gap-3 px-5 py-3"
             }`}
-            style={{ fontFamily: "Outfit, sans-serif" }}
           >
             <StickyNote
               className={
@@ -147,16 +143,16 @@ export function Navbar({ compact = false }: NavbarProps) {
               className={`min-w-0 flex-1 truncate text-left text-(--text-muted) ${
                 compact ? "text-sm" : "text-base"
               }`}
-              style={{ fontFamily: "Outfit, sans-serif" }}
             >
               Buscar documentación...
             </span>
 
             <kbd
               className={`shrink-0 rounded-md border border-(--accent)/20 bg-(--accent)/10 text-(--accent-light) ${
-                compact ? "px-2 py-0.5 text-[10px]" : "px-2.5 py-1 text-[11px]"
+                compact
+                  ? "px-2 py-0.5 text-[10px]"
+                  : "px-2.5 py-1 text-[11px] font-mono"
               }`}
-              style={{ fontFamily: "JetBrains Mono, monospace" }}
             >
               Ctrl+K
             </kbd>

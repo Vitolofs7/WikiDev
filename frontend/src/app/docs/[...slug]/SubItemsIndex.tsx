@@ -41,7 +41,6 @@ export function SubItemsIndex({ title, category, page, subItems }: Props) {
       <div className="mb-8 pb-8 border-b border-white/5">
         <h1
           className="text-6xl font-extrabold text-white mb-4 tracking-tight"
-          style={{ fontFamily: "Outfit, sans-serif" }}
         >
           {title}
         </h1>
@@ -52,7 +51,6 @@ export function SubItemsIndex({ title, category, page, subItems }: Props) {
               background: "rgba(124,109,250,0.1)",
               color: "#a89cf7",
               border: "1px solid rgba(124,109,250,0.2)",
-              fontFamily: "Outfit, sans-serif",
             }}
           >
             {subItems.length} apartados
@@ -69,12 +67,10 @@ export function SubItemsIndex({ title, category, page, subItems }: Props) {
             onChange={(e) => setFilter(e.target.value)}
             placeholder="Filtrar apartados..."
             className="w-full bg-white/5 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-base text-zinc-300 outline-none placeholder:text-zinc-600 focus:border-violet-500/30 transition-colors"
-            style={{ fontFamily: "Outfit, sans-serif" }}
           />
           {filter && (
             <span
               className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-zinc-600"
-              style={{ fontFamily: "Outfit, sans-serif" }}
             >
               {filtered.length} resultado{filtered.length !== 1 ? "s" : ""}
             </span>
@@ -97,20 +93,12 @@ export function SubItemsIndex({ title, category, page, subItems }: Props) {
                 style={{ background: "rgba(255,255,255,0.02)" }}
               >
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, rgba(124,109,250,0.15), rgba(6,214,160,0.1))",
-                    border: "1px solid rgba(124,109,250,0.2)",
-                    color: "#a89cf7",
-                    fontFamily: "JetBrains Mono, monospace",
-                  }}
+                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm font-mono"
                 >
                   {String(originalIndex + 1).padStart(2, "0")}
                 </div>
                 <p
                   className="flex-1 text-base text-zinc-300 group-hover:text-white transition-colors leading-snug"
-                  style={{ fontFamily: "Outfit, sans-serif" }}
                 >
                   {sub.title}
                 </p>
@@ -131,7 +119,6 @@ export function SubItemsIndex({ title, category, page, subItems }: Props) {
         <div className="py-10 text-center">
           <p
             className="text-zinc-600 text-base"
-            style={{ fontFamily: "Outfit, sans-serif" }}
           >
             No se encontraron apartados para{" "}
             <span className="text-zinc-400">{`"${filter}"`}</span>

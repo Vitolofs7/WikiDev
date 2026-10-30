@@ -101,7 +101,6 @@ export function NoteEditor({
       <div className="flex items-center justify-between px-6 py-5 border-b border-white/5">
         <span
           className="text-base text-zinc-600"
-          style={{ fontFamily: "Outfit, sans-serif" }}
         >
           {formatDate(note.updated_at)}
         </span>
@@ -109,7 +108,6 @@ export function NoteEditor({
           {saving && (
             <span
               className="text-base text-zinc-600"
-              style={{ fontFamily: "Outfit, sans-serif" }}
             >
               Guardando...
             </span>
@@ -117,7 +115,6 @@ export function NoteEditor({
           {saved && (
             <span
               className="text-base text-emerald-500"
-              style={{ fontFamily: "Outfit, sans-serif" }}
             >
               Guardado ✓
             </span>
@@ -125,7 +122,6 @@ export function NoteEditor({
           <button
             onClick={() => fileInputRef.current?.click()}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-base text-zinc-400 hover:text-violet-400 hover:bg-white/5 transition-all"
-            style={{ fontFamily: "Outfit, sans-serif" }}
           >
             <ImagePlus className="w-5 h-5" />
             Imagen
@@ -133,7 +129,6 @@ export function NoteEditor({
           <button
             onClick={handleDelete}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-base text-zinc-400 hover:text-red-400 hover:bg-white/5 transition-all"
-            style={{ fontFamily: "Outfit, sans-serif" }}
           >
             <Trash2 className="w-5 h-5" />
             Eliminar
@@ -147,7 +142,6 @@ export function NoteEditor({
         onChange={handleTitleChange}
         placeholder="Título de la nota..."
         className="w-full bg-transparent px-6 pt-6 pb-2 text-4xl font-bold text-white outline-none placeholder:text-zinc-700"
-        style={{ fontFamily: "Outfit, sans-serif" }}
       />
 
       {/* Content */}
@@ -156,7 +150,6 @@ export function NoteEditor({
         onChange={handleContentChange}
         placeholder="Escribe tus apuntes aquí..."
         className="flex-1 w-full bg-transparent px-6 py-4 text-lg text-zinc-300 outline-none resize-none placeholder:text-zinc-700 leading-relaxed"
-        style={{ fontFamily: "Outfit, sans-serif" }}
       />
 
       {/* Images */}
@@ -164,7 +157,6 @@ export function NoteEditor({
         <div className="px-6 py-4 border-t border-white/5">
           <p
             className="text-sm text-zinc-600 mb-3 uppercase tracking-widest font-bold"
-            style={{ fontFamily: "Outfit, sans-serif" }}
           >
             Imágenes
           </p>

@@ -78,7 +78,6 @@ export function DocPageClient({ docKey }: Props) {
     "flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-zinc-400 hover:text-zinc-200 transition-all";
 
   const secondaryBtnStyle = {
-    fontFamily: "Outfit, sans-serif",
     background: "#14141f",
     border: "1px solid rgba(255,255,255,0.08)",
   };
@@ -94,7 +93,6 @@ export function DocPageClient({ docKey }: Props) {
             <nav
               aria-label="Ruta de navegación"
               className="flex items-center flex-wrap gap-1.5 text-sm"
-              style={{ fontFamily: "Outfit, sans-serif" }}
             >
               {crumbs.map((crumb, i) => {
                 const isLast = i === crumbs.length - 1;
@@ -158,7 +156,6 @@ export function DocPageClient({ docKey }: Props) {
                   style={{
                     background: "#0e0e1a",
                     border: "1px solid rgba(255,255,255,0.06)",
-                    fontFamily: "Outfit, sans-serif",
                   }}
                 >
                   <ArrowLeft className="w-5 h-5 text-zinc-600 group-hover:text-violet-300 transition-colors" />
@@ -184,7 +181,6 @@ export function DocPageClient({ docKey }: Props) {
                   style={{
                     background: "#0e0e1a",
                     border: "1px solid rgba(255,255,255,0.06)",
-                    fontFamily: "Outfit, sans-serif",
                   }}
                 >
                   <span className="flex flex-col min-w-0">

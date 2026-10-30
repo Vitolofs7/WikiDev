@@ -11,7 +11,6 @@ ruta: frontend/src/code-execution/components/CodeRunner.tsx
 
 **/
 
-
 "use client";
 import { useState } from "react";
 import { Play, RotateCcw, Copy, Check, Terminal } from "lucide-react";
@@ -89,21 +88,13 @@ export function CodeRunner({
           <div className="w-px h-4 bg-white/10" />
           <span
             className={cn(
-              "text-sm font-medium px-2.5 py-0.5 rounded-md border",
+              "text-sm font-medium px-2.5 py-0.5 rounded-md border font-mono",
               lang.badge,
             )}
-            style={{ fontFamily: "JetBrains Mono, monospace" }}
           >
             {lang.label}
           </span>
-          {title && (
-            <span
-              className="text-zinc-600 text-sm"
-              style={{ fontFamily: "Outfit, sans-serif" }}
-            >
-              {title}
-            </span>
-          )}
+          {title && <span className="text-zinc-600 text-sm">{title}</span>}
         </div>
         <div className="flex items-center gap-1">
           <button
@@ -126,8 +117,7 @@ export function CodeRunner({
           data-code-editor
           value={code}
           onChange={(e) => setCode(e.target.value)}
-          className="w-full bg-transparent text-zinc-300 text-base p-6 resize-none outline-none min-h-[160px] leading-relaxed"
-          style={{ fontFamily: "JetBrains Mono, monospace" }}
+          className="w-full bg-transparent text-zinc-300 text-base p-6 resize-none outline-none min-h-40 leading-relaxed font-mono"
           spellCheck={false}
           onKeyDown={(e) => {
             if (e.key === "Tab") {
@@ -157,10 +147,7 @@ export function CodeRunner({
         >
           <div className="flex items-center gap-2 px-6 pt-3 pb-1">
             <Terminal className="w-3.5 h-3.5 text-zinc-600" />
-            <span
-              className="text-xs text-zinc-600 uppercase tracking-widest font-bold"
-              style={{ fontFamily: "Outfit, sans-serif" }}
-            >
+            <span className="text-xs text-zinc-600 uppercase tracking-widest font-bold">
               Entrada (stdin)
             </span>
           </div>
@@ -168,18 +155,11 @@ export function CodeRunner({
             value={stdinValue}
             onChange={(e) => setStdinValue(e.target.value)}
             placeholder="Escribe aquí la entrada del programa antes de ejecutar..."
-            className="w-full bg-transparent text-zinc-400 text-sm px-6 pb-2 resize-none outline-none leading-relaxed"
-            style={{
-              fontFamily: "JetBrains Mono, monospace",
-              minHeight: "60px",
-            }}
+            className="w-full bg-transparent text-zinc-400 text-sm px-6 pb-2 resize-none outline-none leading-relaxed font-mono"
             spellCheck={false}
           />
           {!stdinValue.trim() && (
-            <p
-              className="px-6 pb-3 text-xs text-amber-500/70"
-              style={{ fontFamily: "Outfit, sans-serif" }}
-            >
+            <p className="px-6 pb-3 text-xs text-amber-500/70">
               ⚠ Escribe la entrada antes de ejecutar para evitar errores
             </p>
           )}
@@ -194,10 +174,7 @@ export function CodeRunner({
           borderTop: "1px solid rgba(255,255,255,0.04)",
         }}
       >
-        <span
-          className="text-zinc-700 text-sm"
-          style={{ fontFamily: "JetBrains Mono, monospace" }}
-        >
+        <span className="text-zinc-700 text-sm font-mono">
           Ctrl+Enter para ejecutar
         </span>
         <div className="flex items-center gap-2">
@@ -205,7 +182,6 @@ export function CodeRunner({
             onClick={handleReset}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-zinc-400 transition-all"
             style={{
-              fontFamily: "Outfit, sans-serif",
               background: "#14141f",
               border: "1px solid rgba(255,255,255,0.08)",
             }}
@@ -225,12 +201,10 @@ export function CodeRunner({
             style={
               !isRunning && code.trim()
                 ? {
-                    fontFamily: "Outfit, sans-serif",
-                    background: "linear-gradient(135deg, #7c6dfa, #06d6a0)",
+                  background: "linear-gradient(135deg, #7c6dfa, #06d6a0)",
                     boxShadow: "0 4px 20px rgba(124,109,250,0.3)",
                   }
                 : {
-                    fontFamily: "Outfit, sans-serif",
                     background: "#14141f",
                     border: "1px solid rgba(255,255,255,0.08)",
                   }

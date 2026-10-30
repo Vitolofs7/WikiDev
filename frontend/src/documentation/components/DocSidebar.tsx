@@ -91,7 +91,6 @@ export function DocSidebar() {
           >
             <span
               className="text-white font-extrabold text-sm"
-              style={{ fontFamily: "Outfit, sans-serif" }}
             >
               W
             </span>
@@ -100,7 +99,6 @@ export function DocSidebar() {
           <span
             className="font-extrabold text-xl text-white"
             style={{
-              fontFamily: "Outfit, sans-serif",
               letterSpacing: "-0.02em",
             }}
           >
@@ -131,14 +129,12 @@ export function DocSidebar() {
 
           <span
             className="flex-1 text-base text-[#52526e]"
-            style={{ fontFamily: "Outfit, sans-serif" }}
           >
             Buscar...
           </span>
 
           <kbd
-            className="px-2 py-0.5 rounded text-xs bg-[rgba(124,109,250,0.1)] text-[#7c6dfa] border border-[rgba(124,109,250,0.2)]"
-            style={{ fontFamily: "JetBrains Mono, monospace" }}
+            className="px-2 py-0.5 rounded text-xs bg-[rgba(124,109,250,0.1)] text-[#7c6dfa] border border-[rgba(124,109,250,0.2)] font-mono"
           >
             Ctrl+K
           </kbd>
@@ -153,7 +149,6 @@ export function DocSidebar() {
               ? "text-white bg-white/8"
               : "text-zinc-500 hover:text-zinc-200 hover:bg-white/5",
           )}
-          style={{ fontFamily: "Outfit, sans-serif" }}
         >
           <Home className="w-5 h-5" />
           <span className="font-medium">Inicio</span>
@@ -180,7 +175,6 @@ export function DocSidebar() {
                     ? "text-white"
                     : "text-zinc-500 hover:text-zinc-200 hover:bg-white/5",
                 )}
-                style={{ fontFamily: "Outfit, sans-serif" }}
               >
                 {isActive && (
                   <span
@@ -218,7 +212,6 @@ export function DocSidebar() {
             <div className="flex items-center justify-between mb-2 px-2">
               <p
                 className="text-xs font-bold uppercase tracking-widest text-zinc-600"
-                style={{ fontFamily: "Outfit, sans-serif" }}
               >
                 Recientes
               </p>
@@ -227,7 +220,6 @@ export function DocSidebar() {
                 type="button"
                 onClick={clearHistory}
                 className="text-xs text-zinc-600 hover:text-violet-400 transition-colors"
-                style={{ fontFamily: "Outfit, sans-serif" }}
               >
                 limpiar
               </button>
@@ -245,7 +237,6 @@ export function DocSidebar() {
                           ? "text-white bg-white/5"
                           : "text-zinc-600 hover:text-zinc-300 hover:bg-white/5",
                       )}
-                      style={{ fontFamily: "Outfit, sans-serif" }}
                     >
                       <Clock className="w-4 h-4 shrink-0 text-zinc-700 group-hover:text-violet-400 transition-colors" />
 
@@ -261,8 +252,7 @@ export function DocSidebar() {
         {/* Footer */}
         <div className="pt-4 border-t border-white/5">
           <p
-            className="text-xs text-zinc-700 px-2"
-            style={{ fontFamily: "JetBrains Mono, monospace" }}
+            className="text-xs text-zinc-700 px-2 font-mono"
           >
             wikidev v0.1.0
           </p>

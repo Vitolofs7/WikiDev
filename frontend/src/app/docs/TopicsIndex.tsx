@@ -125,8 +125,7 @@ function TopicCardBody({ topic }: { topic: TopicSummary }) {
       {/* Contadores: siempre abajo, aunque las tarjetas tengan distinto alto */}
       {!isEmpty && (
         <div
-          className="relative mt-auto flex items-center gap-2 pt-6 text-xs text-zinc-500"
-          style={{ fontFamily: "JetBrains Mono, monospace" }}
+          className="relative mt-auto flex items-center gap-2 pt-6 text-xs text-zinc-500 font-mono"
         >
           <span>{plural(topic.chapterCount, "capítulo", "capítulos")}</span>
 

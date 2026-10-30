@@ -36,7 +36,7 @@ export function NotesList({ notes, selectedId, onSelect }: Props) {
     return (
       <div className="flex flex-col items-center justify-center h-40 text-zinc-700">
         <FileText className="w-10 h-10 mb-2" />
-        <p className="text-base" style={{ fontFamily: 'Outfit, sans-serif' }}>
+        <p className="text-base">
           No hay notas
         </p>
       </div>
@@ -62,7 +62,6 @@ export function NotesList({ notes, selectedId, onSelect }: Props) {
                   'text-base font-medium truncate',
                   selectedId === note.id ? 'text-white' : 'text-zinc-300'
                 )}
-                style={{ fontFamily: 'Outfit, sans-serif' }}
               >
                 {note.title || 'Sin título'}
               </p>
@@ -73,10 +72,10 @@ export function NotesList({ notes, selectedId, onSelect }: Props) {
                 </div>
               )}
             </div>
-            <p className="text-sm text-zinc-600 mt-0.5 truncate" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <p className="text-sm text-zinc-600 mt-0.5 truncate">
               {note.content ? note.content.slice(0, 60) + (note.content.length > 60 ? '...' : '') : 'Sin contenido'}
             </p>
-            <p className="text-xs text-zinc-700 mt-1" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <p className="text-xs text-zinc-700 mt-1">
               {formatDate(note.updated_at)}
             </p>
           </button>

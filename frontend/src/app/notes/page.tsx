@@ -68,7 +68,7 @@ export default function NotesPage() {
   }
 
   return (
-    <div className="relative -mt-16 flex min-h-screen bg-[#080810]">
+    <div className="relative -mt-(--navbar-h) flex min-h-screen bg-[#080810]">
       {/* Sidebar */}
       <div className="w-80 shrink-0 border-r border-white/5 flex flex-col bg-[#0a0a14]">
         {/* Header */}
@@ -76,7 +76,7 @@ export default function NotesPage() {
           <div className="flex items-center justify-between mb-5">
             <Link href="/" className="flex items-center gap-3">
               <StickyNote className="w-5 h-5 text-violet-400" />
-              <span className="text-xl font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <span className="text-xl font-bold text-white">
                 Notas
               </span>
             </Link>
@@ -96,7 +96,6 @@ export default function NotesPage() {
               onChange={e => setSearch(e.target.value)}
               placeholder="Buscar notas..."
               className="w-full bg-white/5 border border-white/5 rounded-xl pl-10 pr-4 py-2.5 text-base text-zinc-300 outline-none placeholder:text-zinc-600 focus:border-violet-500/30 transition-colors"
-              style={{ fontFamily: 'Outfit, sans-serif' }}
             />
           </div>
         </div>
@@ -118,7 +117,7 @@ export default function NotesPage() {
 
         {/* Footer */}
         <div className="px-5 py-4 border-t border-white/5">
-          <p className="text-sm text-zinc-600" style={{ fontFamily: 'Outfit, sans-serif' }}>
+          <p className="text-sm text-zinc-600">
             {notes.length} {notes.length === 1 ? 'nota' : 'notas'}
           </p>
         </div>
@@ -138,10 +137,10 @@ export default function NotesPage() {
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-zinc-700">
             <StickyNote className="w-14 h-14 mb-5" />
-            <p className="text-2xl font-medium text-zinc-500 mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <p className="text-2xl font-medium text-zinc-500 mb-2">
               Selecciona una nota
             </p>
-            <p className="text-base text-zinc-600" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <p className="text-base text-zinc-600">
               o crea una nueva con el botón +
             </p>
           </div>

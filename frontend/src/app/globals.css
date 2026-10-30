@@ -10,10 +10,12 @@ ruta: frontend/src/app/globals.css
 
 **/
 
-
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap");
-
 @import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+}
 
 @layer base {
   :root {
@@ -26,6 +28,12 @@ ruta: frontend/src/app/globals.css
     --bg-3: #14141f;
 
     /* ─────────────────────────────────────
+       WikiDev — Navbar
+       ───────────────────────────────────── */
+
+    --navbar-h: 4rem;
+
+    /* ─────────────────────────────────────
        WikiDev — Brand
        ───────────────────────────────────── */
 
@@ -35,11 +43,7 @@ ruta: frontend/src/app/globals.css
     --accent-2: #06d6a0;
     --accent-2-light: #6ee7b7;
 
-    --gradient-brand: linear-gradient(
-      135deg,
-      #7c6dfa 0%,
-      #06d6a0 100%
-    );
+    --gradient-brand: linear-gradient(135deg, #7c6dfa 0%, #06d6a0 100%);
 
     /* ─────────────────────────────────────
        WikiDev — Text
@@ -187,13 +191,13 @@ ruta: frontend/src/app/globals.css
   }
 
   .prose-docs code:not(pre code) {
-    font-family: "JetBrains Mono", monospace;
+    font-family: var(--font-mono);
 
     @apply text-base bg-violet-500/10 text-violet-300 px-1.5 py-0.5 rounded-md border border-violet-500/20;
   }
 
   .prose-docs pre {
-    font-family: "JetBrains Mono", monospace;
+    font-family: var(--font-mono);
 
     @apply bg-[#0e0e1a] border border-white/5 rounded-xl p-4 overflow-x-auto mb-6 text-base;
   }
@@ -245,7 +249,7 @@ ruta: frontend/src/app/globals.css
   }
 
   .prose-docs code {
-    font-family: "JetBrains Mono", monospace;
+    font-family: var(--font-mono);
   }
 }
 

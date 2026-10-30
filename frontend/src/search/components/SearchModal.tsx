@@ -114,7 +114,6 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
             }}
             placeholder="Buscar documentación..."
             className="flex-1 bg-transparent text-white text-base outline-none placeholder-zinc-600"
-            style={{ fontFamily: "Outfit, sans-serif" }}
           />
 
           {query && (
@@ -152,14 +151,12 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
                   <div className="flex-1 min-w-0">
                     <p
                       className="text-base text-white font-medium truncate"
-                      style={{ fontFamily: "Outfit, sans-serif" }}
                     >
                       {result.title}
                     </p>
 
                     <p
                       className="text-sm text-zinc-600"
-                      style={{ fontFamily: "Outfit, sans-serif" }}
                     >
                       {result.category}
                     </p>
@@ -179,7 +176,6 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
           <div className="px-5 py-10 text-center">
             <p
               className="text-zinc-600 text-base"
-              style={{ fontFamily: "Outfit, sans-serif" }}
             >
               No se encontraron resultados para{" "}
               <span className="text-zinc-400">{`"${query}"`}</span>
@@ -191,8 +187,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
         {!query && (
           <div className="px-5 py-3.5 border-t border-white/5 flex items-center gap-5">
             <span
-              className="flex items-center gap-1.5 text-xs text-zinc-500"
-              style={{ fontFamily: "JetBrains Mono, monospace" }}
+              className="flex items-center gap-1.5 text-xs text-zinc-500 font-mono"
             >
               <kbd className="px-2 py-0.5 rounded text-xs bg-[rgba(124,109,250,0.1)] text-[#7c6dfa] border border-[rgba(124,109,250,0.2)]">
                 ↑↓
@@ -201,8 +196,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
             </span>
 
             <span
-              className="flex items-center gap-1.5 text-xs text-zinc-500"
-              style={{ fontFamily: "JetBrains Mono, monospace" }}
+              className="flex items-center gap-1.5 text-xs text-zinc-500 font-mono"
             >
               <kbd className="px-2 py-0.5 rounded text-xs bg-[rgba(124,109,250,0.1)] text-[#7c6dfa] border border-[rgba(124,109,250,0.2)]">
                 ↵
@@ -211,8 +205,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
             </span>
 
             <span
-              className="flex items-center gap-1.5 text-xs text-zinc-500"
-              style={{ fontFamily: "JetBrains Mono, monospace" }}
+              className="flex items-center gap-1.5 text-xs text-zinc-500 font-mono"
             >
               <kbd className="px-2 py-0.5 rounded text-xs bg-[rgba(124,109,250,0.1)] text-[#7c6dfa] border border-[rgba(124,109,250,0.2)]">
                 Esc

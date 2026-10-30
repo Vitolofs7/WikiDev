@@ -84,13 +84,11 @@ export default async function DocPage({ params }: Props) {
         </div>
         <h1
           className="text-6xl font-extrabold text-white mb-3 tracking-tight"
-          style={{ fontFamily: "Outfit, sans-serif" }}
         >
           {cat.title}
         </h1>
         <p
           className="text-zinc-500 text-xl leading-relaxed"
-          style={{ fontFamily: "Outfit, sans-serif" }}
         >
           {cat.description}
         </p>
@@ -101,7 +99,6 @@ export default async function DocPage({ params }: Props) {
               background: "rgba(124,109,250,0.1)",
               color: "#a89cf7",
               border: "1px solid rgba(124,109,250,0.2)",
-              fontFamily: "Outfit, sans-serif",
             }}
           >
             {cat.items.length} capítulos
@@ -117,28 +114,19 @@ export default async function DocPage({ params }: Props) {
             style={{ background: "rgba(255,255,255,0.02)" }}
           >
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm"
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(124,109,250,0.15), rgba(6,214,160,0.1))",
-                border: "1px solid rgba(124,109,250,0.2)",
-                color: "#a89cf7",
-                fontFamily: "JetBrains Mono, monospace",
-              }}
+              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm font-mono"
             >
               {String(i + 1).padStart(2, "0")}
             </div>
             <div className="flex-1">
               <p
                 className="text-base text-zinc-300 group-hover:text-white transition-colors leading-snug"
-                style={{ fontFamily: "Outfit, sans-serif" }}
               >
                 {item.title}
               </p>
               {item.subItems && (
                 <p
                   className="text-xs text-zinc-600 mt-1"
-                  style={{ fontFamily: "Outfit, sans-serif" }}
                 >
                   {item.subItems.length} apartados
                 </p>

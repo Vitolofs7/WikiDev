@@ -103,7 +103,6 @@ export function Callout({ type, title, children }: CalloutProps) {
             "flex items-center gap-1.5 text-sm font-medium px-2.5 py-0.5 rounded-md border",
             config.badge,
           )}
-          style={{ fontFamily: "Outfit, sans-serif" }}
         >
           <Icon className="w-3.5 h-3.5" />
           {title ?? config.label}
@@ -111,7 +110,7 @@ export function Callout({ type, title, children }: CalloutProps) {
       </div>
       <div
         className="px-5 pb-4 pt-1 text-[15px] leading-relaxed text-zinc-300"
-        style={{ background: "#0e0e1a", fontFamily: "Outfit, sans-serif" }}
+        style={{ background: "#0e0e1a"}}
       >
         {children}
       </div>

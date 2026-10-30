@@ -20,24 +20,26 @@ export const metadata: Metadata = {
     "Explora todos los temas de WikiDev y elige el área que quieres consultar.",
 };
 
-const chip =
-  "rounded-full px-3 py-1.5 text-sm font-medium";
+const chip = "rounded-full px-3 py-1.5 text-sm font-medium";
 
 export default function DocsIndexPage() {
   const topics = getTopicSummaries();
 
-  const chapters = topics.reduce((total, topic) => total + topic.chapterCount, 0);
-  const documents = topics.reduce((total, topic) => total + topic.documentCount, 0);
+  const chapters = topics.reduce(
+    (total, topic) => total + topic.chapterCount,
+    0,
+  );
+  const documents = topics.reduce(
+    (total, topic) => total + topic.documentCount,
+    0,
+  );
 
   return (
     <div className="w-full">
       <header className="mb-12 border-b border-white/5 pb-8">
         <div className="mb-5 flex items-center gap-3">
           <span className="h-px w-10 bg-(--accent)/50" />
-          <span
-            className="text-base uppercase tracking-[0.2em] text-(--accent-light)"
-            style={{ fontFamily: "JetBrains Mono, monospace" }}
-          >
+          <span className="text-base uppercase tracking-[0.2em] text-(--accent-light) font-mono">
             Documentación
           </span>
         </div>

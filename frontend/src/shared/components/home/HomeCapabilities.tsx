@@ -52,7 +52,6 @@ export default function HomeCapabilities() {
 
         <h2
           className="mb-4 text-4xl font-bold tracking-tight text-(--text) sm:text-5xl"
-          style={{ fontFamily: "Outfit, sans-serif" }}
         >
           Herramientas para trabajar
           <br className="hidden sm:block" /> con el conocimiento.
@@ -60,7 +59,6 @@ export default function HomeCapabilities() {
 
         <p
           className="max-w-2xl text-lg leading-relaxed text-(--text-muted)"
-          style={{ fontFamily: "Outfit, sans-serif" }}
         >
           WikiDev combina documentación técnica con herramientas integradas para
           consultar, entender y experimentar con el contenido.
@@ -104,7 +102,6 @@ export default function HomeCapabilities() {
                 </p>
                 <h3
                   className="text-2xl font-semibold tracking-tight text-(--text)"
-                  style={{ fontFamily: "Outfit, sans-serif" }}
                 >
                   Code Runner
                 </h3>
@@ -113,7 +110,6 @@ export default function HomeCapabilities() {
 
             <h4
               className="mb-4 max-w-md text-3xl font-bold leading-tight tracking-tight text-(--text) sm:text-4xl"
-              style={{ fontFamily: "Outfit, sans-serif" }}
             >
               Del código a la práctica,{" "}
               <span
@@ -126,7 +122,6 @@ export default function HomeCapabilities() {
 
             <p
               className="mb-7 max-w-lg text-base leading-7 text-(--text-secondary)"
-              style={{ fontFamily: "Outfit, sans-serif" }}
             >
               Experimenta con ejemplos directamente desde la documentación,
               modifica el código y comprueba los resultados sin interrumpir tu
@@ -368,7 +363,6 @@ export default function HomeCapabilities() {
 
               <h3
                 className="text-2xl font-semibold tracking-tight text-(--text)"
-                style={{ fontFamily: "Outfit, sans-serif" }}
               >
                 Notas
               </h3>
@@ -482,7 +476,6 @@ export default function HomeCapabilities() {
                 <div className="min-w-0">
                   <h4
                     className="mb-3 text-base font-semibold tracking-tight text-(--text)"
-                    style={{ fontFamily: "Outfit, sans-serif" }}
                   >
                     Conceptos de Python
                   </h4>
@@ -649,7 +642,6 @@ export default function HomeCapabilities() {
 
               <h3
                 className="text-2xl font-semibold tracking-tight text-(--text)"
-                style={{ fontFamily: "Outfit, sans-serif" }}
               >
                 MDX
               </h3>
@@ -795,7 +787,6 @@ export default function HomeCapabilities() {
                 <div className="min-h-40">
                   <h4
                     className="mb-3 text-base font-semibold tracking-tight text-(--text)"
-                    style={{ fontFamily: "Outfit, sans-serif" }}
                   >
                     Composición de funciones
                   </h4>

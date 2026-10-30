@@ -14,7 +14,6 @@ ruta: frontend/src/documentation/components/TableOfContents/TableOfContents.tsx
 
 **/
 
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -158,7 +157,6 @@ export function TableOfContents({ docKey }: TableOfContentsProps) {
           const isActive = activeId === heading.id;
 
           const linkStyle: React.CSSProperties = {
-            fontFamily: "Outfit, sans-serif",
             fontSize: getFontSize(heading.level),
             paddingTop: "0.35rem",
             paddingBottom: "0.35rem",

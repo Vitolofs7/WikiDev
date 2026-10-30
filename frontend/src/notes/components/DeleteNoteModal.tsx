@@ -41,10 +41,10 @@ export function DeleteNoteModal({ onConfirm, onCancel }: Props) {
             <Trash2 className="w-5 h-5 text-red-400" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <h2 className="text-xl font-bold text-white">
               Eliminar nota
             </h2>
-            <p className="text-sm text-zinc-500 mt-0.5" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <p className="text-sm text-zinc-500 mt-0.5">
               Esta acción no se puede deshacer
             </p>
           </div>
@@ -52,7 +52,7 @@ export function DeleteNoteModal({ onConfirm, onCancel }: Props) {
 
         {/* Body */}
         <div className="px-6 py-5">
-          <p className="text-base text-zinc-400" style={{ fontFamily: 'Outfit, sans-serif' }}>
+          <p className="text-base text-zinc-400">
             ¿Estás seguro de que quieres eliminar esta nota? Se perderá todo su contenido e imágenes.
           </p>
         </div>
@@ -62,7 +62,6 @@ export function DeleteNoteModal({ onConfirm, onCancel }: Props) {
           <button
             onClick={onCancel}
             className="px-5 py-2.5 rounded-xl text-base text-zinc-400 bg-white/5 hover:bg-white/10 transition-all"
-            style={{ fontFamily: 'Outfit, sans-serif' }}
           >
             Cancelar
           </button>
@@ -74,7 +73,7 @@ export function DeleteNoteModal({ onConfirm, onCancel }: Props) {
               border: '1px solid rgba(239,68,68,0.3)',
             }}
           >
-            <span style={{ fontFamily: 'Outfit, sans-serif' }}>Eliminar nota</span>
+            <span>Eliminar nota</span>
           </button>
         </div>
       </div>
