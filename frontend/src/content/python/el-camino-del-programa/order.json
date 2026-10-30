@@ -1,0 +1,30 @@
+{
+  "que-es-un-programa": {
+    "order": 1,
+    "title": "¿Qué es un programa?"
+  },
+  "ejecutar-python": {
+    "order": 2,
+    "title": "Ejecutar Python"
+  },
+  "el-primer-programa": {
+    "order": 3,
+    "title": "El primer programa"
+  },
+  "valores-y-tipos": {
+    "order": 4,
+    "title": "Valores y tipos"
+  },
+  "operadores-aritmeticos": {
+    "order": 5,
+    "title": "Operadores aritméticos"
+  },
+  "lenguajes-formales-y-naturales": {
+    "order": 6,
+    "title": "Lenguajes formales y naturales"
+  },
+  "depuracion": {
+    "order": 7,
+    "title": "Depuración"
+  }
+}

@@ -1,3 +1,18 @@
+/**
+
+ruta: frontend/src/code-execution/services/pistonApi.service.ts
+
+* Define el servicio de comunicación con la API de ejecución de código, enviando
+* solicitudes al endpoint `/api/execute` para ejecutar código JavaScript o Python.
+* Establece los tipos de parámetros de entrada y de resultados, incluyendo la salida
+* estándar, los errores, el código de finalización y la señal de terminación. Gestiona
+* las respuestas HTTP no satisfactorias mediante excepciones y normaliza los datos
+* recibidos para garantizar una estructura de resultado consistente, contemplando
+* también la entrada estándar opcional y la configuración de la URL del backend.
+
+**/
+
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export interface ExecutionResult {

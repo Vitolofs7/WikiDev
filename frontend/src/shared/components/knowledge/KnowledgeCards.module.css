@@ -1,0 +1,344 @@
+/**
+
+ruta: frontend/src/shared/components/knowledge/KnowledgeCards.module.css
+
+* Define los estilos visuales de las tarjetas de código y las etiquetas
+* informativas utilizadas en la escena interactiva de conocimiento de WikiDev.
+* Establece una apariencia coherente mediante fondos oscuros, bordes con
+* degradados y colores de acento configurables para las variantes violeta
+* y menta. Organiza la presentación del código con cabeceras, indicadores
+* de ventana, nombres de archivo, etiquetas de lenguaje, números de línea
+* y clases para la sintaxis. Incluye un cursor animado y un panel de resultados
+* cuya visibilidad y posición se transicionan al finalizar la escritura.
+* También define etiquetas con iconos e indicadores de actividad, junto con
+* las animaciones de parpadeo y pulsación correspondientes. Utiliza unidades
+* relativas al contenedor (`cqw`) y `em` para adaptar las dimensiones a la
+* escala de la escena. Por último, pausa las animaciones cuando la escena
+* está inactiva y respeta la preferencia del sistema por reducir el movimiento.
+* Las variables de color y tipografía se heredan de `.sceneWrapper`, definido
+* en `KnowledgeScene.module.css`.
+
+**/
+
+
+/* ── Tarjetas y etiquetas ────────────────────────────────────
+   Las variables (--text, --muted, --mono…) y las unidades cqw vienen
+   de .sceneWrapper en KnowledgeScene.module.css.
+   --tone-rgb es el color de acento de cada pieza (violet / mint).
+   ──────────────────────────────────────────────────────────── */
+
+.violet {
+  --tone-rgb: 168, 156, 247;
+}
+
+.mint {
+  --tone-rgb: 110, 231, 183;
+}
+
+/* Borde con degradado (compartido por tarjetas y etiquetas) */
+.card::after,
+.tag::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(var(--tone-rgb), 0.55),
+    rgba(255, 255, 255, 0.07) 38%,
+    rgba(255, 255, 255, 0.05) 62%,
+    rgba(var(--tone-rgb), 0.3)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+
+/* ── Tarjeta de código (todo en em: escala con la escena) ──── */
+
+.card {
+  position: relative;
+  width: 40cqw;
+  overflow: hidden;
+  padding: 0.95em 1.1em 1.1em;
+  font-size: clamp(10px, 2.3cqw, 14.5px);
+  border-radius: 1em;
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 46, 0.98),
+    rgba(15, 15, 30, 0.98)
+  );
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.32),
+    0 0 4cqw rgba(var(--tone-rgb), 0.1),
+    inset 0 1px rgba(var(--tone-rgb), 0.4);
+}
+
+/* Reflejo que sigue al cursor (va debajo del contenido) */
+.glare {
+  position: absolute;
+  inset: -30%;
+  background: radial-gradient(
+    circle at 32% 22%,
+    rgba(255, 255, 255, 0.12),
+    transparent 40%
+  );
+  pointer-events: none;
+}
+
+.header,
+.code,
+.output {
+  position: relative;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+  margin-bottom: 0.9em;
+}
+
+.dot {
+  flex: 0 0 0.5em;
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: #68647b;
+}
+
+.dot:nth-child(1) {
+  background: #f87171;
+}
+
+.dot:nth-child(2) {
+  background: #fbbf24;
+}
+
+.dot:nth-child(3) {
+  background: #34d399;
+}
+
+.fileName {
+  margin-left: 0.5em;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.85em;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.badge {
+  margin-left: auto;
+  padding: 0.15em 0.55em;
+  border: 1px solid rgba(var(--tone-rgb), 0.25);
+  border-radius: 0.5em;
+  background: rgba(var(--tone-rgb), 0.12);
+  color: rgb(var(--tone-rgb));
+  font: 600 0.7em / 1.4 var(--mono);
+}
+
+/* ── Código ─────────────────────────────────────────────────── */
+
+.code {
+  color: var(--text);
+  font-family: var(--mono);
+  font-weight: 500;
+  line-height: 1.65;
+  white-space: nowrap;
+  font-synthesis: none;
+}
+
+/* min-height evita que la tarjeta cambie de alto mientras se escribe */
+.line {
+  display: flex;
+  min-height: 1.65em;
+}
+
+.lineNo {
+  flex: 0 0 1.5em;
+  color: rgba(170, 166, 189, 0.45);
+  font-weight: 400;
+  user-select: none;
+}
+
+.indent {
+  padding-left: 1.05em;
+}
+
+.keyword {
+  color: #b5a5ff;
+}
+
+.string {
+  color: var(--accent-2-light);
+}
+
+.function {
+  color: #7dd3fc;
+}
+
+.caret {
+  display: inline-block;
+  width: 0.5em;
+  height: 1.1em;
+  margin-left: 1px;
+  vertical-align: -0.18em;
+  background: rgb(var(--tone-rgb));
+  animation: blink 1.05s steps(1) infinite;
+}
+
+/* ── Resultado (aparece al terminar de escribir) ───────────── */
+
+.output {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8em;
+  margin: 0.8em 0 0;
+  padding: 0.5em 0.7em;
+  border: 1px solid rgba(var(--tone-rgb), 0.14);
+  border-radius: 0.65em;
+  background: rgba(var(--tone-rgb), 0.07);
+  font-family: var(--mono);
+  font-size: 0.9em;
+  opacity: 0;
+  translate: 0 0.35em;
+  transition:
+    opacity 0.5s ease,
+    translate 0.5s ease;
+}
+
+.output[data-visible="true"] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.outputLabel {
+  color: var(--muted);
+}
+
+.outputValue {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  color: rgb(var(--tone-rgb));
+  font-weight: 600;
+}
+
+.outputValue svg {
+  width: 1em;
+  height: 1em;
+}
+
+/* ── Etiqueta ───────────────────────────────────────────────── */
+
+.tag {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  padding: 0.5em 0.95em 0.5em 0.5em;
+  font: 500 clamp(10px, 1.95cqw, 12.5px) / 1.2 system-ui, sans-serif;
+  color: var(--text);
+  white-space: nowrap;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 46, 0.98),
+    rgba(16, 16, 32, 0.98)
+  );
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.28),
+    0 0 3.5cqw rgba(var(--tone-rgb), 0.12),
+    inset 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.tagIcon {
+  display: grid;
+  place-items: center;
+  width: 2em;
+  height: 2em;
+  border: 1px solid rgba(var(--tone-rgb), 0.25);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 25%,
+    rgba(var(--tone-rgb), 0.28),
+    rgba(var(--tone-rgb), 0.08)
+  );
+  color: rgb(var(--tone-rgb));
+}
+
+.tagIcon svg {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+/* Indicador "en vivo" */
+.live {
+  position: relative;
+  width: 0.5em;
+  height: 0.5em;
+  margin-left: 0.15em;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 0.8em rgba(52, 211, 153, 0.7);
+}
+
+.live::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* ── Animaciones ────────────────────────────────────────────── */
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes ping {
+  0% {
+    scale: 1;
+    opacity: 0.6;
+  }
+
+  75%,
+  100% {
+    scale: 2.6;
+    opacity: 0;
+  }
+}
+
+/* Pausa cuando la escena está fuera de pantalla */
+[data-active="false"] .caret,
+[data-active="false"] .live::after {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret,
+  .live::after {
+    animation: none;
+  }
+
+  .output {
+    transition: none;
+  }
+}

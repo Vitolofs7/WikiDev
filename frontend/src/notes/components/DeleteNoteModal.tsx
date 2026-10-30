@@ -1,3 +1,17 @@
+/**
+
+ruta: frontend/src/notes/components/DeleteNoteModal.tsx
+
+* Renderiza un modal de confirmación para la eliminación de una nota. Presenta
+* un mensaje de advertencia sobre la pérdida irreversible del contenido y las
+* imágenes asociadas, junto con las opciones para confirmar o cancelar la acción.
+* Recibe mediante las propiedades `onConfirm` y `onCancel` las funciones que
+* gestionan ambas decisiones. Impide que los clics dentro del modal se propaguen
+* al fondo, permitiendo cerrar el cuadro al hacer clic fuera de su contenido.
+
+**/
+
+
 'use client'
 import { Trash2 } from 'lucide-react'
 

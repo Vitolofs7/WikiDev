@@ -1,3 +1,20 @@
+/**
+
+ruta: frontend/src/notes/services/notesApi.service.ts
+
+* Define los tipos de datos de las notas y sus imágenes asociadas, y centraliza
+* las operaciones de comunicación con la API del backend. El objeto `notesApi`
+* proporciona métodos para consultar notas con filtros de búsqueda, crear,
+* actualizar y eliminar registros, así como gestionar la subida y eliminación
+* de imágenes vinculadas a cada nota. También genera las URL necesarias para
+* acceder a las imágenes almacenadas. Las peticiones utilizan la dirección base
+* configurada mediante la variable de entorno `NEXT_PUBLIC_API_URL`, facilitando
+* la conexión entre el frontend y el servicio de notas sin acoplar las operaciones
+* a una dirección fija.
+
+**/
+
+
 const API = `${process.env.NEXT_PUBLIC_API_URL}/api/notes`
 
 export interface NoteImage {

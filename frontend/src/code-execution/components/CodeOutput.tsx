@@ -1,3 +1,17 @@
+/**
+
+ruta: frontend/src/code-execution/components/CodeOutput.tsx
+
+* Gestiona la representación visual de los resultados de ejecución de código,
+* mostrando estados diferenciados para la ejecución en curso, los errores y la
+* ausencia de resultados. Presenta la salida estándar y los mensajes de error
+* devueltos por el servicio de ejecución, utilizando indicadores visuales y estilos
+* específicos para facilitar la interpretación de la información y el diagnóstico
+* de posibles problemas durante la ejecución.
+
+**/
+
+
 import { CheckCircle2, XCircle, Terminal } from 'lucide-react'
 import type { ExecutionResult } from '../services/pistonApi.service'
 

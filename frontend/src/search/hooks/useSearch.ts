@@ -1,3 +1,19 @@
+/**
+
+ruta: frontend/src/search/hooks/useSearch.ts
+
+* Proporciona un hook personalizado para realizar búsquedas sobre los contenidos
+* registrados en la configuración de navegación de WikiDev. Construye un índice
+* de búsqueda a partir de los títulos, categorías, identificadores y rutas de los
+* contenidos, utilizando Fuse.js para localizar coincidencias aproximadas por
+* título o categoría. Gestiona el estado de la consulta y los resultados, y expone
+* las funciones `search` y `clear` para ejecutar búsquedas y restablecer el estado.
+* Los resultados incluyen la información necesaria para identificar cada contenido
+* y generar su enlace de navegación dentro de la documentación.
+
+**/
+
+
 import { useState, useCallback } from 'react'
 import Fuse from 'fuse.js'
 import { navConfig } from '@/navigation/config/nav.config'

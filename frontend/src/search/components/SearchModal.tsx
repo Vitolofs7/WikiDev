@@ -1,3 +1,20 @@
+/**
+
+ruta: frontend/src/search/components/SearchModal.tsx
+
+* Renderiza un modal de búsqueda que permite localizar contenidos de la
+* documentación y navegar directamente a los resultados seleccionados. Integra
+* el hook `useSearch` para gestionar la consulta y obtener coincidencias, y
+* proporciona navegación mediante teclado con las flechas, Enter y Escape,
+* además del atajo Ctrl+K o Cmd+K para controlar el modal. Gestiona el foco del
+* campo de búsqueda al abrirse, reinicia la selección en cada apertura y permite
+* seleccionar resultados mediante clic o movimiento del ratón. Incluye estados
+* visuales para los resultados, las búsquedas sin coincidencias y las indicaciones
+* de uso, manteniendo la navegación integrada con el enrutador de Next.js.
+
+**/
+
+
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -16,20 +33,30 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
   const { query, results, search, clear } = useSearch();
   const [selected, setSelected] = useState(0);
 
+  // Reinicia `selected` cuando `open` cambia a true, ajustando el estado
+  // durante el render en vez de en un efecto (evita el render en cascada
+  // que marca react-hooks/set-state-in-effect).
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
+    if (open) setSelected(0);
+  }
+
+  // El foco del input SÍ es un efecto legítimo: es una sincronización con el
+  // DOM, no un simple reflejo de estado.
   useEffect(() => {
     if (open) {
-      setTimeout(() => inputRef.current?.focus(), 50);
-      setSelected(0);
-    } else {
-      clear();
+      const id = setTimeout(() => inputRef.current?.focus(), 50);
+      return () => clearTimeout(id);
     }
-  }, [open]);
+    clear();
+  }, [open, clear]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
-        open ? onClose() : null;
+        if (open) onClose();
       }
       if (!open) return;
       if (e.key === "Escape") onClose();
@@ -43,7 +70,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [open, results, selected]);
+  }, [open, results, selected, onClose, router]);
 
   if (!open) return null;
 
@@ -135,7 +162,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
               style={{ fontFamily: "Outfit, sans-serif" }}
             >
               No se encontraron resultados para{" "}
-              <span className="text-zinc-400">"{query}"</span>
+              <span className="text-zinc-400">{`"${query}"`}</span>
             </p>
           </div>
         )}

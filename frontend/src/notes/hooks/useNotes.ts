@@ -1,3 +1,20 @@
+/**
+
+ruta: frontend/src/notes/hooks/useNotes.ts
+
+* Proporciona un hook personalizado para gestionar el estado y las operaciones
+* relacionadas con las notas. Se encarga de obtener y filtrar las notas mediante
+* una búsqueda con retardo para evitar peticiones innecesarias durante la escritura,
+* y controla el estado de carga durante la recuperación de datos. Expone funciones
+* para crear, actualizar y eliminar notas, así como para subir y eliminar imágenes,
+* manteniendo el estado local sincronizado con las operaciones realizadas a través
+* de `notesApi`. También permite solicitar manualmente la recarga de las notas y
+* expone los datos, el estado de carga y el término de búsqueda para que los
+* componentes consumidores puedan gestionar la interfaz.
+
+**/
+
+
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { notesApi, Note } from '@/notes/services/notesApi.service'

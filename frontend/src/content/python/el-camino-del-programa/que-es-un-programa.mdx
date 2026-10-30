@@ -1,10 +1,14 @@
-# 1.1 ¿Qué es un programa?
+# ¿Qué es un programa?
 
-Un **programa** es una secuencia de instrucciones que le indica al ordenador cómo realizar una tarea. Esa tarea puede ser matemática (resolver una ecuación), simbólica (buscar y reemplazar texto) o visual (procesar una imagen). En todos los casos, el programa descompone un problema complejo en pasos simples que el ordenador puede ejecutar.
+Un **programa** es una secuencia de instrucciones que le indica al ordenador cómo realizar una tarea: resolver una ecuación, buscar texto, procesar una imagen. Su función es descomponer un problema complejo en pasos simples y ejecutables. Este apunte presenta un modelo mental sencillo para clasificar esas instrucciones y entender cómo fluye la ejecución de un programa.
 
-## Un modelo mental: tipos de instrucciones
+---
 
-A nivel conceptual, los programas pueden describirse como combinaciones de cinco tipos de instrucciones. Este modelo no forma parte de la sintaxis de Python, sino que es una forma útil de clasificar lo que hace el código. Aunque los programas reales pueden ser más complejos, muchos se ajustan a esta clasificación:
+## Conceptos clave
+
+### Los 5 tipos de instrucciones
+
+Este modelo no es sintaxis de Python, sino una forma útil de **clasificar** lo que hace cualquier código:
 
 <table>
   <thead>
@@ -43,36 +47,24 @@ A nivel conceptual, los programas pueden describirse como combinaciones de cinco
   </tbody>
 </table>
 
-## Flujo de control
+<Callout type="contexto-profesional">
+  Esta clasificación no es solo académica: es el vocabulario que usan los equipos de desarrollo para describir cualquier sistema, sin importar el lenguaje. En una entrevista técnica, saber distinguir "esto es una entrada", "esto es una transformación de datos" o "esto es control de flujo" demuestra que piensas en la estructura del problema antes de escribir código — una competencia que las empresas valoran más que memorizar sintaxis.
+</Callout>
 
-Por defecto, Python ejecuta las instrucciones de arriba a abajo, en el orden en que aparecen en el código. Este orden se denomina **flujo de control**. Las instrucciones condicionales y de repetición pueden modificarlo, haciendo que ciertas instrucciones se ejecuten o se repitan en función de condiciones. El ordenador aplica cada instrucción exactamente como está escrita, sin inferir intenciones más allá de lo que el código especifica.
+### Flujo de control
 
-## Ejemplo: ejecución secuencial
+Por defecto, Python ejecuta las instrucciones **de arriba a abajo**, en el orden en que aparecen. A esto se le llama **flujo de control**.
 
-El caso más simple es una secuencia de instrucciones que se ejecutan una tras otra, en el orden en que aparecen:
+- Las instrucciones **condicionales** y de **repetición** pueden alterar ese orden.
+- El ordenador aplica cada instrucción **exactamente como está escrita**, sin interpretar intenciones más allá del código.
 
-<CodeRunner language="python" title="Ejecución secuencial" initialCode={`print("Primero")
-print("Segundo")
-print("Tercero")`} />
+<Callout type="error-comun">
+  Los principiantes suelen leer el código como una lista plana, de arriba a abajo, incluso cuando hay un `if` o un `for` de por medio. En cuanto aparece una instrucción condicional o de repetición, hay que "seguir" el flujo real de ejecución mentalmente — no basta con leer las líneas en orden de aparición.
+</Callout>
 
-Cada línea se ejecuta en orden. Cambiar el orden de las instrucciones cambia el resultado del programa.
+### Analogía: el programa como receta
 
-## Ejemplo: combinación de tipos de instrucciones
-
-El siguiente programa combina operaciones, una instrucción condicional y una de repetición. No es necesario comprender en detalle estas estructuras en este punto; el objetivo es observar cómo distintos tipos de instrucciones pueden coexistir en un mismo programa:
-
-<CodeRunner language="python" title="Varios tipos de instrucciones" initialCode={`numero = 7
-
-if numero < 1:
-    print("Número fuera de rango.")
-else:
-    for i in range(1, numero + 1):
-        cuadrado = i ** 2
-        print(i, cuadrado)`} />
-
-## La analogía de la receta
-
-Un programa puede compararse con una receta de cocina: ambos describen una secuencia de pasos para obtener un resultado a partir de unos datos de entrada.
+Pensar en una receta de cocina ayuda a fijar la idea:
 
 <table>
   <thead>
@@ -90,4 +82,57 @@ Un programa puede compararse con una receta de cocina: ambos describen una secue
   </tbody>
 </table>
 
-A diferencia de una receta, que puede interpretarse con cierto margen de flexibilidad, un programa se ejecuta de forma determinista: dadas las mismas condiciones de entrada, produce siempre el mismo resultado.
+> **Diferencia clave**: una receta admite cierto margen de interpretación. Un programa es **determinista** — dadas las mismas entradas, siempre produce el mismo resultado.
+
+<Callout type="pro-tip">
+  Antes de escribir la primera línea de código, muchos profesionales esbozan el problema en estos términos: "¿qué entra?, ¿qué sale?, ¿qué pasos hay en medio?". Pensarlo como una receta —en papel o en pseudocódigo— ahorra tiempo de depuración más adelante, porque el diseño del flujo queda claro antes de lidiar con la sintaxis.
+</Callout>
+
+---
+
+## Código de ejemplo
+
+### Ejecución secuencial
+
+El caso más simple: instrucciones que se ejecutan una tras otra, en orden.
+
+<CodeRunner language="python" title="Ejecución secuencial" initialCode={`print("Primero")   # se ejecuta 1º
+print("Segundo")   # se ejecuta 2º
+print("Tercero")   # se ejecuta 3º`} />
+
+Cambiar el orden de las líneas cambia el resultado del programa.
+
+### Combinando varios tipos de instrucciones
+
+Este ejemplo mezcla **operaciones**, un **condicional** y una **repetición** en un mismo bloque:
+
+<CodeRunner language="python" title="Varios tipos de instrucciones" initialCode={`numero = 7  # dato de entrada (definido directamente en el código)
+
+if numero < 1:
+    # condicional: se ejecuta solo si numero < 1
+    print("Número fuera de rango.")
+else:
+    # repetición: recorre del 1 al número indicado
+    for i in range(1, numero + 1):
+        cuadrado = i ** 2   # operación: cálculo del cuadrado
+        print(i, cuadrado)  # salida: muestra el resultado`} />
+
+**Salida esperada:**
+
+\`\`\`
+1 1
+2 4
+3 9
+4 16
+5 25
+6 36
+7 49
+\`\`\`
+
+---
+
+## Buenas prácticas / errores comunes
+
+- **El ordenador no infiere intenciones.** Si el código no contempla un caso (por ejemplo, un `numero` negativo sin `if` que lo controle), el programa no lo "adivinará": hará exactamente lo que está escrito, aunque el resultado no tenga sentido.
+- **Verifica el determinismo como herramienta de depuración.** Si un mismo programa da resultados distintos con la misma entrada, el problema no está en el modelo de instrucciones — probablemente hay una dependencia externa (aleatoriedad, hora del sistema, estado no controlado) que rompe esa garantía.
+- **Clasifica antes de escribir.** Antes de programar una tarea nueva, identifica qué entra (entrada), qué sale (salida) y qué transformación conecta ambas (operaciones/condicionales/repetición). Ayuda a estructurar el código antes de escribir la primera línea.

@@ -1,8 +1,24 @@
+/**
+
+ruta: frontend/src/notes/components/NoteEditor.tsx
+
+* Gestiona la edición de una nota, incluyendo su título, contenido e imágenes
+* asociadas. Mantiene el estado local de los campos editables y programa el
+* guardado automático tras un breve periodo de inactividad, mostrando indicadores
+* del estado de persistencia. Permite subir y eliminar imágenes, así como eliminar
+* la nota mediante un modal de confirmación. Recibe las operaciones de actualización
+* y gestión de recursos a través de sus propiedades, delegando en el componente
+* padre la persistencia de los cambios. Requiere que el padre utilice `note.id`
+* como `key` para reinicializar correctamente el estado al cambiar de nota.
+
+**/
+
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { Note, notesApi } from "@/notes/services/notesApi.service";
 import { Trash2, ImagePlus, X } from "lucide-react";
 import { DeleteNoteModal } from "@/notes/components/DeleteNoteModal";
+import Image from "next/image";
 
 interface Props {
   note: Note;
@@ -15,6 +31,10 @@ interface Props {
   onDeleteImage: (noteId: number, imageId: number) => Promise<void>;
 }
 
+// IMPORTANTE: el padre debe renderizar <NoteEditor key={note.id} ... />.
+// Al cambiar `note.id`, React desmonta y vuelve a montar este componente con
+// `key` distinta, así que `title`/`content` arrancan frescos desde `note` sin
+// necesidad de un efecto que los sincronice manualmente.
 export function NoteEditor({
   note,
   onUpdate,
@@ -29,11 +49,6 @@ export function NoteEditor({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    setTitle(note.title);
-    setContent(note.content);
-  }, [note.id]);
 
   const triggerSave = (newTitle: string, newContent: string) => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
@@ -156,10 +171,13 @@ export function NoteEditor({
           <div className="flex flex-wrap gap-3">
             {note.images.map((img) => (
               <div key={img.id} className="relative group">
-                <img
+                <Image
                   src={notesApi.getImageUrl(img.filename)}
                   alt={img.original_name}
+                  width={96}
+                  height={96}
                   className="w-24 h-24 object-cover rounded-xl border border-white/10"
+                  unoptimized
                 />
                 <button
                   onClick={() => onDeleteImage(note.id, img.id)}

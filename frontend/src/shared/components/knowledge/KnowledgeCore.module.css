@@ -1,0 +1,259 @@
+/**
+
+ruta: frontend/src/shared/components/knowledge/KnowledgeCore.module.css
+
+* Define los estilos visuales de la escena tridimensional que representa
+* una red de conocimiento mediante una esfera luminosa con una gema central.
+* Organiza las capas de fondo, las redes de nodos, las órbitas y los efectos
+* de iluminación mediante posicionamiento absoluto y distintos niveles
+* de apilamiento. El cuerpo principal combina degradados radiales, sombras
+* internas y externas, y un borde animado con degradado cónico para simular
+* una superficie de cristal. La gema central incorpora facetas de color,
+* reflejos, un resplandor pulsante y un barrido de luz periódico.
+*
+* Incluye capas canvas para representar las conexiones y los nodos, con
+* una máscara radial que reduce su intensidad en la zona central para
+* preservar la legibilidad de la gema. Las animaciones se pausan cuando
+* la escena está inactiva y se deshabilitan si el usuario prefiere reducir
+* el movimiento. Utiliza unidades relativas al contenedor y variables
+* compartidas definidas en KnowledgeScene.module.css para mantener
+* la coherencia visual y la adaptación al tamaño de la escena.
+
+**/
+
+
+/* ── Núcleo ──────────────────────────────────────────────────
+   Las variables (--accent, --mono…) las define .sceneWrapper en
+   KnowledgeScene.module.css; las unidades cqw también vienen de ahí.
+   ──────────────────────────────────────────────────────────── */
+
+.root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Cuerpo de cristal ──────────────────────────────────────── */
+
+.body {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(168, 156, 247, 0.3), transparent 46%),
+    radial-gradient(circle at 70% 84%, rgba(6, 214, 160, 0.16), transparent 52%),
+    radial-gradient(circle, rgba(22, 22, 44, 0.86), rgba(12, 12, 26, 0.93));
+  box-shadow:
+    0 0 5.6cqw rgba(124, 109, 250, 0.16),
+    0 0 13cqw rgba(6, 214, 160, 0.1),
+    inset 0 0 4.8cqw rgba(124, 109, 250, 0.12),
+    inset 0 -2.5cqw 5cqw rgba(6, 214, 160, 0.1),
+    inset 0 2cqw 4cqw rgba(168, 156, 247, 0.1);
+}
+
+/* Borde con degradado cónico que gira despacio (destello en el canto) */
+.body::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: max(1px, 0.3cqw);
+  border-radius: inherit;
+  background: conic-gradient(
+    from 210deg,
+    rgba(168, 156, 247, 0.75),
+    rgba(168, 156, 247, 0.06) 25%,
+    rgba(6, 214, 160, 0.5) 55%,
+    rgba(6, 214, 160, 0.05) 80%,
+    rgba(168, 156, 247, 0.75)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  animation: rimSpin 26s linear infinite;
+  pointer-events: none;
+}
+
+/* Brillo especular que sigue al cursor */
+.sheen {
+  position: absolute;
+  inset: -30%;
+  background: radial-gradient(
+    circle at 38% 32%,
+    rgba(255, 255, 255, 0.18),
+    transparent 38%
+  );
+  pointer-events: none;
+}
+
+/* ── Red de nodos (canvas) ──────────────────────────────────── */
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.canvasBack {
+  z-index: 2;
+}
+
+/* Atenúa los nodos que cruzan por delante de la gema para que siga legible */
+.canvasFront {
+  z-index: 4;
+  -webkit-mask-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.4) 0,
+    rgba(0, 0, 0, 0.4) 15%,
+    #000 34%
+  );
+  mask-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.4) 0,
+    rgba(0, 0, 0, 0.4) 15%,
+    #000 34%
+  );
+}
+
+/* ── Gema central ───────────────────────────────────────────── */
+
+.gemStage {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.gemGlow {
+  position: absolute;
+  width: 64%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(139, 124, 246, 0.55),
+    rgba(124, 109, 250, 0.18) 45%,
+    transparent 70%
+  );
+  filter: blur(1.6cqw);
+  animation: breathe 5.5s ease-in-out infinite;
+}
+
+.gem {
+  position: relative;
+  width: 30%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 28%;
+  /* Facetas: luz arriba-izquierda, rebote verde abajo-derecha */
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 42%),
+    linear-gradient(315deg, rgba(6, 214, 160, 0.3) 0%, transparent 50%),
+    linear-gradient(145deg, #8b7cf6, #4a3ca3);
+  box-shadow:
+    0 0 5cqw rgba(124, 109, 250, 0.45),
+    inset 0 2px 12px rgba(255, 255, 255, 0.28),
+    inset 0 -8px 16px rgba(6, 214, 160, 0.18);
+  transform: rotate(45deg);
+}
+
+/* Barrido de luz que cruza la gema cada pocos segundos */
+.gem::after {
+  content: "";
+  position: absolute;
+  inset: -40% -10%;
+  background: linear-gradient(
+    100deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.38) 50%,
+    transparent 62%
+  );
+  translate: -130% 0;
+  animation: sweep 7s ease-in-out 1.5s infinite;
+}
+
+.gemSymbol {
+  position: relative;
+  color: white;
+  font: 700 clamp(11px, 3.6cqw, 24px) var(--mono, monospace);
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  transform: rotate(-45deg);
+}
+
+/* ── Órbitas ────────────────────────────────────────────────── */
+
+.orbits {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.orbitsBack {
+  z-index: 0;
+}
+
+.orbitsFront {
+  z-index: 5;
+}
+
+/* ── Animaciones ────────────────────────────────────────────── */
+
+@keyframes rimSpin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.7;
+    scale: 1;
+  }
+
+  50% {
+    opacity: 1;
+    scale: 1.12;
+  }
+}
+
+@keyframes sweep {
+  0% {
+    translate: -130% 0;
+  }
+
+  22%,
+  100% {
+    translate: 130% 0;
+  }
+}
+
+/* Pausa cuando la escena está fuera de pantalla */
+.root[data-active="false"] .gemGlow,
+.root[data-active="false"] .gem::after,
+.root[data-active="false"] .body::after {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root *,
+  .root *::before,
+  .root *::after {
+    animation: none !important;
+  }
+}

@@ -1,3 +1,17 @@
+/**
+
+ruta: frontend/src/app/notes/page.tsx
+
+* Gestiona la interfaz principal del módulo de notas, coordinando la búsqueda,
+* selección, creación, edición y eliminación de notas mediante el hook useNotes.
+* Integra la lista de notas con el editor correspondiente y sincroniza el estado
+* de la nota seleccionada tras las operaciones de actualización y gestión de imágenes.
+* También proporciona indicadores de carga y una vista inicial cuando no hay
+* ninguna nota seleccionada.
+
+**/
+
+
 'use client'
 import { useState } from 'react'
 import { useNotes } from '@/notes/hooks/useNotes'
@@ -54,7 +68,7 @@ export default function NotesPage() {
   }
 
   return (
-    <div className="flex h-screen bg-[#080810]">
+    <div className="relative -mt-16 flex min-h-screen bg-[#080810]">
       {/* Sidebar */}
       <div className="w-80 flex-shrink-0 border-r border-white/5 flex flex-col bg-[#0a0a14]">
         {/* Header */}

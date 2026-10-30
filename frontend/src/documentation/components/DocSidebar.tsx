@@ -1,3 +1,19 @@
+/**
+
+ruta: frontend/src/documentation/components/DocSidebar.tsx
+
+* Implementa la barra lateral de navegación del módulo de documentación de WikiDev,
+* integrando el acceso a la página principal, las categorías documentales y el buscador
+* global. Gestiona la apertura del modal de búsqueda mediante interacción directa o
+* el atajo de teclado Ctrl+K, identifica la categoría activa según la ruta actual y
+* aplica los estilos e iconos correspondientes a cada sección. También muestra el
+* historial de documentos visitados mediante el hook `useHistory`, permite eliminar
+* los registros recientes y organiza los elementos en una interfaz fija con navegación
+* desplazable y una sección de pie de página con la versión de la aplicación.
+
+**/
+
+
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

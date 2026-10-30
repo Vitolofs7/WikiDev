@@ -1,3 +1,16 @@
+/**
+
+ruta: frontend/src/app/layout.tsx
+
+* Define el diseño raíz de la aplicación WikiDev, estableciendo los metadatos generales,
+* el idioma del documento y la configuración tipográfica global. Integra los proveedores
+* de tema y búsqueda, la barra de navegación condicional y el seguimiento del historial
+* de navegación, proporcionando el contexto compartido necesario para todas las páginas
+* y centralizando la estructura principal de la interfaz.
+
+**/
+
+
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/theming/components/ThemeProvider";

@@ -1,3 +1,19 @@
+/**
+
+ruta: frontend/src/navigation/config/nav.config.ts
+
+* Define la configuración centralizada de navegación de WikiDev y los tipos que
+* estructuran su jerarquía documental. Establece las interfaces para categorías,
+* capítulos y subapartados, incluyendo sus títulos, identificadores, descripciones
+* y metadatos asociados. El objeto `navConfig` organiza los contenidos de JavaScript,
+* Python y algoritmos, especificando las rutas y los enlaces de cada sección, así
+* como la estructura jerárquica de las unidades que contienen subapartados. Esta
+* configuración sirve como fuente común para generar menús, índices, enlaces y
+* elementos de navegación coherentes en los distintos componentes de la aplicación.
+
+**/
+
+
 export interface NavSubItem {
   title: string;
   slug: string;
@@ -14,7 +30,6 @@ export interface NavCategory {
   slug: string;
   emoji: string;
   description: string;
-  count: number;
   items: NavItem[];
 }
 
@@ -25,7 +40,6 @@ export const navConfig = {
       slug: "javascript",
       emoji: "⚡",
       description: "Arrays, promesas, patrones y más",
-      count: 2,
       items: [
         { title: "Arrays y métodos", slug: "arrays" },
         { title: "Promesas y async/await", slug: "promises" },
@@ -36,7 +50,6 @@ export const navConfig = {
       slug: "python",
       emoji: "🐍",
       description: "Introducción, listas, decoradores y más",
-      count: 1,
       items: [
         {
           title: "El camino del programa",
@@ -181,7 +194,6 @@ export const navConfig = {
       slug: "algorithms",
       emoji: "🧠",
       description: "Sorting, búsqueda y estructuras",
-      count: 1,
       items: [{ title: "Algoritmos de ordenamiento", slug: "sorting" }],
     },
   ] as NavCategory[],

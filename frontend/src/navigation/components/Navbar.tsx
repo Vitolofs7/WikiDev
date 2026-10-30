@@ -1,59 +1,166 @@
-"use client";
-import Link from "next/link";
-import { Code2, Search, StickyNote } from "lucide-react";
+/**
 
-export function Navbar() {
+ruta: frontend/src/navigation/components/Navbar.tsx
+
+* Define la barra de navegación principal de WikiDev, proporcionando acceso a la página
+* de inicio, la documentación, el módulo de notas y el área de búsqueda. Permite adaptar
+* su tamaño mediante la propiedad opcional `compact`, ajustando la altura de la barra,
+* las dimensiones del logotipo, la tipografía, los iconos y el espaciado entre elementos.
+* Utiliza componentes de navegación de Next.js, optimiza la carga del logotipo mediante
+* `next/image` y aplica los estilos globales de la aplicación para mantener una identidad
+* visual coherente. Su diseño adaptable reorganiza los elementos según el espacio
+* disponible y destaca las interacciones mediante transiciones y estados visuales.
+
+**/
+
+
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
+
+import { Search, StickyNote, BookOpen } from "lucide-react";
+
+type NavbarProps = {
+  compact?: boolean;
+};
+
+export function Navbar({ compact = false }: NavbarProps) {
   return (
-    <header className="sticky top-0 z-50 bg-[#0e0e1a] border-b border-[rgba(124,109,250,0.15)]">
-      <div className="flex items-center justify-center gap-8 h-20 px-8">
+    <header className="sticky top-0 z-50 border-b border-white/6 bg-transparent">
+      <div
+        className={`mx-auto flex max-w-7xl items-center px-6 lg:px-8 ${
+          compact ? "h-16" : "h-20"
+        }`}
+      >
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 flex-shrink-0">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#7c6dfa] to-[#06d6a0]">
-            <Code2 className="w-5 h-5 text-white" />
+        <Link
+          href="/"
+          className={`flex shrink-0 items-center ${
+            compact ? "gap-2.5" : "gap-3.5"
+          }`}
+          aria-label="WikiDev - Inicio"
+        >
+          <div
+            className={`relative shrink-0 ${
+              compact ? "h-11 w-11" : "h-14 w-14"
+            }`}
+          >
+            <Image
+              src="/images/branding/wikidev-icon.svg"
+              alt=""
+              fill
+              className="object-contain"
+              sizes={compact ? "44px" : "56px"}
+            />
           </div>
+
           <span
-            className="font-extrabold text-2xl text-white tracking-tight"
+            className={`font-extrabold tracking-tight text-(--text) ${
+              compact ? "text-xl" : "text-[26px]"
+            }`}
             style={{ fontFamily: "Outfit, sans-serif" }}
           >
             Wiki
-            <span className="bg-gradient-to-r from-[#7c6dfa] to-[#06d6a0] bg-clip-text text-transparent">
+            <span
+              className="bg-clip-text text-transparent"
+              style={{
+                backgroundImage: "var(--gradient-brand)",
+              }}
+            >
               Dev
             </span>
           </span>
         </Link>
 
         {/* Divider */}
-        <div className="w-px h-8 bg-white/10" />
+        <div
+          className={`hidden w-px bg-(--border-hover) md:block ${
+            compact ? "ml-7 h-7" : "ml-10 h-9"
+          }`}
+        />
 
-        {/* Notes link */}
-        <Link
-          href="/notes"
-          className="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-[#14141f] border border-white/10 hover:border-[#7c6dfa]/50 transition-all"
-          style={{ fontFamily: "Outfit, sans-serif" }}
+        {/* Navigation */}
+        <nav
+          className={`hidden items-center md:flex ${
+            compact ? "ml-4 gap-1" : "ml-7 gap-3"
+          }`}
         >
-          <StickyNote className="w-5 h-5 flex-shrink-0 text-[#7c6dfa]" />
-          <span className="text-base text-[#52526e]">Notas</span>
-        </Link>
-
-        {/* Search */}
-        <button
-          className="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-[#14141f] border border-white/10 hover:border-[#7c6dfa]/50 transition-all w-[440px]"
-          aria-label="Buscar documentación"
-        >
-          <Search className="w-5 h-5 flex-shrink-0 text-[#7c6dfa]" />
-          <span
-            className="flex-1 text-left text-base text-[#52526e]"
+          <Link
+            href="/docs"
+            className={`flex items-center rounded-xl text-(--text-secondary) transition-all hover:bg-white/4 hover:text-(--text) ${
+              compact ? "gap-2 px-3.5 py-2" : "gap-3 px-5 py-3"
+            }`}
             style={{ fontFamily: "Outfit, sans-serif" }}
           >
-            Buscar documentación...
-          </span>
-          <kbd
-            className="px-2 py-0.5 rounded text-xs bg-[rgba(124,109,250,0.1)] text-[#7c6dfa] border border-[rgba(124,109,250,0.2)]"
-            style={{ fontFamily: "JetBrains Mono, monospace" }}
+            <BookOpen
+              className={
+                compact ? "h-4 w-4 text-(--accent)" : "h-5 w-5 text-(--accent)"
+              }
+            />
+
+            <span
+              className={`font-medium ${compact ? "text-sm" : "text-base"}`}
+            >
+              Documentación
+            </span>
+          </Link>
+
+          <Link
+            href="/notes"
+            className={`flex items-center rounded-xl text-(--text-secondary) transition-all hover:bg-white/4 hover:text-(--text) ${
+              compact ? "gap-2 px-3.5 py-2" : "gap-3 px-5 py-3"
+            }`}
+            style={{ fontFamily: "Outfit, sans-serif" }}
           >
-            Ctrl+K
-          </kbd>
-        </button>
+            <StickyNote
+              className={
+                compact ? "h-4 w-4 text-(--accent)" : "h-5 w-5 text-(--accent)"
+              }
+            />
+
+            <span
+              className={`font-medium ${compact ? "text-sm" : "text-base"}`}
+            >
+              Notas
+            </span>
+          </Link>
+        </nav>
+
+        {/* Search */}
+        <div className={`ml-auto ${compact ? "ml-6 flex-1 max-w-130" : ""}`}>
+          <button
+            type="button"
+            className={`group flex w-full items-center rounded-xl border border-(--border-hover) bg-(--bg-3)/80 transition-all hover:border-(--accent)/40 hover:bg-(--bg-3) focus:border-(--accent)/60 focus:outline-none ${
+              compact ? "h-10 gap-3 px-4" : "h-12 w-95 gap-3.5 px-5"
+            }`}
+            aria-label="Buscar documentación"
+          >
+            <Search
+              className={`shrink-0 text-(--accent) transition-transform group-hover:scale-105 ${
+                compact ? "h-4.5 w-4.5" : "h-5 w-5"
+              }`}
+            />
+
+            <span
+              className={`min-w-0 flex-1 truncate text-left text-(--text-muted) ${
+                compact ? "text-sm" : "text-base"
+              }`}
+              style={{ fontFamily: "Outfit, sans-serif" }}
+            >
+              Buscar documentación...
+            </span>
+
+            <kbd
+              className={`shrink-0 rounded-md border border-(--accent)/20 bg-(--accent)/10 text-(--accent-light) ${
+                compact ? "px-2 py-0.5 text-[10px]" : "px-2.5 py-1 text-[11px]"
+              }`}
+              style={{ fontFamily: "JetBrains Mono, monospace" }}
+            >
+              Ctrl+K
+            </kbd>
+          </button>
+        </div>
       </div>
     </header>
   );

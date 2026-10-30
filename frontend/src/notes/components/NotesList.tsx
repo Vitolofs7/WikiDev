@@ -1,3 +1,19 @@
+/**
+
+ruta: frontend/src/notes/components/NotesList.tsx
+
+* Renderiza una lista de notas y permite seleccionar una para su edición.
+* Muestra el título, una vista previa del contenido, la fecha de última
+* actualización y, cuando existen, el número de imágenes asociadas. Destaca
+* visualmente la nota seleccionada para facilitar su identificación y presenta
+* un estado vacío cuando no hay notas disponibles. Recibe la colección de notas,
+* el identificador de la selección actual y la función de selección mediante
+* sus propiedades. Utiliza la utilidad `cn` para combinar dinámicamente las
+* clases CSS según el estado de cada elemento.
+
+**/
+
+
 'use client'
 import { Note } from '@/notes/services/notesApi.service'
 import { cn } from '@/shared/utils/cn'
