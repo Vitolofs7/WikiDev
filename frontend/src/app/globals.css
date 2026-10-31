@@ -1,14 +1,11 @@
 /**
-
-ruta: frontend/src/app/globals.css
-
 * Define los estilos globales de WikiDev, estableciendo la identidad visual de la aplicación
 * mediante variables CSS para colores, tipografía, fondos, bordes y estados semánticos.
 * Configura los estilos base de la interfaz, los componentes reutilizables, la presentación
 * del contenido de documentación y sus tablas, así como las barras de desplazamiento,
 * los efectos de selección y las animaciones utilizadas para mejorar la experiencia visual.
 
-**/
+*/
 
 @import "tailwindcss";
 

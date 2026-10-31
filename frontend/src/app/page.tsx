@@ -8,10 +8,10 @@
 */
 
 
-import HomeBackground from "@/home/components/home/HomeBackground";
-import HomeHero from "@/home/components/home/HomeHero";
-import HomeCapabilities from "@/home/components/home/HomeCapabilities";
-import HomeFooter from "@/home/components/home/HomeFooter";
+import HomeBackground from "@/home/components/HomeBackground";
+import HomeHero from "@/home/components/HomeHero";
+import HomeCapabilities from "@/home/components/HomeCapabilities";
+import HomeFooter from "@/home/components/HomeFooter";
 
 export default function HomePage() {
   return (
