@@ -123,6 +123,22 @@ function getMetadata(file) {
   return { order, title };
 }
 
+function getUnitTitle(unit) {
+  const unitDirectory = path.join(contentDir, unit);
+  const orderFile = path.join(unitDirectory, "order.json");
+
+  if (!fs.existsSync(orderFile)) {
+    return path.basename(unit);
+  }
+
+  const data = validateOrderFile(orderFile);
+  const firstEntry = Object.entries(data).sort(
+    ([, a], [, b]) => a.order - b.order,
+  )[0];
+
+  return firstEntry?.[1].title ?? path.basename(unit);
+}
+
 if (!fs.existsSync(contentDir)) {
   throw new Error(`Documentation content directory not found: "${contentDir}"`);
 }
@@ -184,6 +200,7 @@ const metadata = entries
       `  {
     slug: ${JSON.stringify(slug)},
     unit: ${JSON.stringify(unit)},
+    unitTitle: ${JSON.stringify(getUnitTitle(unit))},
     order: ${order},
     title: ${JSON.stringify(title)},
   },`,
@@ -198,6 +215,7 @@ type DocComponent = ComponentType<any>;
 export interface DocMetadata {
   slug: string;
   unit: string;
+  unitTitle: string;
   order: number;
   title: string;
 }

@@ -13,7 +13,8 @@ import { notFound } from "next/navigation";
 import { navConfig } from "@/navigation/config/nav.config";
 import { DocPageClient } from "./DocPageClient";
 import { SubItemsIndex } from "./SubItemsIndex";
-import { docsBySlug } from "@/generated/docs.generated";
+import { docsBySlug, docsByUnit } from "@/generated/docs.generated";
+import { topicsMeta } from "@/navigation/config/topics.meta";
 import { TopicCover } from "./TopicCover";
 interface Props {
   params: Promise<{ slug: string[] }>;
@@ -68,6 +69,22 @@ export default async function DocPage({ params }: Props) {
 
 export async function generateStaticParams() {
   const paths: { slug: string[] }[] = [];
+
+  const registeredUnits = new Set(
+    topicsMeta.flatMap((topic) =>
+      topic.chapters.length
+        ? topic.chapters.map((chapter) => `${topic.slug}/${chapter.slug}`)
+        : [topic.slug],
+    ),
+  );
+
+  for (const unit of Object.keys(docsByUnit)) {
+    if (!registeredUnits.has(unit)) {
+      throw new Error(
+        `Documentation unit "${unit}" is missing from topics.meta.ts.`,
+      );
+    }
+  }
 
   for (const category of navConfig.categories) {
     paths.push({ slug: [category.slug] });
