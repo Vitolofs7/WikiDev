@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/navigation/components/ConditionalNavbar.tsx
-
 * Gestiona la visibilidad y la presentación de la barra de navegación según la ruta
 * actual y la dirección del desplazamiento del usuario. En la página principal,
 * posiciona la barra de forma absoluta y utiliza su diseño ampliado; en las páginas
@@ -11,9 +8,7 @@ ruta: frontend/src/navigation/components/ConditionalNavbar.tsx
 * CSS para suavizar los cambios de visibilidad y elimina el evento de desplazamiento
 * al desmontarse el componente.
 
-**/
-
-
+*/
 "use client";
 
 import { useEffect, useState } from "react";

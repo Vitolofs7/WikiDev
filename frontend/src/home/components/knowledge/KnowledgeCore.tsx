@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/shared/components/knowledge/KnowledgeCore.tsx
-
 * Implementa el núcleo visual interactivo de la escena de conocimiento de
 * WikiDev mediante una esfera de nodos conectados, una gema central y varias
 * órbitas animadas. Genera de forma determinista la distribución tridimensional
@@ -27,9 +24,7 @@ ruta: frontend/src/shared/components/knowledge/KnowledgeCore.tsx
 * La composición de capas y los efectos visuales se apoyan en los estilos
 * definidos en KnowledgeCore.module.css.
 
-**/
-
-
+*/
 "use client";
 
 import { useEffect, useId, useRef } from "react";

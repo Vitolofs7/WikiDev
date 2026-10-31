@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/notes/components/NoteEditor.tsx
-
 * Gestiona la edición de una nota, incluyendo su título, contenido e imágenes
 * asociadas. Mantiene el estado local de los campos editables y programa el
 * guardado automático tras un breve periodo de inactividad, mostrando indicadores
@@ -11,7 +8,7 @@ ruta: frontend/src/notes/components/NoteEditor.tsx
 * padre la persistencia de los cambios. Requiere que el padre utilice `note.id`
 * como `key` para reinicializar correctamente el estado al cambiar de nota.
 
-**/
+*/
 
 "use client";
 import { useState, useRef } from "react";

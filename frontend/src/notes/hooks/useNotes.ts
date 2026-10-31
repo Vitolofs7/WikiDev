@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/notes/hooks/useNotes.ts
-
 * Proporciona un hook personalizado para gestionar el estado y las operaciones
 * relacionadas con las notas. Se encarga de obtener y filtrar las notas mediante
 * una búsqueda con retardo para evitar peticiones innecesarias durante la escritura,
@@ -12,7 +9,7 @@ ruta: frontend/src/notes/hooks/useNotes.ts
 * expone los datos, el estado de carga y el término de búsqueda para que los
 * componentes consumidores puedan gestionar la interfaz.
 
-**/
+*/
 
 
 'use client'

@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/shared/components/knowledge/KnowledgeSceneLazy.tsx
-
 * Proporciona una carga diferida del componente `KnowledgeScene` mediante
 * `next/dynamic`, evitando que se renderice durante la generación del HTML
 * en el servidor. Esta configuración permite que la escena interactiva,
@@ -17,7 +14,7 @@ ruta: frontend/src/shared/components/knowledge/KnowledgeSceneLazy.tsx
 * manteniendo su implementación principal separada y optimizando la carga
 * inicial de la página.
 
-**/
+*/
 
 
 "use client";

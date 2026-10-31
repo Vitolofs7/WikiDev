@@ -1,128 +1,538 @@
 # WikiDev — Architecture
 
-Este documento describe la arquitectura de **WikiDev**, detallando **frontend, backend, comunicación entre componentes**, estructura de carpetas y flujo de ejecución del sistema.
+This document describes the architecture of **WikiDev**, including its frontend, backend, communication flow, folder structure, data persistence, and execution process.
 
 ---
 
 ## 1. Overview
 
-**WikiDev** es una aplicación de documentación personal de programación que combina:
+**WikiDev** is a personal programming documentation application designed to centralize technical learning resources and development tools.
 
-- Artículos en **MDX** con ejemplos ejecutables de código (Python y JavaScript)
-- Gestión de **notas personales** con editor avanzado y almacenamiento
-- Búsqueda integrada **fuzzy** para encontrar artículos rápidamente
-- Registro de **historial** y ejecución de código de forma controlada
+Its main features include:
 
-El sistema se divide en dos aplicaciones principales:
+- **Technical documentation:** MDX articles organized by topics, chapters, and lessons.
+- **Interactive code execution:** Run Python and JavaScript examples directly from the documentation.
+- **Personal notes:** Create, edit, search, and delete notes, with support for image attachments.
+- **Integrated search:** Fuzzy search powered by Fuse.js.
+- **Browsing history:** Track visited documentation pages.
+- **Responsive interface:** Modular frontend architecture with reusable components.
 
-1. **Frontend:** interfaz web, rutas y componentes interactivos
-2. **Backend:** API REST, ejecución de código y almacenamiento de datos
+The application is divided into two main components:
 
----
-
-## 2. Stack Tecnológico
-
-| Capa | Tecnologías |
-|------|------------|
-| Frontend | Next.js 16, TypeScript, Tailwind CSS, MDX |
-| Backend | FastAPI, Python 3.10+, SQLite, SQLAlchemy |
-| Build / Deployment | Node.js 18+, Python venv, Uvicorn |
+1. **Frontend:** Web interface, navigation, documentation rendering, search, and interactive features.
+2. **Backend:** REST API, code execution, note management, and persistent storage.
 
 ---
 
-## 3. Folder Structure
+## 2. Technology Stack
+
+| Layer | Technologies |
+|---|---|
+| Frontend framework | Next.js 16, React 18 |
+| Language | TypeScript |
+| Styling | Tailwind CSS 4 |
+| Documentation | MDX |
+| Search | Fuse.js |
+| Icons and animations | Lucide React, Motion |
+| PDF generation | html2pdf.js |
+| Backend framework | FastAPI |
+| Backend language | Python |
+| Database | SQLite |
+| ORM | SQLAlchemy |
+| Data validation | Pydantic |
+| Frontend tooling | Node.js, npm, ESLint |
+
+---
+
+## 3. Project Structure
+
+The repository follows a modular organization, separating frontend features, backend responsibilities, and documentation content.
 
 ```text
 wikidev/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
+├── docs/
+│   └── ARCHITECTURE.md
+│
 ├── frontend/
-│   └── src/
-│       ├── app/             # Rutas principales de Next.js: /, /docs, /notes
-│       ├── code-execution/  # Componentes y hooks para ejecución de código en frontend
-│       ├── documentation/   # Páginas de documentación y renderizado MDX
-│       ├── navigation/      # Barra lateral, breadcrumbs, menú de navegación
-│       ├── notes/           # Editor de notas, autoguardado e imágenes
-│       ├── search/          # Lógica de búsqueda fuzzy (Fuse.js)
-│       ├── history/         # Registro de artículos visitados
-│       ├── theming/         # Configuración de tema, dark/light
-│       ├── shared/          # Componentes reutilizables (buttons, modals, etc.)
-│       └── content/         # Archivos MDX con artículos de Python, JS y algoritmos
+│   ├── scripts/
+│   │   └── generate-docs.mjs
+│   │
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── docs/
+│   │   │   │   └── [...slug]/
+│   │   │   └── notes/
+│   │   │
+│   │   ├── code-execution/
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   └── services/
+│   │   │
+│   │   ├── content/
+│   │   │   ├── algorithms/
+│   │   │   ├── javascript/
+│   │   │   └── python/
+│   │   │       ├── control-de-flujo-y-operaciones-avanzadas/
+│   │   │       ├── el-camino-del-programa/
+│   │   │       ├── funciones-avanzadas/
+│   │   │       ├── funciones-basicas/
+│   │   │       └── funciones-intermedias/
+│   │   │
+│   │   ├── documentation/
+│   │   │   ├── components/
+│   │   │   ├── styles/
+│   │   │   └── utils/
+│   │   │
+│   │   ├── generated/
+│   │   │   └── docs.generated.ts
+│   │   │
+│   │   ├── history/
+│   │   │   ├── components/
+│   │   │   └── hooks/
+│   │   │
+│   │   ├── home/
+│   │   │   └── components/
+│   │   │
+│   │   ├── navigation/
+│   │   │   ├── components/
+│   │   │   └── config/
+│   │   │
+│   │   ├── notes/
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   └── services/
+│   │   │
+│   │   ├── search/
+│   │   │   ├── components/
+│   │   │   └── hooks/
+│   │   │
+│   │   ├── shared/
+│   │   │   ├── components/
+│   │   │   └── utils/
+│   │   │
+│   │   └── types/
+│   │
+│   └── .env.example
+│
 └── backend/
-    ├── code_execution/      # Lógica de ejecución de código Python/JS con subprocess
-    └── notes/               # CRUD de notas, persistencia en SQLite
-````
+    ├── code_execution/
+    │   ├── router.py
+    │   ├── schemas.py
+    │   └── service.py
+    │
+    ├── notes/
+    │   ├── database.py
+    │   ├── models.py
+    │   ├── router.py
+    │   └── schemas.py
+    │
+    ├── shared/
+    │   └── config.py
+    │
+    ├── note_images/
+    ├── main.py
+    ├── requirements.txt
+    └── wikidev.db
+```
+
+Generated files, virtual environments, caches, and user-uploaded images are not considered source-code modules.
 
 ---
 
-## 4. Component Responsibilities
+## 4. Frontend Architecture
 
-### Frontend
+The frontend is built with Next.js and follows a feature-oriented modular structure. Each module groups the components, hooks, services, and utilities associated with a specific application responsibility.
 
-* **Rutas (`app/`)**: Maneja la navegación de la aplicación (`/`, `/docs`, `/notes`)
-* **Code Execution**: Envía el código del usuario al backend para ejecución controlada
-* **Documentation**: Renderiza MDX con ejemplos ejecutables
-* **Search**: Implementa búsqueda fuzzy de artículos
-* **Notes**: Editor de notas, soporte para imágenes, autoguardado
-* **History**: Guarda historial de artículos visitados
-* **Theming**: Gestiona la apariencia (dark/light mode)
-* **Shared Components**: Botones, modals y otros componentes reutilizables
-* **Content**: Almacena los archivos MDX con artículos y ejemplos
+### 4.1. Application Routes (`app/`)
 
-### Backend
+Contains the Next.js application routes:
 
-* **API Endpoints**: FastAPI maneja rutas `/notes`, `/code-execution`
-* **Code Execution**: Ejecuta código en subprocess con seguridad:
+- `/`: Main application page.
+- `/docs`: Documentation section.
+- `/docs/[...slug]`: Dynamic documentation routes.
+- `/notes`: Personal notes workspace.
 
-  * Timeout: 5s
-  * Máx. 20 ejecuciones/minuto por IP
-* **Database Layer**: SQLite + SQLAlchemy para persistencia de notas y artículos
-* **Security**: Rate limiting y control de acceso, ejecución local solo en entorno seguro
+### 4.2. Documentation (`documentation/`)
+
+Responsible for rendering and presenting technical documentation.
+
+Its responsibilities include:
+
+- Rendering MDX content.
+- Managing documentation presentation components.
+- Providing shared documentation styles.
+- Supporting navigation between documentation pages.
+
+### 4.3. Documentation Content (`content/`)
+
+Stores the MDX files organized by topic and chapter.
+
+The content is divided into three main topics:
+
+- Python.
+- JavaScript.
+- Algorithms.
+
+Documentation metadata is generated automatically through `scripts/generate-docs.mjs`.
+
+The resulting `generated/docs.generated.ts` file contains the documentation registry used by the application.
+
+### 4.4. Navigation (`navigation/`)
+
+Manages documentation navigation and its configuration.
+
+It centralizes navigation components and metadata used to organize topics, chapters, and lessons.
+
+### 4.5. Code Execution (`code-execution/`)
+
+Contains the frontend functionality required to execute code examples.
+
+It is organized into:
+
+- `components/`: Interactive code execution interface.
+- `hooks/`: Hooks managing execution-related state and behavior.
+- `services/`: Communication with the backend execution API.
+
+### 4.6. Notes (`notes/`)
+
+Implements the personal notes workspace.
+
+Its responsibilities include:
+
+- Managing note-related components.
+- Handling note state through hooks.
+- Communicating with the backend through services.
+- Supporting note editing and image attachments.
+
+### 4.7. Search (`search/`)
+
+Implements fuzzy search using Fuse.js to help users locate documentation content.
+
+### 4.8. History (`history/`)
+
+Manages the documentation browsing history through dedicated components and hooks.
+
+### 4.9. Home (`home/`)
+
+Contains the components used by the main application page and its knowledge-related sections.
+
+### 4.10. Shared (`shared/`)
+
+Contains reusable components and utilities consumed by different frontend modules.
+
+### 4.11. Generated Documentation Metadata
+
+The documentation registry is generated using:
+
+```bash
+npm run docs:generate
+```
+
+The generator scans the MDX content and produces:
+
+```text
+src/generated/docs.generated.ts
+```
+
+This file is generated automatically and should not be edited manually or committed to Git.
+
+The generation process also runs automatically before the development server and production build through the `predev` and `prebuild` scripts.
 
 ---
 
-## 5. Communication Flow
+## 5. Backend Architecture
 
-1. **Frontend → Backend**
+The backend is implemented with FastAPI and follows a modular structure that separates API routing, business logic, data models, and configuration.
 
-   * Requests HTTP a endpoints FastAPI para notas, historial y ejecución de código
-   * Ejemplo: `POST /code-execution` envía código a ejecutar
+### 5.1. Application Entry Point (`main.py`)
 
-2. **Backend → Frontend**
+Creates the main FastAPI application and configures:
 
-   * Respuestas JSON con resultados de ejecución, notas o artículos
-   * Manejo de errores y límites de ejecución
+- API metadata.
+- CORS middleware.
+- Rate limiting for code execution.
+- Registration of application routers.
+- Database initialization during startup.
+- Health-check endpoint.
 
-3. **Frontend Interno**
+The backend exposes the following main route groups:
 
-   * Componentes intercomunicantes vía props, hooks y contexto global
-   * Ejemplo: búsqueda fuzzy interactúa con historial y contenido MDX
+- `/api/execute`
+- `/api/notes/`
+
+It also provides `/health` to check API availability.
+
+### 5.2. Code Execution (`code_execution/`)
+
+Responsible for processing and executing Python and JavaScript code.
+
+Its components are:
+
+- `router.py`: Defines the code execution endpoint.
+- `schemas.py`: Defines request and response models.
+- `service.py`: Handles execution using Python's `subprocess` module.
+
+Execution restrictions include:
+
+| Restriction | Value |
+|---|---|
+| Supported languages | Python and JavaScript |
+| Maximum code length | 10 KB |
+| Execution timeout | 5 seconds |
+| Maximum stdout | 50 KB |
+| Maximum stderr | 10 KB |
+| Rate limit | 20 requests per minute per IP |
+
+The execution service creates temporary files, launches the corresponding interpreter or runtime, captures standard output and errors, and removes temporary files after execution.
+
+**Security note:** These restrictions provide basic execution limits, but subprocess execution is not equivalent to an isolated security sandbox. The current implementation should not be exposed to untrusted users without additional isolation and security controls.
+
+### 5.3. Notes (`notes/`)
+
+Responsible for managing personal notes and their associated images.
+
+Its components are:
+
+- `router.py`: Defines the note and image API endpoints.
+- `schemas.py`: Defines request and response validation models.
+- `models.py`: Defines the SQLAlchemy database models.
+- `database.py`: Configures the database engine, sessions, and initialization.
+
+The notes API supports:
+
+- Listing and searching notes.
+- Creating notes.
+- Updating notes.
+- Deleting notes.
+- Uploading images.
+- Deleting images.
+- Retrieving stored images.
+
+### 5.4. Shared Configuration (`shared/`)
+
+Contains configuration shared by backend modules.
+
+`config.py` loads environment variables and defines settings such as the Piston service URL and allowed CORS origins.
 
 ---
 
-## 6. Data Flow
+## 6. Database and File Storage
 
-* **Articles (MDX)** → renderizado en frontend con soporte de ejemplos ejecutables
-* **Notes** → CRUD mediante API, persistencia SQLite
-* **Execution Requests** → envío al backend, control de rate limit y timeout
-* **History** → almacenamiento temporal en frontend, sincronización opcional
+WikiDev uses SQLite with SQLAlchemy as its ORM.
+
+The database file is:
+
+```text
+backend/wikidev.db
+```
+
+The main database models are:
+
+### Note
+
+Stores personal notes.
+
+| Field | Description |
+|---|---|
+| `id` | Unique note identifier |
+| `title` | Note title |
+| `content` | Note content |
+| `created_at` | Creation timestamp |
+| `updated_at` | Last modification timestamp |
+
+### NoteImage
+
+Stores metadata about images associated with notes.
+
+| Field | Description |
+|---|---|
+| `id` | Unique image identifier |
+| `note_id` | Associated note identifier |
+| `filename` | Internal stored filename |
+| `original_name` | Original uploaded filename |
+| `created_at` | Upload timestamp |
+
+Image files are stored separately in:
+
+```text
+backend/note_images/
+```
+
+The database stores their metadata and association with the corresponding note.
 
 ---
 
-## 7. Deployment Overview
+## 7. Communication Flow
 
-* **Backend**: `uvicorn main:app --reload` durante desarrollo; producción vía container o servidor WSGI
-* **Frontend**: `npm run dev` para desarrollo; build con `npm run build` y deploy estático
-* **Environment Variables**:
+### 7.1. Frontend to Backend
+
+The frontend communicates with FastAPI through HTTP requests.
+
+The base API URL is configured using the frontend environment variable:
 
 ```env
 NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
 ```
 
+Examples of API operations include:
+
+- Code execution: `POST /api/execute`.
+- Notes retrieval: `GET /api/notes/`.
+- Note creation: `POST /api/notes/`.
+- Note updates: `PUT /api/notes/{note_id}`.
+- Note deletion: `DELETE /api/notes/{note_id}`.
+
+### 7.2. Backend to Frontend
+
+The backend returns JSON responses containing:
+
+- Code execution results.
+- Note data.
+- Image metadata.
+- Operation status and error information.
+
+Images are returned through dedicated file-response endpoints.
+
+### 7.3. Internal Frontend Communication
+
+Frontend modules communicate through:
+
+- React props.
+- Custom hooks.
+- Shared utilities.
+- Context providers where applicable.
+
+This modular organization reduces coupling and encourages component reuse.
+
 ---
 
-## 8. Security Considerations
+## 8. Environment Configuration
 
-* La ejecución de código corre **localmente**, nunca exponer en internet sin protección
-* Rate limiting: 20 ejecuciones/minuto por IP
-* Timeout: 5 segundos por ejecución
-* Tamaño máximo de imágenes: 5 MB
-* Validación de inputs antes de ejecución
+The frontend and backend maintain separate configuration responsibilities.
+
+### Frontend
+
+The frontend uses:
+
+```text
+frontend/.env.local
+frontend/.env.example
+```
+
+The example file documents the required variable:
+
+```env
+NEXT_PUBLIC_API_URL=
+```
+
+The local environment file contains the actual development API URL and should not be committed to the repository.
+
+### Backend
+
+The backend configuration is handled through environment variables loaded by `shared/config.py`.
+
+Currently documented settings include:
+
+- `PISTON_URL`
+- `CORS_ORIGINS`
+
+---
+
+## 9. Development and Build Process
+
+### Frontend
+
+Run the following commands from the `frontend/` directory:
+
+```bash
+npm install
+npm run dev
+```
+
+Generate documentation metadata manually:
+
+```bash
+npm run docs:generate
+```
+
+Run quality checks:
+
+```bash
+npm run typecheck
+npm run lint
+```
+
+Create a production build:
+
+```bash
+npm run build
+```
+
+Start the production server:
+
+```bash
+npm run start
+```
+
+### Backend
+
+Run the following commands from the `backend/` directory, after activating the Python virtual environment and installing the dependencies:
+
+```bash
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+The API documentation is available through FastAPI's interactive documentation endpoints:
+
+```text
+/docs
+/redoc
+```
+
+### Continuous Integration
+
+The GitHub Actions workflow is located at:
+
+```text
+.github/workflows/ci.yml
+```
+
+It installs frontend dependencies, generates documentation metadata, and runs TypeScript and ESLint checks for pushes and pull requests targeting `main` and `develop`.
+
+---
+
+## 10. Security Considerations
+
+The current implementation includes several basic security measures:
+
+- Rate limiting on the code execution endpoint.
+- Maximum code length and execution timeout.
+- Output size limits.
+- Validation of API requests through Pydantic.
+- Maximum image upload size of 5 MB.
+- Allowed image extension checks.
+- Unique filenames for uploaded images.
+- Path basename validation when retrieving images.
+- CORS configuration.
+
+These measures provide basic safeguards for a local development application. They do not replace production-grade security controls.
+
+In particular, code execution requires stronger process isolation before being exposed to untrusted users. Rate limiting is currently stored in application memory and is not shared across multiple backend instances.
+
+---
+
+## 11. Architectural Principles
+
+WikiDev follows these architectural principles:
+
+- **Separation of concerns:** Each module has a clearly defined responsibility.
+- **Modularity:** Features are organized into independent functional areas.
+- **Reusability:** Shared components and utilities avoid unnecessary duplication.
+- **Maintainability:** Centralized metadata and configuration reduce inconsistencies.
+- **Scalability:** The modular structure facilitates future feature development.
+- **Automation:** Documentation metadata generation and CI checks reduce manual work.

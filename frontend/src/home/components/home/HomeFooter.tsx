@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/shared/components/home/HomeFooter.tsx
-
 * Renderiza el pie de página de WikiDev, proporcionando acceso a la identidad
 * visual del proyecto, sus secciones principales y su repositorio en GitHub.
 * Organiza el contenido en tres áreas: presentación de la aplicación con su
@@ -14,8 +11,7 @@ ruta: frontend/src/shared/components/home/HomeFooter.tsx
 * muestra automáticamente el año actual y las tecnologías principales utilizadas
 * en la aplicación.
 
-**/
-
+*/
 import Link from "next/link";
 import { Logo } from "@/shared/components/Logo";
 import { docPath } from "@/shared/utils/routes";

@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/code-execution/services/execution.service.ts
-
 * Define el servicio de comunicación con la API de ejecución de código, enviando
 * solicitudes al endpoint `/api/execute` para ejecutar código JavaScript o Python.
 * Establece los tipos de parámetros de entrada y de resultados, incluyendo la salida
@@ -10,7 +7,7 @@ ruta: frontend/src/code-execution/services/execution.service.ts
 * recibidos para garantizar una estructura de resultado consistente, contemplando
 * también la entrada estándar opcional y la configuración de la URL del backend.
 
-**/
+*/
 
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'

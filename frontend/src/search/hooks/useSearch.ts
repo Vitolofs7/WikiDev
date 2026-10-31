@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/search/hooks/useSearch.ts
-
 * Proporciona un hook personalizado para realizar búsquedas sobre los contenidos
 * registrados en la configuración de navegación de WikiDev. Construye un índice
 * de búsqueda a partir de los títulos, categorías, identificadores y rutas de los
@@ -11,8 +8,7 @@ ruta: frontend/src/search/hooks/useSearch.ts
 * Los resultados incluyen la información necesaria para identificar cada contenido
 * y generar su enlace de navegación dentro de la documentación.
 
-**/
-
+*/
 import { docPath } from "@/shared/utils/routes";
 import { useState, useCallback } from 'react'
 import Fuse from 'fuse.js'

@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/documentation/components/TableOfContents.tsx
-
 * Genera un índice de contenidos interactivo a partir de los encabezados H1, H2 y H3
 * del documento MDX renderizado. Recopila sus títulos, niveles e identificadores,
 * asignando identificadores automáticamente cuando no existen. Detecta el apartado
@@ -12,7 +9,7 @@ ruta: frontend/src/documentation/components/TableOfContents.tsx
 * la sincronización con el documento actual y limpia los eventos y las animaciones
 * pendientes al desmontarse el componente.
 
-**/
+*/
 
 "use client";
 

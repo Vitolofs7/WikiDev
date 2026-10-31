@@ -1,7 +1,4 @@
 /**
- 
-ruta: frontend/src/app/docs/%5B...slug%5D/DocPageClient.tsx
-
 * Gestiona la representación de una página de documentación, integrando la carga dinámica
 * del contenido MDX, las migas de pan, las acciones de navegación, la exportación a PDF,
 * el seguimiento del progreso de lectura y el índice de contenidos. También organiza la
@@ -9,7 +6,7 @@ ruta: frontend/src/app/docs/%5B...slug%5D/DocPageClient.tsx
 * y proporciona los componentes personalizados necesarios para renderizar el contenido
 * interactivo de la documentación.
 
-**/
+*/
 
 "use client";
 

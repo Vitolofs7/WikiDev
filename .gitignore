@@ -30,6 +30,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# generated documentation metadata
+/frontend/src/generated/docs.generated.ts
+
 # ————————————————————————————
 # Python / Backend
 # ————————————————————————————

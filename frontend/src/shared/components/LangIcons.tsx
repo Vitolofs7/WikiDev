@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/shared/components/LangIcons.tsx
-
 * Define los componentes SVG reutilizables que representan visualmente los
 * lenguajes y áreas de programación disponibles en WikiDev: JavaScript, Python
 * y algoritmos. Cada componente permite personalizar el tamaño mediante `className`
@@ -11,9 +8,7 @@ ruta: frontend/src/shared/components/LangIcons.tsx
 * en `langColors`, facilitando su utilización coherente en los distintos elementos
 * de la interfaz.
 
-**/
-
-
+*/
 export function JavaScriptIcon({ className = "w-5 h-5", color = "#f7df1e" }: { className?: string, color?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill={color}>

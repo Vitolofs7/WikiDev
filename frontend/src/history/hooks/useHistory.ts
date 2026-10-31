@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/history/hooks/useHistory.ts
-
 * Proporciona un hook personalizado para gestionar el historial de navegación de WikiDev,
 * almacenando los documentos visitados en `localStorage` para conservarlos entre sesiones.
 * Define la estructura de cada entrada y limita el historial a los cinco documentos más
@@ -11,9 +8,7 @@ ruta: frontend/src/history/hooks/useHistory.ts
 * los datos una sola vez y memoriza las funciones de actualización mediante `useCallback`.
 * También contempla posibles errores de acceso o persistencia en el almacenamiento local.
 
-**/
-
-
+*/
 'use client'
 import { useCallback, useState } from 'react'
 

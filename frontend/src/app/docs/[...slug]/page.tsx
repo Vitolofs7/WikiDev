@@ -1,5 +1,4 @@
 /**
- * ruta: frontend/src/app/docs/[...slug]/page.tsx
  *
  * Gestiona el enrutamiento dinámico de la documentación, resolviendo las páginas según
  * su categoría, capítulo y subapartado. Valida la existencia de los documentos mediante

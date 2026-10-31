@@ -1,15 +1,11 @@
 /**
-
-ruta: frontend/scripts/generate-docs.mjs
-
 * Genera automáticamente el registro de documentación a partir de los archivos MDX
 * almacenados en el directorio de contenidos. Recopila los metadatos de cada documento,
 * incluyendo su slug, unidad, orden de visualización y título, y genera un módulo TypeScript
 * con las importaciones dinámicas y los índices necesarios para la resolución de documentos,
 * la organización de los contenidos y la navegación entre páginas.
 
-**/
-
+*/
 import fs from "node:fs";
 import path from "node:path";
 

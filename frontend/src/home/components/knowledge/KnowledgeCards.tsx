@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/shared/components/knowledge/KnowledgeCards.tsx
-
 * Define los componentes visuales CodeCard e InfoTag utilizados en la escena
 * de conocimiento de WikiDev, junto con los tipos y utilidades necesarios
 * para representar fragmentos de código y etiquetas informativas.
@@ -19,9 +16,7 @@ ruta: frontend/src/shared/components/knowledge/KnowledgeCards.tsx
 * Ambos componentes admiten variantes de acento violeta o menta y utilizan
 * los estilos definidos en KnowledgeCards.module.css.
 
-**/
-
-
+*/
 "use client";
 
 import { useEffect, useRef, useState } from "react";

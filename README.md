@@ -1,113 +1,188 @@
 # WikiDev
 
-Documentación personal de programación con ejemplos de código ejecutables, notas y búsqueda integrada.
+Personal programming documentation with executable code examples, notes, and integrated search.
 
-## Stack
+## Tech Stack
 
-**Frontend** — Next.js 16 · TypeScript · Tailwind CSS · MDX  
-**Backend** — FastAPI · SQLite · SQLAlchemy
+- **Frontend:** Next.js 16, React 18, TypeScript, Tailwind CSS 4, MDX
+- **Backend:** FastAPI, Python, SQLite, SQLAlchemy
+- **Search:** Fuse.js
+- **Code execution:** Local Python and JavaScript subprocesses
 
-## Requisitos previos
+## Prerequisites
 
-- [Node.js](https://nodejs.org/) v18 o superior
-- [Python](https://www.python.org/) 3.10 o superior
-- [node](https://nodejs.org/) disponible en el PATH (para ejecutar JavaScript)
+- [Node.js](https://nodejs.org/) 20.9 or later
+- [Python](https://www.python.org/) 3.10 or later
+- npm
+- Node.js available in the system PATH (required for JavaScript execution)
 
-## Estructura
-```
+## Project Structure
+
+```text
 wikidev/
-├── frontend/          # Next.js app
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── docs/
+│   └── ARCHITECTURE.md
+├── frontend/
+│   ├── scripts/
+│   │   └── generate-docs.mjs
 │   └── src/
-│       ├── app/       # Rutas (/, /docs, /notes)
-│       ├── code-execution/
-│       ├── documentation/
-│       ├── navigation/
-│       ├── notes/
-│       ├── search/
-│       ├── history/
-│       ├── theming/
-│       ├── shared/
-│       └── content/   # Artículos MDX
-└── backend/           # FastAPI app
-    ├── code_execution/
-    └── notes/
+│       ├── app/                 # Next.js routes
+│       ├── code-execution/      # Code execution interface
+│       ├── content/             # MDX documentation
+│       ├── documentation/       # Documentation components and utilities
+│       ├── generated/           # Generated documentation metadata
+│       ├── history/             # Browsing history
+│       ├── home/                # Homepage components
+│       ├── navigation/          # Navigation components and configuration
+│       ├── notes/               # Notes interface
+│       ├── search/              # Search functionality
+│       ├── shared/              # Shared components and utilities
+│       └── types/               # TypeScript definitions
+└── backend/
+    ├── code_execution/          # Code execution API
+    ├── notes/                   # Notes API and database
+    ├── shared/                  # Shared backend configuration
+    ├── note_images/              # Uploaded note images
+    ├── main.py                  # FastAPI application
+    └── requirements.txt
 ```
 
-## Instalación
+The `frontend/src/generated/docs.generated.ts` file is generated automatically from the MDX content and is not committed to the repository.
 
-### 1. Clonar el repositorio
+## Installation
+
+### 1. Clone the repository
+
 ```bash
-git clone https://github.com/tu-usuario/wikidev.git
+git clone https://github.com/Vitolofs7/wikidev.git
 cd wikidev
 ```
 
-### 2. Backend
+### 2. Set up the backend
+
 ```bash
 cd backend
 python -m venv .venv
+```
 
-# Windows
-.venv\Scripts\activate
+Activate the virtual environment:
 
-# macOS / Linux
+**Windows (Git Bash):**
+
+```bash
+source .venv/Scripts/activate
+```
+
+**Windows (PowerShell):**
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+**macOS / Linux:**
+
+```bash
 source .venv/bin/activate
+```
 
+Install the dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
-### 3. Frontend
+### 3. Set up the frontend
+
+Open a separate terminal from the repository root:
+
 ```bash
 cd frontend
-npm install
+npm ci
 ```
 
-Crea el archivo `frontend\.env.local`:
+Create the local environment file using the example:
+
+```bash
+cp .env.example .env.local
+```
+
+Set the backend URL in `frontend/.env.local`:
+
 ```env
 NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
 ```
 
-## Uso
+Do not commit `.env.local` or other files containing local environment settings.
 
-Arranca **ambos servicios** en terminales separadas:
+## Running the Application
 
-**Backend:**
+Start both services in separate terminals.
+
+### Backend
+
+From the `backend/` directory, with the virtual environment activated:
+
 ```bash
-cd backend
-.venv\Scripts\activate   # Windows
 python -m uvicorn main:app --reload
 ```
 
-**Frontend:**
+### Frontend
+
+From the `frontend/` directory:
+
 ```bash
-cd frontend
 npm run dev
 ```
 
+The frontend automatically generates the documentation metadata before starting the development server.
+
 ## URLs
 
-| Servicio | URL |
+| Service | URL |
 |---|---|
-| App | http://localhost:3000 |
-| API | http://127.0.0.1:8000 |
-| Swagger | http://127.0.0.1:8000/docs |
+| Application | http://localhost:3000 |
+| Backend API | http://127.0.0.1:8000 |
+| API documentation (Swagger) | http://127.0.0.1:8000/docs |
+| API documentation (ReDoc) | http://127.0.0.1:8000/redoc |
+| Health check | http://127.0.0.1:8000/health |
 
-## Funcionalidades
+## Main Features
 
-- **Documentación MDX** con ejemplos de código ejecutables (Python y JavaScript)
-- **Notas** con editor, autoguardado e imágenes (máx. 5 MB por imagen)
-- **Búsqueda** fuzzy con Fuse.js — `Ctrl+K`
-- **Historial** de artículos visitados
-- **Ejecución de código** local vía subprocess (timeout 5s, máx. 20 ejecuciones/min)
+- **MDX documentation:** Programming tutorials with executable Python and JavaScript examples.
+- **Code execution:** Run code locally through the backend API.
+- **Notes:** Create, edit, search, and delete notes, with image attachments.
+- **Integrated search:** Fuzzy search powered by Fuse.js, accessible with `Ctrl+K`.
+- **Browsing history:** Keep track of previously visited documentation pages.
+- **Documentation metadata generation:** Automatically build the documentation registry from the MDX content.
 
-## Contenido actual
+## Current Documentation
 
-**Python** — Introducción, números, expresiones y operadores, variables, strings, listas, decoradores  
-**JavaScript** — Arrays, promesas  
-**Algoritmos** — Sorting
+- **Python:** Introduction, numbers, expressions and operators, variables, strings, lists, decorators, and additional topics.
+- **JavaScript:** Arrays and promises.
+- **Algorithms:** Sorting.
 
-## Notas de seguridad
+## Development Commands
 
-- La ejecución de código corre en local vía subprocess, **no usar en producción expuesto a internet**
-- Rate limiting: 20 ejecuciones por minuto por IP
-- Tamaño máximo de imágenes: 5 MB
-- Timeout de ejecución: 5 segundos
+Run these commands from the `frontend/` directory:
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start the development server |
+| `npm run build` | Generate documentation metadata and build the application |
+| `npm run start` | Start the production server |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run the TypeScript type checker |
+| `npm run docs:generate` | Regenerate documentation metadata |
+
+## Security Considerations
+
+- Code execution uses local subprocesses and **is not sandboxed**. Do not expose this functionality to untrusted users or deploy it publicly without proper isolation.
+- The API applies an in-memory rate limit of 20 code execution requests per IP address per minute. This limit is process-local and is not shared across multiple workers.
+- Code execution has a maximum input size of 10,000 characters and a timeout of 5 seconds.
+- Uploaded note images have a maximum file size of 5 MB.
+- Local environment files must not be committed to the repository.
+
+For more technical details, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).

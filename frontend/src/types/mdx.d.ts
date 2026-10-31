@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/types/mdx.d.ts
-
 * Declara el módulo TypeScript correspondiente a los archivos con extensión
 * `.mdx`, permitiendo importar su contenido como componentes React dentro
 * de la aplicación.
@@ -15,7 +12,7 @@ ruta: frontend/src/types/mdx.d.ts
 * TypeScript reconozca los imports de archivos MDX y reduzca los errores
 * de tipos durante el desarrollo.
 
-**/
+*/
 
 
 declare module "*.mdx" {

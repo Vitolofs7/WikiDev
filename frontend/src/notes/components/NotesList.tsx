@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/notes/components/NotesList.tsx
-
 * Renderiza una lista de notas y permite seleccionar una para su edición.
 * Muestra el título, una vista previa del contenido, la fecha de última
 * actualización y, cuando existen, el número de imágenes asociadas. Destaca
@@ -11,7 +8,7 @@ ruta: frontend/src/notes/components/NotesList.tsx
 * sus propiedades. Utiliza la utilidad `cn` para combinar dinámicamente las
 * clases CSS según el estado de cada elemento.
 
-**/
+*/
 
 
 'use client'

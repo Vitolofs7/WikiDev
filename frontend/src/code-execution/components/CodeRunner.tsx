@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/code-execution/components/CodeRunner.tsx
-
 * Proporciona un editor interactivo de código para JavaScript y Python, permitiendo
 * modificar, ejecutar, copiar y restaurar ejemplos directamente desde la documentación.
 * Gestiona la entrada estándar cuando es necesaria, coordina la ejecución mediante el
@@ -9,7 +6,7 @@ ruta: frontend/src/code-execution/components/CodeRunner.tsx
 * del componente CodeOutput. También incorpora atajos de teclado y controles visuales
 * para facilitar la edición y ejecución del código.
 
-**/
+*/
 
 "use client";
 import { useState } from "react";

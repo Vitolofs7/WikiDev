@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/shared/components/home/HomeBackground.tsx
-
 * Renderiza el fondo decorativo de la página principal de WikiDev mediante una
 * composición de capas visuales que refuerzan la identidad tecnológica de la
 * aplicación. Combina atmósferas difuminadas en tonos púrpura y verde, una rejilla
@@ -15,9 +12,7 @@ ruta: frontend/src/shared/components/home/HomeBackground.tsx
 * instancias del componente. El fondo es puramente decorativo, no intercepta
 * interacciones y queda excluido del árbol de accesibilidad.
 
-**/
-
-
+*/
 import { useId } from "react";
 
 /**

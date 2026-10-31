@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/app/docs/%5B...slug%5D/SubItemsIndex.tsx
-
 * Renderiza el índice de apartados de un capítulo, mostrando sus títulos y enlaces
 * de navegación correspondientes. Incorpora un filtro dinámico por título cuando
 * el número de apartados supera el umbral establecido, actualiza los resultados
@@ -9,7 +6,7 @@ ruta: frontend/src/app/docs/%5B...slug%5D/SubItemsIndex.tsx
 * existen coincidencias. Mantiene la numeración original de los apartados durante
 * el filtrado para preservar su orden dentro del capítulo.
 
-**/
+*/
 
 "use client";
 import { useState } from "react";

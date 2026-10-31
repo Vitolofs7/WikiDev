@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/shared/utils/cn.ts
-
 * Proporciona la utilidad `cn` para combinar y normalizar clases CSS
 * de forma segura en los componentes de la aplicación.
 *
@@ -15,9 +12,7 @@ ruta: frontend/src/shared/utils/cn.ts
 * composición de estilos y evitando duplicar código al gestionar clases
 * dinámicas o condicionales en la interfaz.
 
-**/
-
-
+*/
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 

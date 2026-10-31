@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/app/notes/page.tsx
-
 * Gestiona la interfaz principal del módulo de notas, coordinando la búsqueda,
 * selección, creación, edición y eliminación de notas mediante el hook useNotes.
 * Integra la lista de notas con el editor correspondiente y sincroniza el estado
@@ -9,9 +6,7 @@ ruta: frontend/src/app/notes/page.tsx
 * También proporciona indicadores de carga y una vista inicial cuando no hay
 * ninguna nota seleccionada.
 
-**/
-
-
+*/
 'use client'
 import { useState } from 'react'
 import { useNotes } from '@/notes/hooks/useNotes'

@@ -1,6 +1,5 @@
 
  /**
- * ruta: frontend/src/app/layout.tsx
  *
  * Define el diseño raíz de la aplicación WikiDev, estableciendo los metadatos generales,
  * el idioma del documento y la configuración tipográfica global. Integra los proveedores

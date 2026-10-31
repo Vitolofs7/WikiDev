@@ -1,14 +1,11 @@
 /**
-
-ruta: frontend/src/app/page.tsx
-
 * Define la página principal de WikiDev, organizando los componentes visuales que
 * conforman la portada de la aplicación. Integra el fondo decorativo, la sección
 * principal de presentación, el resumen de funcionalidades y el pie de página,
 * estableciendo la estructura y distribución general del contenido mediante
 * contenedores y estilos adaptados al diseño de la interfaz.
 
-**/
+*/
 
 
 import HomeBackground from "@/home/components/home/HomeBackground";

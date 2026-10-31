@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/shared/components/home/HomeCapabilities.tsx
-
 * Renderiza la sección de capacidades de la página principal de WikiDev,
 * presentando visualmente las principales herramientas que ofrece la aplicación:
 * Code Runner, notas personales y documentación enriquecida mediante MDX.
@@ -16,9 +13,7 @@ ruta: frontend/src/shared/components/home/HomeCapabilities.tsx
 * visuales representativos, sin implementar dentro de estas vistas previas la
 * funcionalidad completa de las herramientas que describen.
 
-**/
-
-
+*/
 "use client";
 
 import { useState } from "react";

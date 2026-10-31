@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/shared/components/knowledge/KnowledgeScene.tsx
-
 * Implementa la escena visual interactiva de conocimiento de WikiDev,
 * coordinando el núcleo tridimensional, las tarjetas de código y las
 * etiquetas informativas. Gestiona la interacción con el puntero, la
@@ -28,9 +25,7 @@ ruta: frontend/src/shared/components/knowledge/KnowledgeScene.tsx
 * decorativo mediante `aria-hidden`, ya que su contenido es una representación
 * visual ilustrativa y no una interfaz de interacción funcional.
 
-**/
-
-
+*/
 "use client";
 
 import { useEffect, useId, useRef, type ReactNode } from "react";

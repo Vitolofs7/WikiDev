@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/notes/services/notes.service.ts
-
 * Define los tipos de datos de las notas y sus imágenes asociadas, y centraliza
 * las operaciones de comunicación con la API del backend. El objeto `notesApi`
 * proporciona métodos para consultar notas con filtros de búsqueda, crear,
@@ -12,7 +9,7 @@ ruta: frontend/src/notes/services/notes.service.ts
 * la conexión entre el frontend y el servicio de notas sin acoplar las operaciones
 * a una dirección fija.
 
-**/
+*/
 
 
 const API = `${process.env.NEXT_PUBLIC_API_URL}/api/notes`

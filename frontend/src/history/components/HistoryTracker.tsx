@@ -1,7 +1,4 @@
 /**
-
-ruta: frontend/src/history/components/HistoryTracker.tsx
-
 * Registra automáticamente el historial de navegación del usuario en el módulo
 * de documentación de WikiDev. Detecta los cambios de ruta, identifica la categoría
 * y el documento visitado mediante la configuración de navegación y almacena su
@@ -11,9 +8,7 @@ ruta: frontend/src/history/components/HistoryTracker.tsx
 * No renderiza elementos visuales, ya que su función se limita a sincronizar
 * la navegación con el historial de documentos consultados.
 
-**/
-
-
+*/
 'use client'
 import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
