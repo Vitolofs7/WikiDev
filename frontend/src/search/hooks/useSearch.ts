@@ -13,7 +13,7 @@ ruta: frontend/src/search/hooks/useSearch.ts
 
 **/
 
-
+import { docPath } from "@/shared/utils/routes";
 import { useState, useCallback } from 'react'
 import Fuse from 'fuse.js'
 import { navConfig } from '@/navigation/config/nav.config'
@@ -32,7 +32,7 @@ const searchItems: SearchResult[] = navConfig.categories.flatMap((cat) =>
     category: cat.title,
     categoryEmoji: cat.emoji,
     slug: item.slug,
-    href: `/docs/${cat.slug}/${item.slug}`,
+    href: docPath(cat.slug, item.slug),
   }))
 )
 

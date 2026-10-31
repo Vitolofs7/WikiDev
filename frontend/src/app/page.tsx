@@ -11,10 +11,10 @@ ruta: frontend/src/app/page.tsx
 **/
 
 
-import HomeBackground from "@/shared/components/home/HomeBackground";
-import HomeHero from "@/shared/components/home/HomeHero";
-import HomeCapabilities from "@/shared/components/home/HomeCapabilities";
-import HomeFooter from "@/shared/components/home/HomeFooter";
+import HomeBackground from "@/home/components/home/HomeBackground";
+import HomeHero from "@/home/components/home/HomeHero";
+import HomeCapabilities from "@/home/components/home/HomeCapabilities";
+import HomeFooter from "@/home/components/home/HomeFooter";
 
 export default function HomePage() {
   return (

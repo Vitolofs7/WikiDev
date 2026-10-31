@@ -15,7 +15,7 @@ ruta: frontend/src/notes/components/NotesList.tsx
 
 
 'use client'
-import { Note } from '@/notes/services/notesApi.service'
+import { Note } from '@/notes/services/notes.service'
 import { cn } from '@/shared/utils/cn'
 import { FileText, ImageIcon } from 'lucide-react'
 

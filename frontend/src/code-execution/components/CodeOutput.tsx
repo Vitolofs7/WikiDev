@@ -12,7 +12,7 @@ ruta: frontend/src/code-execution/components/CodeOutput.tsx
 **/
 
 import { CheckCircle2, XCircle, Terminal } from "lucide-react";
-import type { ExecutionResult } from "../services/pistonApi.service";
+import type { ExecutionResult } from "../services/execution.service";
 
 interface CodeOutputProps {
   result: ExecutionResult | null;

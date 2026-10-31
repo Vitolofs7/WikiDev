@@ -1,6 +1,6 @@
 /**
 
-ruta: frontend/src/documentation/components/Callout/Callout.tsx
+ruta: frontend/src/documentation/components/Callout.tsx
 
 * Define el sistema de cajas informativas de WikiDev para enriquecer el contenido
 * de documentación con avisos de carácter pedagógico. Implementa cuatro categorías

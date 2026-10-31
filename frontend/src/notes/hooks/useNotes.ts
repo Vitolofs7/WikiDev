@@ -17,7 +17,7 @@ ruta: frontend/src/notes/hooks/useNotes.ts
 
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import { notesApi, Note } from '@/notes/services/notesApi.service'
+import { notesApi, Note } from '@/notes/services/notes.service'
 
 export function useNotes() {
   const [notes, setNotes] = useState<Note[]>([])

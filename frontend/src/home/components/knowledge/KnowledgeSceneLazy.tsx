@@ -25,7 +25,7 @@ ruta: frontend/src/shared/components/knowledge/KnowledgeSceneLazy.tsx
 import dynamic from "next/dynamic";
 
 const KnowledgeScene = dynamic(
-  () => import("@/shared/components/knowledge/KnowledgeScene"),
+  () => import("@/home/components/knowledge/KnowledgeScene"),
   {
     ssr: false,
     loading: () => <div className="aspect-square w-full" />,

@@ -21,31 +21,31 @@ import Link from "next/link";
 
 import { CodeRunner } from "@/code-execution/components/CodeRunner";
 
-import docs, { docsBySlug, docsByUnit } from "@/generated/docs.generated";
-
-import { TableOfContents } from "@/documentation/components/TableOfContents/TableOfContents";
+import { TableOfContents } from "@/documentation/components/TableOfContents";
 
 import { Download, ArrowLeft, ArrowRight, ChevronRight } from "lucide-react";
 
-import { Callout } from "@/documentation/components/Callout/Callout";
+import { Callout } from "@/documentation/components/Callout";
 
-import { downloadPdf } from "@/documentation/components/PdfExport";
+import { downloadPdf } from "@/documentation/utils/pdf-export";
 
-import { ReadingProgress } from "@/documentation/components/ReadingProgress/ReadingProgress";
+import { ReadingProgress } from "@/documentation/components/ReadingProgress";
 
-// Ruta base de las páginas de documentación.
-const BASE_PATH = "/docs";
+import docs from "@/generated/docs.generated";
+
+import { docPath } from "@/shared/utils/routes";
+
+import {
+  getAdjacentDocs,
+  getBreadcrumbs,
+} from "@/documentation/utils/doc-navigation";
+
+import "@/documentation/styles/prose-docs.css";
 
 const components = { CodeRunner, Callout };
 
 interface Props {
   docKey: string;
-}
-
-/** "que-es-un-programa" → "Que es un programa" */
-function formatBreadcrumb(segment: string): string {
-  const words = segment.replace(/-/g, " ");
-  return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
 export function DocPageClient({ docKey }: Props) {
@@ -56,23 +56,8 @@ export function DocPageClient({ docKey }: Props) {
 
   if (!Content) return null;
 
-  // Anterior / Siguiente dentro de la misma unidad.
-  const unitDocs = docsByUnit[docsBySlug[docKey]?.unit ?? ""] ?? [];
-  const currentIndex = unitDocs.findIndex((doc) => doc.slug === docKey);
-
-  const prevDoc = currentIndex > 0 ? unitDocs[currentIndex - 1] : null;
-
-  const nextDoc =
-    currentIndex >= 0 && currentIndex < unitDocs.length - 1
-      ? unitDocs[currentIndex + 1]
-      : null;
-
-  const crumbs = docKey.split("/").map((segment, index, segments) => {
-    const currentSlug = segments.slice(0, index + 1).join("/");
-    const metadata = docsBySlug[currentSlug];
-
-    return metadata?.title ?? formatBreadcrumb(segment);
-  });
+  const { prev: prevDoc, next: nextDoc } = getAdjacentDocs(docKey);
+  const crumbs = getBreadcrumbs(docKey);
 
   const secondaryBtn =
     "flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-zinc-400 hover:text-zinc-200 transition-all";
@@ -151,7 +136,7 @@ export function DocPageClient({ docKey }: Props) {
             >
               {prevDoc ? (
                 <Link
-                  href={`${BASE_PATH}/${prevDoc.slug}`}
+                  href={docPath(...prevDoc.slug.split("/"))}
                   className="group flex items-center gap-3 p-4 rounded-2xl transition-all hover:-translate-y-0.5"
                   style={{
                     background: "#0e0e1a",
@@ -176,7 +161,7 @@ export function DocPageClient({ docKey }: Props) {
 
               {nextDoc ? (
                 <Link
-                  href={`${BASE_PATH}/${nextDoc.slug}`}
+                  href={docPath(...nextDoc.slug.split("/"))}
                   className="group flex items-center justify-end gap-3 p-4 rounded-2xl text-right transition-all hover:-translate-y-0.5 sm:col-start-2"
                   style={{
                     background: "#0e0e1a",

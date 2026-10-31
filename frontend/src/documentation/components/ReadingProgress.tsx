@@ -1,6 +1,6 @@
 /**
 
-ruta: frontend/src/documentation/components/ReadingProgress/ReadingProgress.tsx
+ruta: frontend/src/documentation/components/ReadingProgress.tsx
 
 * Implementa una barra de progreso de lectura que representa el porcentaje del
 * contenido de un documento recorrido por el usuario. Calcula el progreso a partir

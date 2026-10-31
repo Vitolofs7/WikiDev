@@ -13,7 +13,7 @@ ruta: frontend/src/code-execution/hooks/useCodeExecution.ts
 
 
 import { useState, useCallback } from 'react'
-import { runCode, type ExecutionResult, type RunCodeParams } from '../services/pistonApi.service'
+import { runCode, type ExecutionResult, type RunCodeParams } from '../services/execution.service'
 
 interface UseCodeExecutionState {
   result: ExecutionResult | null

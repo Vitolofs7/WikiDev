@@ -16,9 +16,9 @@ ruta: frontend/src/shared/components/home/HomeFooter.tsx
 
 **/
 
-
-import Image from "next/image";
 import Link from "next/link";
+import { Logo } from "@/shared/components/Logo";
+import { docPath } from "@/shared/utils/routes";
 import {
   ArrowUpRight,
   BookOpen,
@@ -29,7 +29,7 @@ import {
 const footerLinks = [
   {
     title: "Documentación",
-    href: "/docs",
+    href: docPath(),
     icon: BookOpen,
   },
   {
@@ -67,20 +67,7 @@ export default function HomeFooter() {
         <div className="grid gap-14 py-16 md:grid-cols-[1.5fr_1fr] md:gap-20 md:py-20">
           {/* Brand */}
           <div className="flex max-w-xl flex-col items-start">
-            <Link
-              href="/"
-              aria-label="Ir al inicio"
-              className="inline-flex items-center transition-opacity duration-200 hover:opacity-80"
-            >
-              <Image
-                src="/images/branding/wikidev-logo.svg"
-                alt="WikiDev"
-                width={280}
-                height={90}
-                priority={false}
-                className="h-auto w-64 object-contain sm:w-72"
-              />
-            </Link>
+            <Logo variant="full" />
 
             <p className="mt-6 max-w-md text-sm leading-7 text-(--text-muted)">
               Un espacio para consultar documentación técnica, comprender

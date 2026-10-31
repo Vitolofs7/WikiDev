@@ -1,6 +1,6 @@
 /**
 
-ruta: frontend/src/code-execution/services/pistonApi.service.ts
+ruta: frontend/src/code-execution/services/execution.service.ts
 
 * Define el servicio de comunicación con la API de ejecución de código, enviando
 * solicitudes al endpoint `/api/execute` para ejecutar código JavaScript o Python.

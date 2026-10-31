@@ -1,5 +1,5 @@
 /**
- * Ruta: frontend/src/documentation/components/PdfExport.tsx
+ * Ruta: frontend/src/documentation/utils/pdf-export.tsx
  *
  * Gestiona la exportación del contenido de una página de documentación a un archivo PDF,
  * utilizando `html2pdf.js` para generar un documento descargable en formato A4. Clona el

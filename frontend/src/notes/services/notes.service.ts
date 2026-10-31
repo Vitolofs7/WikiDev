@@ -1,6 +1,6 @@
 /**
 
-ruta: frontend/src/notes/services/notesApi.service.ts
+ruta: frontend/src/notes/services/notes.service.ts
 
 * Define los tipos de datos de las notas y sus imágenes asociadas, y centraliza
 * las operaciones de comunicación con la API del backend. El objeto `notesApi`

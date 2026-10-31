@@ -12,9 +12,9 @@
 
 "use client";
 
+import { docPath } from "@/shared/utils/routes";
 import Link from "next/link";
-import Image from "next/image";
-
+import { Logo } from "@/shared/components/Logo";
 import { Search, StickyNote, BookOpen } from "lucide-react";
 import { useSearchModal } from "@/search/components/SearchProvider";
 
@@ -33,43 +33,7 @@ export function Navbar({ compact = false }: NavbarProps) {
         }`}
       >
         {/* Logo */}
-        <Link
-          href="/"
-          className={`flex shrink-0 items-center ${
-            compact ? "gap-2.5" : "gap-3.5"
-          }`}
-          aria-label="WikiDev - Inicio"
-        >
-          <div
-            className={`relative shrink-0 ${
-              compact ? "h-11 w-11" : "h-14 w-14"
-            }`}
-          >
-            <Image
-              src="/images/branding/wikidev-icon.svg"
-              alt=""
-              fill
-              className="object-contain"
-              sizes={compact ? "44px" : "56px"}
-            />
-          </div>
-
-          <span
-            className={`font-extrabold tracking-tight text-(--text) ${
-              compact ? "text-xl" : "text-[26px]"
-            }`}
-          >
-            Wiki
-            <span
-              className="bg-clip-text text-transparent"
-              style={{
-                backgroundImage: "var(--gradient-brand)",
-              }}
-            >
-              Dev
-            </span>
-          </span>
-        </Link>
+        <Logo compact={compact} />
 
         {/* Divider */}
         <div
@@ -85,7 +49,7 @@ export function Navbar({ compact = false }: NavbarProps) {
           }`}
         >
           <Link
-            href="/docs"
+            href={docPath()}
             className={`flex items-center rounded-xl text-(--text-secondary) transition-all hover:bg-white/4 hover:text-(--text) ${
               compact ? "gap-2 px-3.5 py-2" : "gap-3 px-5 py-3"
             }`}

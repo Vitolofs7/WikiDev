@@ -94,7 +94,7 @@ function TopicCardBody({ topic }: { topic: TopicSummary }) {
       </h2>
 
       {/* Siempre 2 líneas de alto: así los separadores quedan alineados entre tarjetas */}
-      <p className="relative mt-2 line-clamp-2 min-h-[3.25rem] text-base leading-relaxed text-(--text-muted)">
+      <p className="relative mt-2 line-clamp-2 min-h-13 text-base leading-relaxed text-(--text-muted)">
         {topic.description}
       </p>
 

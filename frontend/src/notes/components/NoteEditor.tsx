@@ -15,7 +15,7 @@ ruta: frontend/src/notes/components/NoteEditor.tsx
 
 "use client";
 import { useState, useRef } from "react";
-import { Note, notesApi } from "@/notes/services/notesApi.service";
+import { Note, notesApi } from "@/notes/services/notes.service";
 import { Trash2, ImagePlus, X } from "lucide-react";
 import { DeleteNoteModal } from "@/notes/components/DeleteNoteModal";
 import Image from "next/image";

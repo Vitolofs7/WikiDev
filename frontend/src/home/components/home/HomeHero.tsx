@@ -1,8 +1,9 @@
 
+import { docPath } from "@/shared/utils/routes";
 import Link from "next/link";
 import { ArrowRight, Terminal } from "lucide-react";
 
-import KnowledgeSceneLazy from "@/shared/components/knowledge/KnowledgeSceneLazy";
+import KnowledgeSceneLazy from "@/home/components/knowledge/KnowledgeSceneLazy";
 
 export default function HomeHero() {
   return (
@@ -27,7 +28,7 @@ export default function HomeHero() {
 
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
           <Link
-            href="/docs/javascript"
+            href={docPath("javascript")}
             className="group inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-(image:--gradient-brand) px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-(color:--accent)/20 transition-all hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent) sm:w-auto"
           >
             Explorar documentación
@@ -35,7 +36,7 @@ export default function HomeHero() {
           </Link>
 
           <Link
-            href="/docs/javascript/arrays"
+            href={docPath("javascript", "arrays")}
             className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-(--border-hover) bg-(--bg-3) px-6 py-3 text-sm font-medium text-(--text-secondary) transition-colors hover:text-(--text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent) sm:w-auto"
           >
             <Terminal className="h-4 w-4 text-(--accent)" />

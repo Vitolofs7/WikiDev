@@ -11,6 +11,7 @@
  */
 
 import { navConfig, type NavCategory } from "@/navigation/config/nav.config";
+import { docPath } from "@/shared/utils/routes";
 
 export interface TopicSummary {
   slug: string;
@@ -37,7 +38,7 @@ function toSummary(category: NavCategory): TopicSummary {
     title,
     description,
     emoji,
-    href: `/docs/${slug}`,
+    href: docPath(slug),
     chapterCount: items.length,
     documentCount: items.reduce(
       (total, item) => total + (item.subItems?.length || 1),

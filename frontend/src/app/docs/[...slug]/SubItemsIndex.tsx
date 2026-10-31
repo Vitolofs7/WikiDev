@@ -11,21 +11,19 @@ ruta: frontend/src/app/docs/%5B...slug%5D/SubItemsIndex.tsx
 
 **/
 
-
 "use client";
 import { useState } from "react";
 import { Search } from "lucide-react";
+import { docPath } from "@/shared/utils/routes";
 
-interface SubItem {
-  title: string;
-  slug: string;
-}
+import type { NavSubItem } from "@/navigation/config/nav.config";
+import { IndexCard } from "@/documentation/components/IndexCard";
 
 interface Props {
   title: string;
   category: string;
   page: string;
-  subItems: SubItem[];
+  subItems: NavSubItem[];
 }
 
 export function SubItemsIndex({ title, category, page, subItems }: Props) {
@@ -39,9 +37,7 @@ export function SubItemsIndex({ title, category, page, subItems }: Props) {
     <div className="w-full">
       {/* Header */}
       <div className="mb-8 pb-8 border-b border-white/5">
-        <h1
-          className="text-6xl font-extrabold text-white mb-4 tracking-tight"
-        >
+        <h1 className="text-6xl font-extrabold text-white mb-4 tracking-tight">
           {title}
         </h1>
         <div className="flex items-center gap-3">
@@ -69,9 +65,7 @@ export function SubItemsIndex({ title, category, page, subItems }: Props) {
             className="w-full bg-white/5 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-base text-zinc-300 outline-none placeholder:text-zinc-600 focus:border-violet-500/30 transition-colors"
           />
           {filter && (
-            <span
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-zinc-600"
-            >
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-zinc-600">
               {filtered.length} resultado{filtered.length !== 1 ? "s" : ""}
             </span>
           )}
@@ -83,43 +77,22 @@ export function SubItemsIndex({ title, category, page, subItems }: Props) {
         <div className="grid grid-cols-2 gap-3">
           {filtered.map((sub) => {
             const originalIndex = subItems.findIndex(
-              (s) => s.slug === sub.slug,
+              (item) => item.slug === sub.slug,
             );
+
             return (
-              <a
+              <IndexCard
                 key={sub.slug}
-                href={`/docs/${category}/${page}/${sub.slug}`}
-                className="flex items-center gap-4 p-5 rounded-2xl border border-white/5 hover:border-violet-500/30 transition-all group"
-                style={{ background: "rgba(255,255,255,0.02)" }}
-              >
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm font-mono"
-                >
-                  {String(originalIndex + 1).padStart(2, "0")}
-                </div>
-                <p
-                  className="flex-1 text-base text-zinc-300 group-hover:text-white transition-colors leading-snug"
-                >
-                  {sub.title}
-                </p>
-                <div
-                  className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0 text-sm"
-                  style={{
-                    background: "rgba(124,109,250,0.15)",
-                    color: "#a89cf7",
-                  }}
-                >
-                  →
-                </div>
-              </a>
+                href={docPath(category, page, sub.slug)}
+                index={originalIndex}
+                title={sub.title}
+              />
             );
           })}
         </div>
       ) : (
         <div className="py-10 text-center">
-          <p
-            className="text-zinc-600 text-base"
-          >
+          <p className="text-zinc-600 text-base">
             No se encontraron apartados para{" "}
             <span className="text-zinc-400">{`"${filter}"`}</span>
           </p>
