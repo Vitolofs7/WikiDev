@@ -11,7 +11,6 @@
 
 import type { Metadata } from "next";
 import { Outfit, JetBrains_Mono } from "next/font/google";
-import { ThemeProvider } from "@/theming/components/ThemeProvider";
 import { ConditionalNavbar } from "@/navigation/components/ConditionalNavbar";
 import { SearchProvider } from "@/search/components/SearchProvider";
 import { HistoryTracker } from "@/history/components/HistoryTracker";
@@ -39,17 +38,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" suppressHydrationWarning data-scroll-behavior="smooth">
+    <html lang="es" data-scroll-behavior="smooth">
       <body
         className={`${outfit.variable} ${jetbrains.variable} bg-zinc-950 text-zinc-100 antialiased`}
       >
-        <ThemeProvider>
           <SearchProvider>
             <ConditionalNavbar />
             <HistoryTracker />
             <main className="flex-1">{children}</main>
           </SearchProvider>
-        </ThemeProvider>
       </body>
     </html>
   );

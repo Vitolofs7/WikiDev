@@ -25,7 +25,6 @@
       "@/*": [
         "./src/*"
       ],
-      "@content/*": ["./content/*"]
     },
     "target": "ES2017"
   },

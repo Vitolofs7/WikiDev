@@ -6,8 +6,8 @@
  * las páginas de /docs/[...slug]). No mantiene ninguna lista propia: añadir
  * un tema nuevo a `navConfig` basta para que aparezca en /docs.
  *
- * Los contadores se calculan a partir de `items` y `subItems`; el campo
- * manual `count` de `navConfig` no se utiliza (está desactualizado).
+ * Los contadores se calculan dinámicamente a partir de `items` y `subItems`,
+ * evitando mantener información duplicada en la configuración de navegación.
  */
 
 import { navConfig, type NavCategory } from "@/navigation/config/nav.config";

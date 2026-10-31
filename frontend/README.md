@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WikiDev — Frontend
+
+## Overview
+
+The WikiDev frontend is the user interface of a personal programming documentation platform. It provides a centralized environment for exploring technical documentation, managing personal notes, and practicing programming through interactive code execution.
+
+## Technology Stack
+
+- **Framework:** Next.js 16
+- **Library:** React
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS v4
+- **Documentation:** MDX
+- **Typography:** Outfit and JetBrains Mono
+
+## Project Structure
+
+```text
+frontend/
+├── public/              # Static assets and branding
+├── scripts/             # Build-time utility scripts
+├── src/
+│   ├── app/             # Application routes and layouts
+│   ├── code-execution/  # Interactive code execution interface
+│   ├── content/         # MDX documentation content
+│   ├── documentation/   # Documentation components and utilities
+│   ├── generated/       # Automatically generated documentation registry
+│   ├── history/         # Navigation history functionality
+│   ├── navigation/      # Navigation components and configuration
+│   ├── notes/           # Personal notes functionality
+│   ├── search/          # Global search functionality
+│   ├── shared/          # Reusable components and utilities
+│   ├── theming/         # Theme configuration and provider
+│   └── types/           # Shared TypeScript declarations
+├── package.json
+└── README.md
+```
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js
+- npm
+
+### Installation
+
+Install the project dependencies:
+
+```bash
+npm install
+```
+
+### Development
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Build the application:
 
-## Learn More
+```bash
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+Start the production server:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Main Features
 
-## Deploy on Vercel
+- Structured technical documentation organized by categories and topics.
+- MDX-based content management.
+- Interactive programming exercises and code execution.
+- Personal notes management.
+- Global documentation search.
+- Reading history and navigation.
+- PDF documentation export.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Backend Integration
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The frontend communicates with the WikiDev backend, built with FastAPI, to handle features such as personal notes and code execution.
+
+The backend API URL can be configured through the `NEXT_PUBLIC_API_URL` environment variable.
+
+## Development Guidelines
+
+- Use TypeScript for application code.
+- Keep components and utilities organized by functional responsibility.
+- Reuse shared components whenever possible.
+- Keep documentation content separate from application logic.
+- Use Tailwind CSS v4 for styling.
+- Maintain consistent naming conventions and project structure.
