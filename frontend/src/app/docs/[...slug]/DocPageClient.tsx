@@ -1,40 +1,20 @@
-/**
-* Gestiona la representación de una página de documentación, integrando la carga dinámica
-* del contenido MDX, las migas de pan, las acciones de navegación, la exportación a PDF,
-* el seguimiento del progreso de lectura y el índice de contenidos. También organiza la
-* navegación secuencial entre lecciones de una misma unidad mediante los metadatos generados,
-* y proporciona los componentes personalizados necesarios para renderizar el contenido
-* interactivo de la documentación.
-
-*/
-
 "use client";
 
-import { useRef } from "react";
-
-import { useRouter } from "next/navigation";
-
+import { useRef, useState } from "react";
 import Link from "next/link";
-
 import { CodeRunner } from "@/code-execution/components/CodeRunner";
-
 import { TableOfContents } from "@/documentation/components/TableOfContents";
-
-import { Download, ArrowLeft, ArrowRight, ChevronRight } from "lucide-react";
-
+import { Download, ArrowLeft, ArrowRight, ListTree } from "lucide-react";
 import { Callout } from "@/documentation/components/Callout";
-
 import { downloadPdf } from "@/documentation/utils/pdf-export";
-
 import { ReadingProgress } from "@/documentation/components/ReadingProgress";
-
+import { DocBreadcrumbs } from "@/documentation/components/DocBreadcrumbs";
+import { DocOutlineDrawer } from "@/documentation/components/DocOutlineDrawer";
 import docs from "@/generated/docs.generated";
-
 import { docPath } from "@/shared/utils/routes";
-
 import {
   getAdjacentDocs,
-  getBreadcrumbs,
+  getBreadcrumbLinks,
 } from "@/documentation/utils/doc-navigation";
 
 import "@/documentation/styles/prose-docs.css";
@@ -46,108 +26,89 @@ interface Props {
 }
 
 export function DocPageClient({ docKey }: Props) {
-  const router = useRouter();
   const articleRef = useRef<HTMLElement>(null);
+  const [outlineOpen, setOutlineOpen] = useState(false);
 
   const Content = docs[docKey];
-
   if (!Content) return null;
 
-  const { prev: prevDoc, next: nextDoc } = getAdjacentDocs(docKey);
-  const crumbs = getBreadcrumbs(docKey);
+  const { prev: prevDoc, next: nextDoc, position, total } = getAdjacentDocs(docKey);
+  const crumbs = getBreadcrumbLinks(docKey);
+  const parentCrumb = crumbs.length >= 2 ? crumbs[crumbs.length - 2] : null;
 
   const secondaryBtn =
-    "flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-zinc-400 hover:text-zinc-200 transition-all";
-
-  const secondaryBtnStyle = {
-    background: "#14141f",
-    border: "1px solid rgba(255,255,255,0.08)",
-  };
+    "inline-flex h-9 items-center gap-2 rounded-lg border border-(--border) bg-(--bg-2) px-3 text-xs font-medium text-(--text-secondary) transition-colors hover:border-(--border-hover) hover:bg-(--bg-3) hover:text-(--text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)";
 
   return (
-    <>
+    <div className="mx-auto w-full max-w-[1280px]">
       <ReadingProgress articleRef={articleRef} docKey={docKey} />
 
-      <div className="flex gap-12 items-start">
-        <div className="flex-1 min-w-0">
-          {/* Barra superior: breadcrumbs + acciones */}
-          <div className="flex items-center justify-between flex-wrap gap-3 mb-8">
-            <nav
-              aria-label="Ruta de navegación"
-              className="flex items-center flex-wrap gap-1.5 text-sm"
-            >
-              {crumbs.map((crumb, i) => {
-                const isLast = i === crumbs.length - 1;
-
-                return (
-                  <span key={i} className="flex items-center gap-1.5">
-                    <span
-                      className={
-                        isLast ? "text-zinc-300 font-medium" : "text-zinc-600"
-                      }
-                    >
-                      {crumb}
-                    </span>
-
-                    {!isLast && (
-                      <ChevronRight className="w-3.5 h-3.5 text-zinc-700" />
-                    )}
-                  </span>
-                );
-              })}
-            </nav>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => router.back()}
-                className={secondaryBtn}
-                style={secondaryBtnStyle}
-                title="Volver a la página anterior"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Volver
-              </button>
-
-              <button
-                onClick={() => downloadPdf(docKey)}
-                className={secondaryBtn}
-                style={secondaryBtnStyle}
-                title="Ejecuta el código antes de descargar para incluir las salidas"
-              >
-                <Download className="w-4 h-4" />
-                Descargar PDF
-              </button>
-            </div>
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-3 border-b border-(--border) pb-4">
+        <div className="flex min-w-0 flex-wrap items-center gap-3">
+          {parentCrumb?.href && (
+            <Link href={parentCrumb.href} className={secondaryBtn}>
+              <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+              <span className="max-w-44 truncate">{parentCrumb.label}</span>
+            </Link>
+          )}
+          <div className="hidden sm:block">
+            <DocBreadcrumbs items={crumbs} />
           </div>
+        </div>
 
+        <div className="flex items-center gap-2">
+          {position && total > 1 && (
+            <span className="hidden rounded-lg border border-(--border) bg-(--bg-2) px-2.5 py-1.5 text-xs font-medium tabular-nums text-(--text-muted) md:inline-block">
+              {position} de {total}
+            </span>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setOutlineOpen(true)}
+            className={secondaryBtn}
+            title="Abrir temario completo del área actual"
+          >
+            <ListTree className="h-3.5 w-3.5 text-(--accent-light)" aria-hidden="true" />
+            Temario
+          </button>
+
+          <button
+            type="button"
+            onClick={() => downloadPdf(docKey)}
+            className={secondaryBtn}
+            title="Ejecuta el código antes de descargar para incluir las salidas"
+          >
+            <Download className="h-3.5 w-3.5" aria-hidden="true" />
+            PDF
+          </button>
+        </div>
+      </div>
+
+      <div className="flex items-start gap-10 xl:gap-12">
+        <div className="min-w-0 flex-1">
           <article ref={articleRef} className="prose-docs" data-doc-article>
             <Content components={components} />
           </article>
 
-          {/* Navegación entre lecciones de la unidad (fuera del article: no entra en el PDF) */}
           {(prevDoc || nextDoc) && (
             <nav
               aria-label="Navegación entre lecciones"
-              className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12 pt-8"
-              style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+              className="mt-14 grid grid-cols-1 gap-4 border-t border-(--border) pt-8 sm:grid-cols-2"
             >
               {prevDoc ? (
                 <Link
                   href={docPath(...prevDoc.slug.split("/"))}
-                  className="group flex items-center gap-3 p-4 rounded-2xl transition-all hover:-translate-y-0.5"
-                  style={{
-                    background: "#0e0e1a",
-                    border: "1px solid rgba(255,255,255,0.06)",
-                  }}
+                  className="group flex items-center gap-3 rounded-xl border border-(--border) bg-(--bg-2) p-4 transition-colors hover:border-(--border-hover) hover:bg-(--bg-3) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)"
                 >
-                  <ArrowLeft className="w-5 h-5 text-zinc-600 group-hover:text-violet-300 transition-colors" />
+                  <ArrowLeft
+                    aria-hidden="true"
+                    className="h-4 w-4 shrink-0 text-(--text-muted) group-hover:text-(--accent-light)"
+                  />
 
-                  <span className="flex flex-col min-w-0">
-                    <span className="text-xs uppercase tracking-widest text-zinc-600">
-                      Anterior
-                    </span>
-
-                    <span className="text-sm text-zinc-300 truncate">
+                  <span className="flex min-w-0 flex-col">
+                    <span className="text-xs text-(--text-muted)">Anterior</span>
+                    <span className="truncate text-sm font-medium text-(--text-secondary) group-hover:text-(--text)">
                       {prevDoc.title}
                     </span>
                   </span>
@@ -159,23 +120,19 @@ export function DocPageClient({ docKey }: Props) {
               {nextDoc ? (
                 <Link
                   href={docPath(...nextDoc.slug.split("/"))}
-                  className="group flex items-center justify-end gap-3 p-4 rounded-2xl text-right transition-all hover:-translate-y-0.5 sm:col-start-2"
-                  style={{
-                    background: "#0e0e1a",
-                    border: "1px solid rgba(255,255,255,0.06)",
-                  }}
+                  className="group flex items-center justify-end gap-3 rounded-xl border border-(--border) bg-(--bg-2) p-4 text-right transition-colors hover:border-(--border-hover) hover:bg-(--bg-3) sm:col-start-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)"
                 >
-                  <span className="flex flex-col min-w-0">
-                    <span className="text-xs uppercase tracking-widest text-zinc-600">
-                      Siguiente
-                    </span>
-
-                    <span className="text-sm text-zinc-300 truncate">
+                  <span className="flex min-w-0 flex-col">
+                    <span className="text-xs text-(--text-muted)">Siguiente</span>
+                    <span className="truncate text-sm font-medium text-(--text-secondary) group-hover:text-(--text)">
                       {nextDoc.title}
                     </span>
                   </span>
 
-                  <ArrowRight className="w-5 h-5 text-zinc-600 group-hover:text-emerald-300 transition-colors" />
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="h-4 w-4 shrink-0 text-(--text-muted) group-hover:text-(--accent-light)"
+                  />
                 </Link>
               ) : (
                 <span />
@@ -186,6 +143,12 @@ export function DocPageClient({ docKey }: Props) {
 
         <TableOfContents docKey={docKey} />
       </div>
-    </>
+
+      <DocOutlineDrawer
+        open={outlineOpen}
+        onClose={() => setOutlineOpen(false)}
+        docKey={docKey}
+      />
+    </div>
   );
 }

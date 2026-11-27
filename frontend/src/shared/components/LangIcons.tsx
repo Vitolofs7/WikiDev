@@ -1,46 +1,103 @@
-/**
-* Define los componentes SVG reutilizables que representan visualmente los
-* lenguajes y áreas de programación disponibles en WikiDev: JavaScript, Python
-* y algoritmos. Cada componente permite personalizar el tamaño mediante `className`
-* y el color mediante `color`, utilizando valores predeterminados acordes con la
-* identidad visual de cada tecnología. Además, centraliza la asociación entre
-* identificadores y componentes en `langIcons`, y entre identificadores y colores
-* en `langColors`, facilitando su utilización coherente en los distintos elementos
-* de la interfaz.
+import type { ComponentType } from "react";
 
-*/
-export function JavaScriptIcon({ className = "w-5 h-5", color = "#f7df1e" }: { className?: string, color?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill={color}>
-      <path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/>
-    </svg>
-  )
+export interface LangIconProps {
+  className?: string;
+  color?: string;
 }
 
-export function PythonIcon({ className = "w-5 h-5", color = "#3776ab" }: { className?: string, color?: string }) {
+export function JavaScriptIcon({ className = "h-6 w-6" }: LangIconProps) {
   return (
-    <svg viewBox="0 0 24 24" className={className} fill={color}>
-      <path d="M11.914 0C5.82 0 6.2 2.656 6.2 2.656l.007 2.752h5.814v.826H3.9S0 5.789 0 11.969c0 6.18 3.403 5.963 3.403 5.963h2.031v-2.867s-.109-3.403 3.347-3.403h5.764s3.236.052 3.236-3.13V3.395S18.28 0 11.914 0zm-3.21 1.96a1.042 1.042 0 1 1 0 2.084 1.042 1.042 0 0 1 0-2.083zM12.086 24c6.094 0 5.714-2.656 5.714-2.656l-.007-2.752h-5.814v-.826h8.121S24 18.211 24 12.031c0-6.18-3.403-5.963-3.403-5.963h-2.031v2.867s.109 3.403-3.347 3.403h-5.764s-3.236-.052-3.236 3.13v5.137S5.72 24 12.086 24zm3.21-1.96a1.042 1.042 0 1 1 0-2.084 1.042 1.042 0 0 1 0 2.083z"/>
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      aria-hidden="true"
+    >
+      <rect width="24" height="24" rx="5" fill="#F0DB4F" />
+      <path
+        fill="#131B26"
+        d="M15.86 18.08c.46.75 1.06 1.31 2.12 1.31.89 0 1.46-.45 1.46-1.06 0-.74-.58-1-1.56-1.43l-.54-.23c-1.55-.66-2.58-1.49-2.58-3.23 0-1.61 1.23-2.84 3.15-2.84 1.37 0 2.35.48 3.06 1.72l-1.67 1.07c-.37-.66-.76-.92-1.39-.92-.63 0-1.03.4-1.03.92 0 .65.4.91 1.33 1.31l.54.23c1.82.78 2.86 1.58 2.86 3.37 0 1.93-1.52 2.99-3.56 2.99-2 0-3.29-.95-3.92-2.2l1.73-1.01Zm-7.61.18c.33.59.63 1.09 1.36 1.09.69 0 1.13-.27 1.13-1.32V10.8h2.11v7.26c0 2.2-1.29 3.2-3.17 3.2-1.7 0-2.69-.88-3.19-1.94l1.76-1.06Z"
+      />
     </svg>
-  )
+  );
 }
 
-export function AlgorithmsIcon({ className = "w-5 h-5", color = "#a89cf7" }: { className?: string, color?: string }) {
+export function PythonIcon({ className = "h-6 w-6" }: LangIconProps) {
   return (
-    <svg viewBox="0 0 24 24" className={className} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        fill="#4B8BBE"
+        d="M11.91 1C6.2 1 6.56 3.49 6.56 3.49l.01 2.58h5.45v.77H4.4S1 6.43 1 12.22s3.19 5.59 3.19 5.59h1.9v-2.69s-.1-3.19 3.14-3.19h5.4s3.04.05 3.04-2.93V4.18S18.13 1 11.91 1Zm-3.01 1.84a.98.98 0 1 1 0 1.95.98.98 0 0 1 0-1.95Z"
+      />
+      <path
+        fill="#FFD43B"
+        d="M12.09 23c5.71 0 5.35-2.49 5.35-2.49l-.01-2.58h-5.45v-.77h7.62s3.4.41 3.4-5.38-3.19-5.59-3.19-5.59h-1.9v2.69s.1 3.19-3.14 3.19h-5.4s-3.04-.05-3.04 2.93v4.82S5.87 23 12.09 23Zm3.01-1.84a.98.98 0 1 1 0-1.95.98.98 0 0 1 0 1.95Z"
+      />
     </svg>
-  )
+  );
 }
 
-export const langIcons: Record<string, React.ComponentType<{ className?: string, color?: string }>> = {
+export function AlgorithmsIcon({
+  className = "h-6 w-6",
+  color = "#69d2de",
+}: LangIconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M12 7.2 6.8 14.3M12 7.2l5.2 7.1M8.5 16.5h7"
+        stroke={color}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+      <circle
+        cx="12"
+        cy="5.5"
+        r="2.6"
+        fill={color}
+        fillOpacity="0.22"
+        stroke={color}
+        strokeWidth="1.75"
+      />
+      <circle
+        cx="5.8"
+        cy="16.5"
+        r="2.6"
+        fill={color}
+        fillOpacity="0.22"
+        stroke={color}
+        strokeWidth="1.75"
+      />
+      <circle
+        cx="18.2"
+        cy="16.5"
+        r="2.6"
+        fill={color}
+        fillOpacity="0.22"
+        stroke={color}
+        strokeWidth="1.75"
+      />
+    </svg>
+  );
+}
+
+export const langIcons: Record<string, ComponentType<LangIconProps>> = {
   javascript: JavaScriptIcon,
   python: PythonIcon,
   algorithms: AlgorithmsIcon,
-}
+};
 
 export const langColors: Record<string, string> = {
-  javascript: '#f7df1e',
-  python: '#3776ab',
-  algorithms: '#a89cf7',
-}
+  javascript: "#f0db4f",
+  python: "#4b8bbe",
+  algorithms: "#69d2de",
+};

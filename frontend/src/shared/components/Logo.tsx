@@ -17,7 +17,7 @@ export function Logo({
       <Link
         href="/"
         aria-label="WikiDev - Inicio"
-        className={`inline-flex items-center transition-opacity duration-200 hover:opacity-80 ${className}`}
+        className={`inline-flex items-center transition-opacity duration-200 hover:opacity-85 ${className}`}
       >
         <Image
           src="/images/branding/wikidev-logo.svg"
@@ -34,13 +34,13 @@ export function Logo({
     <Link
       href="/"
       aria-label="WikiDev - Inicio"
-      className={`flex shrink-0 items-center ${
+      className={`flex shrink-0 items-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light) ${
         compact ? "gap-2.5" : "gap-3.5"
       } ${className}`}
     >
       <div
         className={`relative shrink-0 ${
-          compact ? "h-11 w-11" : "h-14 w-14"
+          compact ? "h-8 w-8" : "h-12 w-12"
         }`}
       >
         <Image
@@ -48,22 +48,17 @@ export function Logo({
           alt=""
           fill
           className="object-contain"
-          sizes={compact ? "44px" : "56px"}
+          sizes={compact ? "32px" : "48px"}
         />
       </div>
 
       <span
-        className={`font-extrabold tracking-tight text-(--text) ${
-          compact ? "text-xl" : "text-[26px]"
+        translate="no"
+        className={`font-display font-semibold tracking-[-0.02em] text-(--text) ${
+          compact ? "text-[17px]" : "text-2xl"
         }`}
       >
-        Wiki
-        <span
-          className="bg-clip-text text-transparent"
-          style={{ backgroundImage: "var(--gradient-brand)" }}
-        >
-          Dev
-        </span>
+        Wiki<span className="text-(--accent-light)">Dev</span>
       </span>
     </Link>
   );

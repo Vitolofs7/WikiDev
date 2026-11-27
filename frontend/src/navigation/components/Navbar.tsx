@@ -1,128 +1,185 @@
-/**
- * Ruta: frontend/src/navigation/components/Navbar.tsx
- *
- * Define la barra de navegación principal de WikiDev, proporcionando acceso a la página
- * de inicio, la documentación, el módulo de notas y el área de búsqueda. Permite adaptar
- * su tamaño mediante la propiedad opcional compact, ajustando la altura de la barra, las
- * dimensiones del logotipo, la tipografía, los iconos y el espaciado entre elementos.
- * Utiliza componentes de navegación de Next.js y optimiza la carga del logotipo mediante
- * next/image. El buscador se controla desde el contexto global SearchProvider, evitando
- * instancias duplicadas del modal y manteniendo una experiencia de navegación coherente.
- */
-
 "use client";
 
+import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { docPath } from "@/shared/utils/routes";
 import Link from "next/link";
 import { Logo } from "@/shared/components/Logo";
-import { Search, StickyNote, BookOpen } from "lucide-react";
+import {
+  Search,
+  StickyNote,
+  BookOpen,
+  LogOut,
+  User,
+  Menu,
+  X,
+} from "lucide-react";
 import { useSearchModal } from "@/search/components/SearchProvider";
+import { useAuth } from "@/auth/context/AuthProvider";
 
 type NavbarProps = {
   compact?: boolean;
 };
 
+const FOCUS =
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)";
+
 export function Navbar({ compact = false }: NavbarProps) {
+  const pathname = usePathname();
   const { open } = useSearchModal();
+  const { user, loading, openAuthModal, logout } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const isDocsActive = pathname.startsWith("/docs");
+  const isNotesActive = pathname.startsWith("/notes");
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/6 bg-transparent">
+    <header className="sticky top-0 z-50 border-b border-(--border) bg-(--bg)/92 backdrop-blur-md">
       <div
-        className={`mx-auto flex max-w-7xl items-center px-6 lg:px-8 ${
-          compact ? "h-(--navbar-h)" : "h-20"
+        className={`mx-auto flex max-w-6xl items-center gap-3 px-5 sm:px-8 ${
+          compact ? "h-(--navbar-h)" : "h-16"
         }`}
       >
-        {/* Logo */}
-        <Logo compact={compact} />
+        <Logo compact />
 
-        {/* Divider */}
-        <div
-          className={`hidden w-px bg-(--border-hover) md:block ${
-            compact ? "ml-7 h-7" : "ml-10 h-9"
-          }`}
-        />
+        <div className="hidden h-5 w-px bg-(--border) md:block" />
 
-        {/* Navigation */}
         <nav
-          className={`hidden items-center md:flex ${
-            compact ? "ml-4 gap-1" : "ml-7 gap-3"
-          }`}
+          aria-label="Navegación principal"
+          className="hidden items-center gap-1 md:flex"
         >
           <Link
             href={docPath()}
-            className={`flex items-center rounded-xl text-(--text-secondary) transition-all hover:bg-white/4 hover:text-(--text) ${
-              compact ? "gap-2 px-3.5 py-2" : "gap-3 px-5 py-3"
+            aria-current={isDocsActive ? "page" : undefined}
+            className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-[15px] font-medium transition-colors ${FOCUS} ${
+              isDocsActive
+                ? "bg-(--accent-soft) text-(--text)"
+                : "text-(--text-muted) hover:bg-(--bg-2) hover:text-(--text)"
             }`}
           >
             <BookOpen
-              className={
-                compact ? "h-4 w-4 text-(--accent)" : "h-5 w-5 text-(--accent)"
-              }
+              aria-hidden="true"
+              className={`h-4 w-4 ${isDocsActive ? "text-(--accent-light)" : ""}`}
             />
-
-            <span
-              className={`font-medium ${compact ? "text-sm" : "text-base"}`}
-            >
-              Documentación
-            </span>
+            Documentación
           </Link>
 
           <Link
             href="/notes"
-            className={`flex items-center rounded-xl text-(--text-secondary) transition-all hover:bg-white/4 hover:text-(--text) ${
-              compact ? "gap-2 px-3.5 py-2" : "gap-3 px-5 py-3"
+            aria-current={isNotesActive ? "page" : undefined}
+            className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-[15px] font-medium transition-colors ${FOCUS} ${
+              isNotesActive
+                ? "bg-(--accent-soft) text-(--text)"
+                : "text-(--text-muted) hover:bg-(--bg-2) hover:text-(--text)"
             }`}
           >
             <StickyNote
-              className={
-                compact ? "h-4 w-4 text-(--accent)" : "h-5 w-5 text-(--accent)"
-              }
+              aria-hidden="true"
+              className={`h-4 w-4 ${isNotesActive ? "text-(--accent-light)" : ""}`}
             />
-
-            <span
-              className={`font-medium ${compact ? "text-sm" : "text-base"}`}
-            >
-              Notas
-            </span>
+            Notas
           </Link>
         </nav>
 
-        {/* Search */}
-        <div className={`ml-auto ${compact ? "ml-6 flex-1 max-w-130" : ""}`}>
+        <div className="ml-auto sm:w-64 md:w-72">
           <button
             type="button"
             onClick={open}
-            className={`group flex w-full items-center rounded-xl border border-(--border-hover) bg-(--bg-3)/80 transition-all hover:border-(--accent)/40 hover:bg-(--bg-3) focus:border-(--accent)/60 focus:outline-none ${
-              compact ? "h-10 gap-3 px-4" : "h-12 w-95 gap-3.5 px-5"
-            }`}
+            className={`group flex h-9 w-full items-center gap-2.5 rounded-lg border border-(--border) bg-(--bg-2) px-3 text-left transition-colors hover:border-(--border-hover) hover:bg-(--bg-3) ${FOCUS}`}
             aria-label="Buscar documentación"
           >
             <Search
-              className={`shrink-0 text-(--accent) transition-transform group-hover:scale-105 ${
-                compact ? "h-4.5 w-4.5" : "h-5 w-5"
-              }`}
+              aria-hidden="true"
+              className="h-3.5 w-3.5 shrink-0 text-(--text-muted) group-hover:text-(--text)"
             />
-
-            <span
-              className={`min-w-0 flex-1 truncate text-left text-(--text-muted) ${
-                compact ? "text-sm" : "text-base"
-              }`}
-            >
-              Buscar documentación...
+            <span className="hidden min-w-0 flex-1 truncate text-sm text-(--text-muted) sm:inline">
+              Buscar…
             </span>
-
             <kbd
-              className={`shrink-0 rounded-md border border-(--accent)/20 bg-(--accent)/10 text-(--accent-light) ${
-                compact
-                  ? "px-2 py-0.5 text-[10px]"
-                  : "px-2.5 py-1 text-[11px] font-mono"
-              }`}
+              translate="no"
+              className="hidden shrink-0 rounded border border-(--border) bg-(--bg) px-1.5 py-0.5 font-mono text-[10px] text-(--text-muted) sm:inline"
             >
-              Ctrl+K
+              Ctrl&nbsp;K
             </kbd>
           </button>
         </div>
+
+        {!loading && (
+          <div className="flex items-center gap-2">
+            {user ? (
+              <>
+                <span className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-(--border) bg-(--bg-2) px-2.5 py-1.5 text-xs font-medium text-(--text-secondary)">
+                  <User
+                    aria-hidden="true"
+                    className="h-3.5 w-3.5 text-(--accent-light)"
+                  />
+                  <span className="max-w-28 truncate">{user.username}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => void logout()}
+                  title="Cerrar sesión"
+                  aria-label="Cerrar sesión"
+                  className={`inline-flex h-9 items-center gap-1.5 rounded-lg border border-(--border) bg-(--bg-2) px-3 text-xs font-medium text-(--text-secondary) transition-colors hover:border-(--error)/40 hover:text-(--error) ${FOCUS}`}
+                >
+                  <LogOut aria-hidden="true" className="h-3.5 w-3.5" />
+                  <span className="hidden md:inline">Salir</span>
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => openAuthModal("login")}
+                className={`inline-flex h-9 items-center rounded-lg bg-(--accent) px-4 text-sm font-semibold text-(--accent-fg) transition-colors hover:bg-(--accent-light) ${FOCUS}`}
+              >
+                Acceder
+              </button>
+            )}
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-main-nav"
+          aria-label={mobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+          className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border border-(--border) bg-(--bg-2) text-(--text-secondary) md:hidden ${FOCUS}`}
+        >
+          {mobileMenuOpen ? (
+            <X className="h-4 w-4" aria-hidden="true" />
+          ) : (
+            <Menu className="h-4 w-4" aria-hidden="true" />
+          )}
+        </button>
       </div>
+
+      {mobileMenuOpen && (
+        <nav
+          id="mobile-main-nav"
+          aria-label="Navegación móvil"
+          className="border-t border-(--border) bg-(--bg-2) px-5 py-3 md:hidden"
+        >
+          <div className="flex flex-col gap-1">
+            <Link
+              href={docPath()}
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] font-medium text-(--text-secondary) hover:bg-(--bg-3) hover:text-(--text) ${FOCUS}`}
+            >
+              <BookOpen aria-hidden="true" className="h-4 w-4" />
+              Documentación
+            </Link>
+            <Link
+              href="/notes"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] font-medium text-(--text-secondary) hover:bg-(--bg-3) hover:text-(--text) ${FOCUS}`}
+            >
+              <StickyNote aria-hidden="true" className="h-4 w-4" />
+              Notas
+            </Link>
+          </div>
+        </nav>
+      )}
     </header>
   );
 }

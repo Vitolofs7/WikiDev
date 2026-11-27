@@ -124,7 +124,10 @@ export async function downloadPdf(docKey: string) {
 
   clone.prepend(style);
 
-  const filename = docKey.split("/").pop()?.replace(/-/g, " ") ?? "documento";
+  const rawName = docKey.split("/").pop()?.replace(/-/g, " ") ?? "documento";
+  const filename =
+    rawName.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ _-]/g, "").trim().slice(0, 100) ||
+    "documento";
 
   // Localizar los editores originales y sus correspondientes clones.
   const runners = Array.from(article.querySelectorAll("[data-code-runner]"));

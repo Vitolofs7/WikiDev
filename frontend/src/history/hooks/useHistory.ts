@@ -1,56 +1,76 @@
-/**
-* Proporciona un hook personalizado para gestionar el historial de navegación de WikiDev,
-* almacenando los documentos visitados en `localStorage` para conservarlos entre sesiones.
-* Define la estructura de cada entrada y limita el historial a los cinco documentos más
-* recientes. La función `addToHistory` evita duplicados por dirección, actualiza la fecha
-* de visita y sitúa el documento al principio de la lista, mientras que `clearHistory`
-* elimina todas las entradas almacenadas. Utiliza un estado inicial perezoso para recuperar
-* los datos una sola vez y memoriza las funciones de actualización mediante `useCallback`.
-* También contempla posibles errores de acceso o persistencia en el almacenamiento local.
-
-*/
-'use client'
-import { useCallback, useState } from 'react'
+"use client";
+import { useCallback, useState } from "react";
 
 export interface HistoryItem {
-  href: string
-  title: string
-  category: string
-  visitedAt: number
+  href: string;
+  title: string;
+  category: string;
+  visitedAt: number;
 }
 
-const MAX_ITEMS = 5
-const STORAGE_KEY = 'wikidev_history'
+const MAX_ITEMS = 5;
+const STORAGE_KEY = "wikidev_history";
+
+function isSafeDocHref(href: unknown): href is string {
+  return (
+    typeof href === "string" &&
+    href.startsWith("/docs/") &&
+    !href.startsWith("//") &&
+    !/[\x00-\x1f\x7f]/.test(href) &&
+    href.length <= 300
+  );
+}
+
+function isValidHistoryItem(item: unknown): item is HistoryItem {
+  if (typeof item !== "object" || item === null) return false;
+  const candidate = item as Record<string, unknown>;
+  return (
+    isSafeDocHref(candidate.href) &&
+    typeof candidate.title === "string" &&
+    candidate.title.length <= 200 &&
+    typeof candidate.category === "string" &&
+    candidate.category.length <= 100 &&
+    typeof candidate.visitedAt === "number" &&
+    Number.isFinite(candidate.visitedAt)
+  );
+}
 
 function readStoredHistory(): HistoryItem[] {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    return stored ? JSON.parse(stored) : []
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return [];
+    const parsed: unknown = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(isValidHistoryItem).slice(0, MAX_ITEMS);
   } catch {
-    return []
+    return [];
   }
 }
 
 export function useHistory() {
-  // Estado inicial perezoso: localStorage se lee una sola vez, al crear el estado,
-  // sin pasar por un efecto que dispare un render adicional.
-  const [history, setHistory] = useState<HistoryItem[]>(readStoredHistory)
+  const [history, setHistory] = useState<HistoryItem[]>(readStoredHistory);
 
-  // useCallback: identidad estable entre renders, para poder incluirla sin
-  // problemas en el array de dependencias de un useEffect en quien la consuma.
-  const addToHistory = useCallback((item: Omit<HistoryItem, 'visitedAt'>) => {
+  const addToHistory = useCallback((item: Omit<HistoryItem, "visitedAt">) => {
+    if (!isSafeDocHref(item.href)) return;
     setHistory((prev) => {
-      const filtered = prev.filter((h) => h.href !== item.href)
-      const next = [{ ...item, visitedAt: Date.now() }, ...filtered].slice(0, MAX_ITEMS)
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)) } catch {}
-      return next
-    })
-  }, [])
+      const filtered = prev.filter((h) => h.href !== item.href);
+      const next = [{ ...item, visitedAt: Date.now() }, ...filtered].slice(
+        0,
+        MAX_ITEMS,
+      );
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  }, []);
 
   const clearHistory = useCallback(() => {
-    setHistory([])
-    try { localStorage.removeItem(STORAGE_KEY) } catch {}
-  }, [])
+    setHistory([]);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {}
+  }, []);
 
-  return { history, addToHistory, clearHistory }
+  return { history, addToHistory, clearHistory };
 }

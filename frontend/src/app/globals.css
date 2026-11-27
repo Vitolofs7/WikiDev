@@ -1,78 +1,49 @@
-/**
-* Define los estilos globales de WikiDev, estableciendo la identidad visual de la aplicación
-* mediante variables CSS para colores, tipografía, fondos, bordes y estados semánticos.
-* Configura los estilos base de la interfaz, los componentes reutilizables, la presentación
-* del contenido de documentación y sus tablas, así como las barras de desplazamiento,
-* los efectos de selección y las animaciones utilizadas para mejorar la experiencia visual.
-
-*/
-
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
 }
 
 @layer base {
   :root {
-    /* ─────────────────────────────────────
-       WikiDev — Backgrounds
-       ───────────────────────────────────── */
+    /* Surfaces — deep maritime slate with clear tonal depth */
+    --bg: #0d1219;
+    --bg-2: #131b26;
+    --bg-3: #1a2433;
+    --bg-code: #090d13;
 
-    --bg: #080810;
-    --bg-2: #0e0e1a;
-    --bg-3: #14141f;
+    /* Navbar */
+    --navbar-h: 3.75rem;
 
-    /* ─────────────────────────────────────
-       WikiDev — Navbar
-       ───────────────────────────────────── */
+    /* Brand accent — calibrated from wikidev-icon.svg (#4DC0CD) */
+    --accent: #38b2c0;
+    --accent-light: #69d2de;
+    --accent-soft: rgba(56, 178, 192, 0.13);
+    --accent-fg: #071318;
+    --accent-2: #38b2c0;
+    --accent-2-light: #69d2de;
 
-    --navbar-h: 4rem;
+    /* Typography — warm archival ink on slate */
+    --text: #f0eee9;
+    --text-secondary: #c2cbd6;
+    --text-muted: #8896a8;
 
-    /* ─────────────────────────────────────
-       WikiDev — Brand
-       ───────────────────────────────────── */
+    /* Slate-tinted hairlines */
+    --border: rgba(214, 226, 240, 0.09);
+    --border-hover: rgba(214, 226, 240, 0.2);
 
-    --accent: #7c6dfa;
-    --accent-light: #a89cf7;
+    /* Semantic states */
+    --success: #56c99b;
+    --warning: #e5b25d;
+    --error: #ea7878;
+    --info: #78b7e8;
 
-    --accent-2: #06d6a0;
-    --accent-2-light: #6ee7b7;
-
-    --gradient-brand: linear-gradient(135deg, #7c6dfa 0%, #06d6a0 100%);
-
-    /* ─────────────────────────────────────
-       WikiDev — Text
-       ───────────────────────────────────── */
-
-    --text: #e8e8f0;
-    --text-secondary: #d4d0e2;
-    --text-muted: #6e6e8a;
-
-    /* ─────────────────────────────────────
-       WikiDev — Borders
-       ───────────────────────────────────── */
-
-    --border: rgba(255, 255, 255, 0.06);
-    --border-hover: rgba(255, 255, 255, 0.12);
-
-    /* ─────────────────────────────────────
-       WikiDev — Semantic colors
-       ───────────────────────────────────── */
-
-    --success: #34d399;
-    --warning: #fbbf24;
-    --error: #f87171;
-    --info: #7dd3fc;
-
-    /* ─────────────────────────────────────
-       WikiDev — UI
-       ───────────────────────────────────── */
-
-    --scrollbar: #2a2a3d;
-    --scrollbar-hover: #3a3a55;
-    --selection: rgba(124, 109, 250, 0.25);
+    /* Browser chrome */
+    --scrollbar: #243041;
+    --scrollbar-hover: #35475f;
+    --selection: rgba(56, 178, 192, 0.28);
   }
 
   * {
@@ -80,18 +51,34 @@
   }
 
   html {
+    color-scheme: dark;
     scroll-behavior: smooth;
+    -webkit-tap-highlight-color: rgba(56, 178, 192, 0.18);
   }
 
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: "Outfit", sans-serif;
+    font-family: var(--font-sans);
+    caret-color: var(--accent-light);
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  a,
+  button {
+    touch-action: manipulation;
   }
 
   ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 7px;
+    height: 7px;
   }
 
   ::-webkit-scrollbar-track {
@@ -109,71 +96,40 @@
 
   ::selection {
     background: var(--selection);
+    color: var(--text);
   }
 }
 
-@layer components {
-  /* ─────────────────────────────────────
-     Glass
-     ───────────────────────────────────── */
-
-  .glass {
-    background: rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--border);
-  }
-
-  .glass-hover {
-    transition:
-      background 0.2s,
-      border-color 0.2s;
-  }
-
-  .glass-hover:hover {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: var(--border-hover);
-  }
+.skip-link {
+  position: fixed;
+  top: -100%;
+  left: 1rem;
+  z-index: 100;
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.5rem;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: top 0.15s ease;
 }
 
-/* ─────────────────────────────────────────
-   Animations
-   ───────────────────────────────────────── */
+.skip-link:focus {
+  top: 1rem;
+  outline: 2px solid var(--accent-light);
+  outline-offset: 2px;
+}
 
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
-}
-
-@keyframes pulse-slow {
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.4;
-  }
-}
-
-.animate-fade-up {
-  animation: fadeUp 0.4s ease both;
-}
-
-.delay-100 {
-  animation-delay: 100ms;
-}
-
-.delay-200 {
-  animation-delay: 200ms;
-}
-
-.delay-300 {
-  animation-delay: 300ms;
 }

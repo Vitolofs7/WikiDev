@@ -8,6 +8,7 @@
  * de las páginas de documentación.
  */
 
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { navConfig } from "@/navigation/config/nav.config";
 import { DocPageClient } from "./DocPageClient";
@@ -15,8 +16,37 @@ import { SubItemsIndex } from "./SubItemsIndex";
 import { docsBySlug, docsByUnit } from "@/generated/docs.generated";
 import { topicsMeta } from "@/navigation/config/topics.meta";
 import { TopicCover } from "./TopicCover";
+
 interface Props {
   params: Promise<{ slug: string[] }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const [category, page, subpage] = slug ?? [];
+  const cat = navConfig.categories.find((c) => c.slug === category);
+
+  if (subpage) {
+    const docKey = `${category}/${page}/${subpage}`;
+    const doc = docsBySlug[docKey];
+    if (doc) return { title: `${doc.title} — WikiDev` };
+  }
+
+  if (page) {
+    const item = cat?.items.find((i) => i.slug === page);
+    if (item) return { title: `${item.title} — WikiDev` };
+    const doc = docsBySlug[`${category}/${page}`];
+    if (doc) return { title: `${doc.title} — WikiDev` };
+  }
+
+  if (cat) {
+    return {
+      title: `${cat.title} — WikiDev`,
+      description: cat.description,
+    };
+  }
+
+  return { title: "Documentación — WikiDev" };
 }
 
 export default async function DocPage({ params }: Props) {
@@ -40,12 +70,33 @@ export default async function DocPage({ params }: Props) {
     const item = cat?.items.find((item) => item.slug === page);
 
     if (item?.subItems && item.subItems.length > 0) {
+      const chapters = cat?.items ?? [];
+      const chapterIndex = chapters.findIndex((c) => c.slug === page);
+      const prevChapter = chapterIndex > 0 ? chapters[chapterIndex - 1] : null;
+      const nextChapter =
+        chapterIndex >= 0 && chapterIndex < chapters.length - 1
+          ? chapters[chapterIndex + 1]
+          : null;
+
       return (
         <SubItemsIndex
           title={item.title}
           category={category}
+          categoryTitle={cat?.title ?? category}
           page={page}
           subItems={item.subItems}
+          chapterNumber={chapterIndex >= 0 ? chapterIndex + 1 : 1}
+          totalChapters={chapters.length || 1}
+          prevChapter={
+            prevChapter
+              ? { slug: prevChapter.slug, title: prevChapter.title }
+              : null
+          }
+          nextChapter={
+            nextChapter
+              ? { slug: nextChapter.slug, title: nextChapter.title }
+              : null
+          }
         />
       );
     }

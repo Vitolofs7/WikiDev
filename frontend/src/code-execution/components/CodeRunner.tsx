@@ -1,19 +1,12 @@
-/**
-* Proporciona un editor interactivo de código para JavaScript y Python, permitiendo
-* modificar, ejecutar, copiar y restaurar ejemplos directamente desde la documentación.
-* Gestiona la entrada estándar cuando es necesaria, coordina la ejecución mediante el
-* hook useCodeExecution y muestra los resultados, errores y estados de ejecución a través
-* del componente CodeOutput. También incorpora atajos de teclado y controles visuales
-* para facilitar la edición y ejecución del código.
-
-*/
-
 "use client";
-import { useState } from "react";
+
+import { useMemo, useRef, useState } from "react";
 import { Play, RotateCcw, Copy, Check, Terminal } from "lucide-react";
 import { useCodeExecution } from "../hooks/useCodeExecution";
 import { CodeOutput } from "./CodeOutput";
+import { TOKEN_CLASSES, tokenizeCode } from "../utils/syntax-highlight";
 import { cn } from "@/shared/utils/cn";
+import { useAuth } from "@/auth/context/AuthProvider";
 
 interface CodeRunnerProps {
   initialCode: string;
@@ -23,15 +16,12 @@ interface CodeRunnerProps {
 }
 
 const LANGUAGE_CONFIG = {
-  javascript: {
-    label: "JavaScript",
-    badge: "bg-yellow-300/10 border-yellow-300/20 text-yellow-300",
-  },
-  python: {
-    label: "Python",
-    badge: "bg-blue-300/10 border-blue-300/20 text-blue-300",
-  },
+  javascript: { label: "JavaScript" },
+  python: { label: "Python" },
 };
+
+const EDITOR_METRICS =
+  "font-mono text-sm leading-6 sm:text-[15px] sm:leading-[1.625rem] py-4 pr-5 pl-3.5 whitespace-pre";
 
 export function CodeRunner({
   initialCode,
@@ -43,183 +33,200 @@ export function CodeRunner({
   const [stdinValue, setStdinValue] = useState("");
   const [copied, setCopied] = useState(false);
   const { result, isRunning, error, execute, reset } = useCodeExecution();
+  const { user, openAuthModal } = useAuth();
+  const preRef = useRef<HTMLPreElement>(null);
+  const gutterRef = useRef<HTMLDivElement>(null);
+
   const lang = LANGUAGE_CONFIG[language];
+  const tokens = useMemo(() => tokenizeCode(code, language), [code, language]);
+  const lineCount = useMemo(() => Math.max(code.split("\n").length, 1), [code]);
+  const visibleRows = Math.min(Math.max(lineCount + 1, 6), 22);
 
   const handleRun = () => {
+    if (!user) {
+      openAuthModal("login");
+      return;
+    }
     execute({ language, code, stdin: hasStdin ? stdinValue : undefined });
   };
+
   const handleReset = () => {
     setCode(initialCode.trim());
     setStdinValue("");
     reset();
   };
+
   const handleCopy = async () => {
     await navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleEditorScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
+    if (preRef.current) {
+      preRef.current.scrollTop = e.currentTarget.scrollTop;
+      preRef.current.scrollLeft = e.currentTarget.scrollLeft;
+    }
+    if (gutterRef.current) {
+      gutterRef.current.scrollTop = e.currentTarget.scrollTop;
+    }
+  };
+
   return (
     <div
-      className="rounded-2xl overflow-hidden my-8 shadow-2xl"
+      className="my-7 overflow-hidden rounded-xl border border-(--border-hover) bg-(--bg-2)"
       data-code-runner
-      style={{
-        border: "1px solid rgba(255,255,255,0.06)",
-        boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
-      }}
     >
-      {/* Header */}
-      <div
-        className="flex items-center justify-between px-5 py-4"
-        style={{
-          background: "#0e0e1a",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
-        }}
-      >
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-red-500/60" />
-            <span className="w-3 h-3 rounded-full bg-yellow-500/60" />
-            <span className="w-3 h-3 rounded-full bg-emerald-500/60" />
-          </div>
-          <div className="w-px h-4 bg-white/10" />
+      <div className="flex items-center justify-between gap-3 border-b border-(--border) px-4 py-2.5">
+        <div className="flex min-w-0 items-center gap-2.5">
           <span
-            className={cn(
-              "text-sm font-medium px-2.5 py-0.5 rounded-md border font-mono",
-              lang.badge,
-            )}
+            translate="no"
+            className="shrink-0 rounded-md bg-(--accent-soft) px-2 py-0.5 font-mono text-xs font-medium text-(--accent-light)"
           >
             {lang.label}
           </span>
-          {title && <span className="text-zinc-600 text-sm">{title}</span>}
+          {title && (
+            <span className="truncate text-xs font-medium text-(--text-secondary)">
+              {title}
+            </span>
+          )}
         </div>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={handleCopy}
-            className="p-2 rounded-lg text-zinc-600 hover:text-zinc-300 hover:bg-white/5 transition-all"
-            title="Copiar"
-          >
-            {copied ? (
-              <Check className="w-4 h-4 text-emerald-400" />
-            ) : (
-              <Copy className="w-4 h-4" />
-            )}
-          </button>
-        </div>
-      </div>
 
-      {/* Editor */}
-      <div style={{ background: "#080810" }}>
-        <textarea
-          data-code-editor
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          className="w-full bg-transparent text-zinc-300 text-base p-6 resize-none outline-none min-h-40 leading-relaxed font-mono"
-          spellCheck={false}
-          onKeyDown={(e) => {
-            if (e.key === "Tab") {
-              e.preventDefault();
-              const start = e.currentTarget.selectionStart;
-              const end = e.currentTarget.selectionEnd;
-              const newCode =
-                code.substring(0, start) + "  " + code.substring(end);
-              setCode(newCode);
-              setTimeout(() => {
-                e.currentTarget.selectionStart = start + 2;
-                e.currentTarget.selectionEnd = start + 2;
-              });
-            }
-            if ((e.metaKey || e.ctrlKey) && e.key === "Enter") handleRun();
-          }}
-        />
-      </div>
-
-      {/* Stdin — solo si el CodeRunner lo requiere */}
-      {hasStdin && (
-        <div
-          style={{
-            background: "#080810",
-            borderTop: "1px solid rgba(255,255,255,0.04)",
-          }}
+        <button
+          type="button"
+          onClick={handleCopy}
+          aria-label={copied ? "Código copiado" : "Copiar código"}
+          title="Copiar código"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-(--text-muted) transition-colors hover:bg-(--bg-3) hover:text-(--text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)"
         >
-          <div className="flex items-center gap-2 px-6 pt-3 pb-1">
-            <Terminal className="w-3.5 h-3.5 text-zinc-600" />
-            <span className="text-xs text-zinc-600 uppercase tracking-widest font-bold">
-              Entrada (stdin)
+          {copied ? (
+            <Check className="h-3.5 w-3.5 text-(--success)" aria-hidden="true" />
+          ) : (
+            <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+          )}
+        </button>
+      </div>
+
+      {/* Syntax-highlighted editor with synchronized line-number gutter */}
+      <div className="flex bg-(--bg-code)">
+        <div
+          ref={gutterRef}
+          aria-hidden="true"
+          className="select-none overflow-hidden border-r border-(--border) py-4 pl-3 pr-3 text-right font-mono text-xs leading-6 tabular-nums text-[#4c5e75] sm:text-[13px] sm:leading-[1.625rem]"
+        >
+          {Array.from({ length: lineCount }, (_, i) => (
+            <div key={i}>{i + 1}</div>
+          ))}
+        </div>
+
+        <div className="relative min-w-0 flex-1 overflow-hidden">
+          <pre
+            ref={preRef}
+            data-code-highlight
+            aria-hidden="true"
+            className={`pointer-events-none absolute inset-0 m-0 overflow-hidden ${EDITOR_METRICS}`}
+          >
+            <code>
+              {tokens.map((token, idx) => (
+                <span key={idx} className={TOKEN_CLASSES[token.type]}>
+                  {token.value}
+                </span>
+              ))}
+              {code.endsWith("\n") ? " " : null}
+            </code>
+          </pre>
+
+          <textarea
+            data-code-editor
+            aria-label={`Editor de código ${lang.label}${title ? `: ${title}` : ""}`}
+            value={code}
+            rows={visibleRows}
+            wrap="off"
+            onChange={(e) => setCode(e.target.value)}
+            onScroll={handleEditorScroll}
+            className={`relative block w-full resize-y overflow-auto bg-transparent text-transparent caret-(--accent-light) outline-none selection:bg-(--accent)/30 selection:text-transparent focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-(--accent)/50 ${EDITOR_METRICS}`}
+            spellCheck={false}
+            autoCapitalize="off"
+            autoComplete="off"
+            autoCorrect="off"
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                e.currentTarget.blur();
+                return;
+              }
+              if (e.key === "Tab") {
+                e.preventDefault();
+                const target = e.currentTarget;
+                const start = target.selectionStart;
+                const end = target.selectionEnd;
+                const newCode =
+                  code.substring(0, start) + "  " + code.substring(end);
+                setCode(newCode);
+                setTimeout(() => {
+                  target.selectionStart = start + 2;
+                  target.selectionEnd = start + 2;
+                });
+              }
+              if ((e.metaKey || e.ctrlKey) && e.key === "Enter") handleRun();
+            }}
+          />
+        </div>
+      </div>
+
+      {hasStdin && (
+        <div className="border-t border-(--border) bg-(--bg-code)">
+          <div className="flex items-center gap-2 px-5 pb-1 pt-3">
+            <Terminal className="h-3.5 w-3.5 text-(--text-muted)" aria-hidden="true" />
+            <span className="text-xs font-medium text-(--text-muted)">
+              Entrada estándar (stdin)
             </span>
           </div>
           <textarea
+            aria-label="Entrada estándar (stdin)"
             value={stdinValue}
             onChange={(e) => setStdinValue(e.target.value)}
-            placeholder="Escribe aquí la entrada del programa antes de ejecutar..."
-            className="w-full bg-transparent text-zinc-400 text-sm px-6 pb-2 resize-none outline-none leading-relaxed font-mono"
+            placeholder="Escribe aquí la entrada del programa antes de ejecutar…"
+            className="w-full resize-none bg-transparent px-5 pb-3 font-mono text-sm leading-relaxed text-(--text-secondary) outline-none placeholder:text-(--text-muted)"
             spellCheck={false}
           />
-          {!stdinValue.trim() && (
-            <p className="px-6 pb-3 text-xs text-amber-500/70">
-              ⚠ Escribe la entrada antes de ejecutar para evitar errores
-            </p>
-          )}
         </div>
       )}
 
-      {/* Footer / Run bar */}
-      <div
-        className="flex items-center justify-between px-5 py-3"
-        style={{
-          background: "#0e0e1a",
-          borderTop: "1px solid rgba(255,255,255,0.04)",
-        }}
-      >
-        <span className="text-zinc-700 text-sm font-mono">
-          Ctrl+Enter para ejecutar
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-(--border) bg-(--bg-2) px-4 py-2.5">
+        <span className="text-xs text-(--text-muted)">
+          <kbd translate="no" className="font-mono text-[11px] text-(--text-secondary)">Tab</kbd> indenta,{" "}
+          <kbd translate="no" className="font-mono text-[11px] text-(--text-secondary)">Esc</kbd> sale,{" "}
+          <kbd translate="no" className="font-mono text-[11px] text-(--text-secondary)">Ctrl+Enter</kbd> ejecuta
         </span>
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={handleReset}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-zinc-400 transition-all"
-            style={{
-              background: "#14141f",
-              border: "1px solid rgba(255,255,255,0.08)",
-            }}
+            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-(--border) bg-(--bg) px-3 text-xs font-medium text-(--text-secondary) transition-colors hover:border-(--border-hover) hover:text-(--text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)"
           >
-            <RotateCcw className="w-4 h-4" />
-            Reset
+            <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+            Restablecer
           </button>
           <button
+            type="button"
             onClick={handleRun}
             disabled={isRunning || !code.trim()}
             className={cn(
-              "flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold transition-all",
+              "inline-flex h-8 items-center gap-1.5 rounded-lg px-3.5 text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)",
               isRunning || !code.trim()
-                ? "text-zinc-600 cursor-not-allowed"
-                : "text-white hover:scale-105",
+                ? "cursor-not-allowed border border-(--border) bg-(--bg-3) text-(--text-muted)"
+                : "bg-(--accent) text-(--accent-fg) hover:bg-(--accent-light)",
             )}
-            style={
-              !isRunning && code.trim()
-                ? {
-                  background: "linear-gradient(135deg, #7c6dfa, #06d6a0)",
-                    boxShadow: "0 4px 20px rgba(124,109,250,0.3)",
-                  }
-                : {
-                    background: "#14141f",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                  }
-            }
           >
-            <Play className="w-4 h-4" />
-            {isRunning ? "Ejecutando..." : "Ejecutar"}
+            <Play className="h-3.5 w-3.5" aria-hidden="true" />
+            {isRunning ? "Ejecutando…" : "Ejecutar"}
           </button>
         </div>
       </div>
 
-      {/* Output */}
       <div
-        style={{
-          background: "#06060e",
-          borderTop: "1px solid rgba(255,255,255,0.04)",
-          minHeight: "60px",
-        }}
+        aria-live="polite"
+        className="min-h-13 border-t border-(--border) bg-(--bg-code)"
       >
         <CodeOutput result={result} isRunning={isRunning} error={error} />
       </div>

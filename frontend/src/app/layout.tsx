@@ -1,23 +1,23 @@
-
- /**
- *
- * Define el diseño raíz de la aplicación WikiDev, estableciendo los metadatos generales,
- * el idioma del documento y la configuración tipográfica global. Integra los proveedores
- * de tema y búsqueda, la barra de navegación condicional y el seguimiento del historial
- * de navegación, proporcionando el contexto compartido necesario para todas las páginas
- * y centralizando la estructura principal de la interfaz.
- */
-
-import type { Metadata } from "next";
-import { Outfit, JetBrains_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import {
+  Bricolage_Grotesque,
+  Source_Sans_3,
+  JetBrains_Mono,
+} from "next/font/google";
 import { ConditionalNavbar } from "@/navigation/components/ConditionalNavbar";
 import { SearchProvider } from "@/search/components/SearchProvider";
 import { HistoryTracker } from "@/history/components/HistoryTracker";
+import { AuthProvider } from "@/auth/context/AuthProvider";
 import "./globals.css";
 
-const outfit = Outfit({
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  variable: "--font-outfit",
+  variable: "--font-bricolage",
+});
+
+const sourceSans = Source_Sans_3({
+  subsets: ["latin"],
+  variable: "--font-source-sans",
 });
 
 const jetbrains = JetBrains_Mono({
@@ -25,10 +25,14 @@ const jetbrains = JetBrains_Mono({
   variable: "--font-jetbrains",
 });
 
+export const viewport: Viewport = {
+  themeColor: "#0d1219",
+};
+
 export const metadata: Metadata = {
-  title: "WikiDev — Tu base de conocimiento",
+  title: "WikiDev — Documentación de programación",
   description:
-    "Documentación personal de programación con ejemplos interactivos",
+    "Guías técnicas de Python, JavaScript y algoritmos con ejecución de código y notas privadas.",
 };
 
 export default function RootLayout({
@@ -37,15 +41,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" data-scroll-behavior="smooth">
-      <body
-        className={`${outfit.variable} ${jetbrains.variable} bg-zinc-950 text-zinc-100 antialiased`}
-      >
+    <html
+      lang="es"
+      data-scroll-behavior="smooth"
+      className={`${bricolage.variable} ${sourceSans.variable} ${jetbrains.variable}`}
+    >
+      <body className="bg-(--bg) text-(--text) antialiased">
+        <AuthProvider>
           <SearchProvider>
+            <a href="#main-content" className="skip-link">
+              Saltar al contenido principal
+            </a>
             <ConditionalNavbar />
             <HistoryTracker />
-            <main className="flex-1">{children}</main>
+            <main id="main-content" className="flex-1">
+              {children}
+            </main>
           </SearchProvider>
+        </AuthProvider>
       </body>
     </html>
   );

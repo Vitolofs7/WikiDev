@@ -1,16 +1,3 @@
-/**
-* Implementa una barra de progreso de lectura que representa el porcentaje del
-* contenido de un documento recorrido por el usuario. Calcula el progreso a partir
-* de las dimensiones y la posición del elemento asociado a `articleRef`, actualizando
-* su valor durante el desplazamiento y los cambios de tamaño de la ventana. Optimiza
-* las actualizaciones mediante `requestAnimationFrame` para reducir cálculos repetidos
-* y elimina los eventos registrados al desmontarse el componente. La barra permanece
-* fija en la parte superior de la pantalla y utiliza un degradado visual para indicar
-* el avance de la lectura.
-
-*/
-
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -35,17 +22,13 @@ export function ReadingProgress({
 
       const rect = el.getBoundingClientRect();
       const total = rect.height - window.innerHeight;
-      const scrolled = Math.min(
-        Math.max(-rect.top, 0),
-        Math.max(total, 0),
-      );
+      const scrolled = Math.min(Math.max(-rect.top, 0), Math.max(total, 0));
 
-      setProgress(total > 0 ? (scrolled / total) * 100 : 100);
+      setProgress(total > 0 ? scrolled / total : 1);
     }
 
     function onScroll() {
       if (ticking) return;
-
       ticking = true;
       requestAnimationFrame(() => {
         updateProgress();
@@ -66,15 +49,12 @@ export function ReadingProgress({
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 h-[3px] z-50"
-      style={{ background: "rgba(255,255,255,0.05)" }}
+      aria-hidden="true"
+      className="pointer-events-none fixed left-0 right-0 top-0 z-50 h-[2px] bg-white/[0.04]"
     >
       <div
-        className="h-full transition-[width] duration-150 ease-out"
-        style={{
-          width: `${progress}%`,
-          background: "linear-gradient(90deg, #7c6dfa, #06d6a0)",
-        }}
+        className="h-full w-full origin-left bg-(--accent) transition-transform duration-150 ease-out"
+        style={{ transform: `scaleX(${progress})` }}
       />
     </div>
   );

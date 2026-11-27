@@ -26,21 +26,23 @@ const lessons = (unit: string): NavSubItem[] =>
     slug: doc.slug.split("/").pop()!,
   }));
 
-export const navConfig = {
-  categories: topicsMeta.map((topic) => ({
+export const navConfig: { categories: NavCategory[] } = {
+  categories: topicsMeta.map((topic): NavCategory => ({
     title: topic.title,
     slug: topic.slug,
     emoji: topic.emoji,
     description: topic.description,
-    items: topic.chapters.map((chapter) => {
-      const chapterKey = `${topic.slug}/${chapter.slug}`;
-      const chapterDocs = docsByUnit[chapterKey] ?? [];
+    items:
+      topic.chapters.length > 0
+        ? topic.chapters.map((chapter): NavItem => {
+            const chapterKey = `${topic.slug}/${chapter.slug}`;
 
-      return {
-        title: chapterDocs[0]?.unitTitle ?? chapter.slug,
-        slug: chapter.slug,
-        subItems: lessons(chapterKey),
-      };
-    }),
+            return {
+              title: chapter.title,
+              slug: chapter.slug,
+              subItems: lessons(chapterKey),
+            };
+          })
+        : lessons(topic.slug),
   })),
-} satisfies { categories: NavCategory[] };
+};

@@ -1,27 +1,26 @@
-/**
-* Define la página principal de WikiDev, organizando los componentes visuales que
-* conforman la portada de la aplicación. Integra el fondo decorativo, la sección
-* principal de presentación, el resumen de funcionalidades y el pie de página,
-* estableciendo la estructura y distribución general del contenido mediante
-* contenedores y estilos adaptados al diseño de la interfaz.
-
-*/
-
-
 import HomeBackground from "@/home/components/HomeBackground";
 import HomeHero from "@/home/components/HomeHero";
+import HomeTopics from "@/home/components/HomeTopics";
 import HomeCapabilities from "@/home/components/HomeCapabilities";
+import HomeCta from "@/home/components/HomeCta";
 import HomeFooter from "@/home/components/HomeFooter";
+import { getTopicSummaries } from "@/documentation/utils/topics";
+import { docsMetadata } from "@/generated/docs.generated";
 
 export default function HomePage() {
+  const topics = getTopicSummaries();
+  const docCount = docsMetadata.length;
+
   return (
-    <div className="relative overflow-hidden bg-(--bg)">
+    <div className="relative bg-(--bg)">
       <HomeBackground />
 
-      <main className="relative z-10 mx-auto w-full max-w-360 px-8 pb-24 pt-38">
-        <HomeHero />
+      <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-24 pt-28 sm:px-8 sm:pt-32">
+        <HomeHero docCount={docCount} topicCount={topics.length} />
+        <HomeTopics topics={topics} />
         <HomeCapabilities />
-      </main>
+        <HomeCta />
+      </div>
 
       <div className="relative z-10">
         <HomeFooter />

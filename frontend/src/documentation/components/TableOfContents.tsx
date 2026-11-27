@@ -1,16 +1,3 @@
-/**
-* Genera un índice de contenidos interactivo a partir de los encabezados H1, H2 y H3
-* del documento MDX renderizado. Recopila sus títulos, niveles e identificadores,
-* asignando identificadores automáticamente cuando no existen. Detecta el apartado
-* activo durante el desplazamiento de la página y actualiza su resaltado visual,
-* optimizando los cálculos mediante `requestAnimationFrame` y búsqueda binaria.
-* Permite navegar hasta cada sección mediante desplazamiento suave y adapta la
-* presentación del índice según la jerarquía de los encabezados. También gestiona
-* la sincronización con el documento actual y limpia los eventos y las animaciones
-* pendientes al desmontarse el componente.
-
-*/
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -33,16 +20,13 @@ export function TableOfContents({ docKey }: TableOfContentsProps) {
     const article = document.querySelector("article.prose-docs");
 
     if (!article) {
-      // Este efecto sincroniza el índice con el DOM renderizado por el MDX,
-      // algo que solo se puede leer después del pintado — no hay alternativa
-      // sin efecto (ni "key", ni estado inicial perezoso) para este caso.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setHeadings([]);
       setActiveId("");
       return;
     }
 
-    const elements = Array.from(article.querySelectorAll("h1, h2, h3"));
+    const elements = Array.from(article.querySelectorAll("h2, h3"));
     const items: Heading[] = [];
 
     elements.forEach((el, index) => {
@@ -62,7 +46,7 @@ export function TableOfContents({ docKey }: TableOfContentsProps) {
       items.push({
         id: el.id,
         text,
-        level: parseInt(el.tagName[1]),
+        level: parseInt(el.tagName[1], 10),
       });
     });
 
@@ -73,8 +57,7 @@ export function TableOfContents({ docKey }: TableOfContentsProps) {
     let animationFrameId: number | null = null;
 
     const updateActiveHeading = () => {
-      const scrollY = window.scrollY + 60;
-
+      const scrollY = window.scrollY + 96;
       const isAtBottom =
         window.innerHeight + window.scrollY >= document.body.scrollHeight - 50;
 
@@ -90,7 +73,6 @@ export function TableOfContents({ docKey }: TableOfContentsProps) {
         while (low <= high) {
           const mid = Math.floor((low + high) / 2);
           const el = elements[mid];
-
           const absoluteTop =
             (el as HTMLElement).getBoundingClientRect().top + window.scrollY;
 
@@ -110,9 +92,7 @@ export function TableOfContents({ docKey }: TableOfContentsProps) {
 
     const handleScroll = () => {
       if (ticking) return;
-
       ticking = true;
-
       animationFrameId = requestAnimationFrame(() => {
         updateActiveHeading();
         ticking = false;
@@ -121,12 +101,10 @@ export function TableOfContents({ docKey }: TableOfContentsProps) {
     };
 
     updateActiveHeading();
-
     window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-
       if (animationFrameId !== null) {
         cancelAnimationFrame(animationFrameId);
       }
@@ -135,51 +113,61 @@ export function TableOfContents({ docKey }: TableOfContentsProps) {
 
   if (headings.length === 0) return null;
 
-  function getPadding(level: number): string {
-    if (level === 2) return "1rem";
-    if (level === 3) return "1.75rem";
-    return "0.5rem";
-  }
-
-  function getFontSize(level: number): string {
-    if (level === 1) return "1.15rem";
-    if (level === 2) return "1.1rem";
-    return "1.05rem";
-  }
+  const activeIndex = Math.max(
+    0,
+    headings.findIndex((h) => h.id === activeId),
+  );
+  const progressRatio =
+    headings.length > 1 ? (activeIndex + 1) / headings.length : 1;
 
   return (
-    <aside className="w-90 shrink-0 sticky top-10 h-fit hidden xl:block">
-      <ul className="space-y-1">
+    <aside
+      aria-label="Índice de la página"
+      className="sticky top-20 hidden h-fit max-h-[calc(100vh-6rem)] w-72 shrink-0 overflow-y-auto rounded-2xl border border-(--border) bg-(--bg-2)/80 p-5 lg:block xl:w-80"
+    >
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <p className="font-display text-[15px] font-semibold text-(--text)">
+          En esta página
+        </p>
+        <span className="text-xs font-medium tabular-nums text-(--text-muted)">
+          {activeIndex + 1} / {headings.length}
+        </span>
+      </div>
+
+      <div
+        aria-hidden="true"
+        className="mb-4 h-1 w-full overflow-hidden rounded-full bg-(--bg-3)"
+      >
+        <div
+          className="h-full w-full origin-left rounded-full bg-(--accent) transition-transform duration-200 ease-out"
+          style={{ transform: `scaleX(${progressRatio})` }}
+        />
+      </div>
+
+      <ul className="space-y-1 border-l border-(--border)">
         {headings.map((heading) => {
           const isActive = activeId === heading.id;
-
-          const linkStyle: React.CSSProperties = {
-            fontSize: getFontSize(heading.level),
-            paddingTop: "0.35rem",
-            paddingBottom: "0.35rem",
-            paddingLeft: getPadding(heading.level),
-            paddingRight: "0.5rem",
-            color: isActive ? "#a89cf7" : "#71718b",
-            fontWeight: 400,
-            display: "block",
-            lineHeight: "1.4",
-            transition: "color 0.2s",
-            borderRadius: "0.375rem",
-            background: isActive ? "rgba(124,109,250,0.08)" : "transparent",
-          };
 
           return (
             <li key={heading.id}>
               <a
-                href={"#" + heading.id}
-                style={linkStyle}
+                href={`#${heading.id}`}
+                aria-current={isActive ? "location" : undefined}
                 onClick={(e) => {
                   e.preventDefault();
-
                   document
                     .getElementById(heading.id)
                     ?.scrollIntoView({ behavior: "smooth" });
                 }}
+                className={`-ml-px block rounded-r-lg border-l-2 pr-3 leading-snug transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light) ${
+                  heading.level === 3
+                    ? "py-1.5 pl-6 text-sm"
+                    : "py-2 pl-3.5 text-[15px]"
+                } ${
+                  isActive
+                    ? "border-(--accent-light) bg-(--accent-soft) font-medium text-(--accent-light)"
+                    : "border-transparent text-(--text-muted) hover:border-(--border-hover) hover:bg-(--bg-3)/60 hover:text-(--text)"
+                }`}
               >
                 {heading.text}
               </a>

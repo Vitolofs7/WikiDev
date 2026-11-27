@@ -1,45 +1,48 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
-from sqlalchemy.orm import DeclarativeBase
 from datetime import datetime, timezone
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy.orm import relationship
+from shared.db_base import Base
 
 
-# Clase base para todos los modelos ORM.
-class Base(DeclarativeBase):
-    pass
-
-
-# Modelo principal de notas.
 class Note(Base):
     __tablename__ = "notes"
 
-    # Identificador único de la nota.
     id = Column(Integer, primary_key=True, index=True)
-    # Título de la nota.
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=True,  # Permite conservar filas legadas de SQLite sin romper datos previos; las nuevas siempre llevan propietario.
+        index=True,
+    )
     title = Column(String(200), nullable=False)
-    # Contenido principal de la nota.
-    content = Column(Text, default="")
-    # Fecha de creación de la nota.
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    # Fecha de última actualización.
-    # Se actualiza automáticamente cuando se modifica el registro.
+    content = Column(Text, default="", nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at = Column(
-        DateTime,
+        DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
 
+    images = relationship(
+        "NoteImage",
+        back_populates="note",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
 
-# Modelo para imágenes asociadas a una nota.
+
 class NoteImage(Base):
     __tablename__ = "note_images"
 
-    # Identificador único de la imagen.
     id = Column(Integer, primary_key=True, index=True)
-    # Referencia al identificador de la nota.
-    note_id = Column(Integer, nullable=False, index=True)
-    # Nombre interno del archivo almacenado en disco.
-    filename = Column(String(255), nullable=False)
-    # Nombre original del archivo subido por el usuario.
+    note_id = Column(
+        Integer,
+        ForeignKey("notes.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    filename = Column(String(255), nullable=False, unique=True)
     original_name = Column(String(255), nullable=False)
-    # Fecha de creación del registro.
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    note = relationship("Note", back_populates="images")

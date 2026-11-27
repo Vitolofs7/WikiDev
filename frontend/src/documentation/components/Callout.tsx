@@ -1,29 +1,6 @@
-/**
-* Define el sistema de cajas informativas de WikiDev para enriquecer el contenido
-* de documentación con avisos de carácter pedagógico. Implementa cuatro categorías
-* —contexto profesional, recordatorio, error común y consejo práctico—, cada una con
-* su etiqueta, icono y estilos visuales específicos. El componente `Callout` permite
-* personalizar el título y mostrar contenido arbitrario mediante `children`, mientras
-* que los componentes auxiliares `ContextoProfesional`, `Recuerda`, `ErrorComun` y
-* `ProTip` facilitan su utilización en archivos MDX sin necesidad de indicar el tipo
-* manualmente en cada caso.
-
-*/
-
-
 import type { ReactNode } from "react";
 import { Briefcase, History, TriangleAlert, Lightbulb } from "lucide-react";
-import { cn } from "@/shared/utils/cn";
 
-/**
- * Tipos de caja pedagógica usados en las notas de documentación.
- * Cada uno tiene un propósito fijo — no son estilos libres, son categorías de contenido:
- *
- * - contexto-profesional: conecta el concepto con situaciones reales del mercado laboral.
- * - recuerda:              referencia a conceptos de unidades anteriores (apuntes acumulativos).
- * - error-comun:           trampas típicas que cometen los principiantes.
- * - pro-tip:               consejos y buenas prácticas que usan los profesionales.
- */
 export type CalloutType =
   | "contexto-profesional"
   | "recuerda"
@@ -32,51 +9,45 @@ export type CalloutType =
 
 interface CalloutProps {
   type: CalloutType;
-  /** Sobrescribe la etiqueta por defecto (p. ej. "Recuerda — Unidad 1.1"). */
   title?: string;
   children: ReactNode;
 }
 
 const CALLOUT_CONFIG: Record<
   CalloutType,
-  { label: string; icon: typeof Briefcase; badge: string; accent: string }
+  {
+    label: string;
+    icon: typeof Briefcase;
+    boxClass: string;
+    titleClass: string;
+  }
 > = {
   "contexto-profesional": {
-    label: "Contexto Profesional",
+    label: "Contexto profesional",
     icon: Briefcase,
-    badge: "bg-blue-300/10 border-blue-300/20 text-blue-300",
-    accent: "#5eb1ff",
+    boxClass: "border-[#78b7e8]/25 bg-[#78b7e8]/[0.06]",
+    titleClass: "text-[#8dc6f2]",
   },
   recuerda: {
     label: "Recuerda",
     icon: History,
-    badge: "bg-violet-300/10 border-violet-300/20 text-violet-300",
-    accent: "#7c6dfa",
+    boxClass: "border-(--border-hover) bg-(--bg-2)",
+    titleClass: "text-(--text)",
   },
   "error-comun": {
     label: "Error común",
     icon: TriangleAlert,
-    badge: "bg-red-300/10 border-red-300/20 text-red-300",
-    accent: "#f16565",
+    boxClass: "border-[#ea7878]/30 bg-[#ea7878]/[0.07]",
+    titleClass: "text-[#f29595]",
   },
   "pro-tip": {
-    label: "Pro-tip",
+    label: "Consejo práctico",
     icon: Lightbulb,
-    badge: "bg-emerald-300/10 border-emerald-300/20 text-emerald-300",
-    accent: "#06d6a0",
+    boxClass: "border-(--accent)/30 bg-(--accent)/[0.07]",
+    titleClass: "text-(--accent-light)",
   },
 };
 
-/**
- * Caja de color con propósito pedagógico para usar dentro de contenido MDX.
- * Comparte paleta y tipografía con CodeRunner para que ambos se sientan
- * parte del mismo sistema de notas.
- *
- * Uso en un .mdx (registrado globalmente, sin import, igual que CodeRunner):
- *   <Callout type="pro-tip">
- *     Cuando algo falla, comprueba `sys.version_info` antes que nada.
- *   </Callout>
- */
 export function Callout({ type, title, children }: CalloutProps) {
   const config = CALLOUT_CONFIG[type];
   const Icon = config.icon;
@@ -84,38 +55,21 @@ export function Callout({ type, title, children }: CalloutProps) {
   return (
     <aside
       role="note"
-      className="rounded-2xl overflow-hidden my-6"
-      style={{
-        border: "1px solid rgba(255,255,255,0.06)",
-        borderLeft: `3px solid ${config.accent}`,
-        boxShadow: "0 12px 30px rgba(0,0,0,0.25)",
-      }}
+      className={`my-6 rounded-xl border px-5 py-4 ${config.boxClass}`}
     >
-      <div
-        className="flex items-center gap-2.5 px-5 pt-4 pb-2"
-        style={{ background: "#0e0e1a" }}
-      >
-        <span
-          className={cn(
-            "flex items-center gap-1.5 text-sm font-medium px-2.5 py-0.5 rounded-md border",
-            config.badge,
-          )}
-        >
-          <Icon className="w-3.5 h-3.5" />
+      <div className="mb-1.5 flex items-center gap-2">
+        <Icon className={`h-4 w-4 shrink-0 ${config.titleClass}`} aria-hidden="true" />
+        <span className={`text-sm font-semibold ${config.titleClass}`}>
           {title ?? config.label}
         </span>
       </div>
-      <div
-        className="px-5 pb-4 pt-1 text-[15px] leading-relaxed text-zinc-300"
-        style={{ background: "#0e0e1a"}}
-      >
+      <div className="text-[15px] leading-relaxed text-(--text-secondary)">
         {children}
       </div>
     </aside>
   );
 }
 
-/** Atajos opcionales: <ProTip>...</ProTip> en vez de <Callout type="pro-tip">...</Callout> */
 export const ContextoProfesional = (props: Omit<CalloutProps, "type">) => (
   <Callout type="contexto-profesional" {...props} />
 );

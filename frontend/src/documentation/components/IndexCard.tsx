@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 interface IndexCardProps {
   href: string;
@@ -7,43 +8,32 @@ interface IndexCardProps {
   meta?: string;
 }
 
-export function IndexCard({
-  href,
-  index,
-  title,
-  meta,
-}: IndexCardProps) {
+export function IndexCard({ href, index, title, meta }: IndexCardProps) {
   return (
     <Link
       href={href}
-      className="group flex items-center gap-4 rounded-2xl border border-white/5 p-5 transition-all hover:border-violet-500/30"
-      style={{ background: "rgba(255,255,255,0.02)" }}
+      className="group flex items-center gap-4 rounded-xl border border-(--border) bg-(--bg-2) px-5 py-4 transition-colors hover:border-(--border-hover) hover:bg-(--bg-3) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)"
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-mono text-sm font-bold">
-        {String(index + 1).padStart(2, "0")}
-      </div>
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-(--bg) text-xs font-semibold tabular-nums text-(--text-muted) transition-colors group-hover:bg-(--accent-soft) group-hover:text-(--accent-light)">
+        {index + 1}
+      </span>
 
-      <div className="flex-1">
-        <p className="text-base leading-snug text-zinc-300 transition-colors group-hover:text-white">
+      <div className="min-w-0 flex-1">
+        <p className="text-[15px] font-medium leading-snug text-(--text) transition-colors">
           {title}
         </p>
 
         {meta && (
-          <p className="mt-1 text-xs text-zinc-600">
+          <p className="mt-0.5 text-xs tabular-nums text-(--text-muted)">
             {meta}
           </p>
         )}
       </div>
 
-      <div
-        className="flex h-7 w-7 shrink-0 -translate-x-1 items-center justify-center rounded-lg text-sm opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100"
-        style={{
-          background: "rgba(124,109,250,0.15)",
-          color: "#a89cf7",
-        }}
-      >
-        →
-      </div>
+      <ArrowRight
+        aria-hidden="true"
+        className="h-4 w-4 shrink-0 text-(--text-muted) transition-transform group-hover:translate-x-0.5 group-hover:text-(--accent-light)"
+      />
     </Link>
   );
 }

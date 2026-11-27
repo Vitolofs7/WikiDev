@@ -1,51 +1,56 @@
 # WikiDev — Code Execution
 
-Este documento describe cómo funciona la **ejecución de código** en WikiDev, incluyendo **Python y JavaScript**, limitaciones de seguridad y ejemplos de uso.
+Este documento describe cómo funciona la **ejecución de código** en WikiDev para **Python y JavaScript**, sus modos de aislamiento y las medidas de seguridad implementadas.
 
 ---
 
 ## 1. Overview
 
-WikiDev permite a los usuarios ejecutar fragmentos de código directamente desde los artículos MDX o desde notas, enviándolos al **backend** para su procesamiento seguro.
+WikiDev permite a los usuarios autenticados ejecutar fragmentos de código directamente desde los artículos MDX a través del backend.
 
-- **Lenguajes soportados:** Python 3.10+, JavaScript (Node.js 18+)  
-- **Modo de ejecución:** local, mediante subprocess  
-- **Entorno:** controlado para evitar riesgos de seguridad  
+- **Lenguajes soportados:** Python 3.10+, JavaScript (Node.js 20+)
+- **Modos de ejecución (`CODE_EXECUTION_MODE`):**
+  - `disabled` *(por defecto en `ENVIRONMENT=production`)*: deshabilita la ejecución devolviendo HTTP 503.
+  - `docker` *(recomendado para red/producción)*: ejecuta cada petición en un contenedor efímero aislado (`--network=none`, `--read-only`, `--cap-drop=ALL`, `--security-opt=no-new-privileges:true`, `--pids-limit=32`, `--memory=128m`, `--cpus=0.5`, usuario no privilegiado `65534:65534`).
+  - `local_unsafe` *(solo para desarrollo local)*: ejecuta un subproceso local en un directorio temporal aislado con variables de entorno mínimas (sin heredar secretos) y Python en modo `-I`. **No constituye un sandbox del sistema operativo y nunca debe exponerse a usuarios no confiables.**
 
 ---
 
 ## 2. Execution Flow
 
-1. **Frontend** envía una petición HTTP al backend (`POST /code-execution`) con el código a ejecutar y el lenguaje seleccionado.  
-2. **Backend** valida el input y ejecuta el código en un **subprocess seguro**.  
-3. **Backend** devuelve la salida estándar, errores y metadatos al frontend.  
-4. **Frontend** muestra los resultados en la interfaz de usuario.
+1. El **Frontend** envía `POST /api/execute` con cookie de sesión `HttpOnly` y cabecera `X-CSRF-Token`.
+2. El **Backend** verifica autenticación, protección CSRF, rate limiting (20 peticiones/minuto) y validación de esquema (`code <= 10 KB`, `stdin <= 10 KB`).
+3. El servicio ejecuta el código de forma no bloqueante con límite de concurrencia y timeout de 5 segundos.
+4. El **Backend** devuelve `stdout` (máx. 50 KB), `stderr` (máx. 10 KB) y `exit_code`.
 
 ---
 
 ## 3. Security Measures
 
-- **Timeout:** 5 segundos por ejecución  
-- **Rate limit:** máximo 20 ejecuciones por minuto por IP  
-- **Sandboxing:** ejecución local, sin acceso a archivos del sistema ni red  
-- **Tamaño de entrada:** limitado para evitar sobrecarga del backend  
+- **Autenticación y CSRF obligatorios:** solo usuarios autenticados con sesión válida y token CSRF pueden invocar `POST /api/execute`.
+- **Secure by Default en producción:** `CODE_EXECUTION_MODE` toma el valor `disabled` si `ENVIRONMENT=production` salvo que se configure explícitamente `docker`.
+- **Timeout y concurrencia:** límite de 5 segundos por ejecución y semáforo de ejecuciones simultáneas (`MAX_CONCURRENT_EXECUTIONS`).
+- **Rate limit:** máximo 20 ejecuciones por minuto por IP.
+- **Límites de entrada y salida:** código ≤ 10 KB, `stdin` ≤ 10 KB, `stdout` ≤ 50 KB, `stderr` ≤ 10 KB.
+- **Entorno mínimo:** en modo local no se heredan secretos ni credenciales del proceso backend.
 
-> ⚠️ Nunca exponer la ejecución de código directamente a internet sin medidas de seguridad adicionales.
+> ⚠️ Nunca utilices `CODE_EXECUTION_MODE=local_unsafe` en un servidor expuesto a red o multiusuario. Utiliza `docker` (o un runner aislado dedicado) o mantén `disabled`.
 
 ---
 
 ## 4. API Endpoint
 
-**POST `/code-execution`**
+**POST `/api/execute`** *(requiere sesión autenticada y cabecera `X-CSRF-Token`)*
 
 ### Request Body
 
 ```json
 {
-  "language": "python", // "python" o "javascript"
-  "code": "print('Hola Mundo')"
+  "language": "python",
+  "code": "print('Hola Mundo')",
+  "stdin": ""
 }
-````
+```
 
 ### Response Body
 
@@ -53,57 +58,6 @@ WikiDev permite a los usuarios ejecutar fragmentos de código directamente desde
 {
   "stdout": "Hola Mundo\n",
   "stderr": "",
-  "exit_code": 0,
-  "execution_time_ms": 12
+  "exit_code": 0
 }
 ```
-
-* **stdout:** salida estándar
-* **stderr:** mensajes de error
-* **exit_code:** código de salida del proceso
-* **execution_time_ms:** tiempo de ejecución en milisegundos
-
----
-
-## 5. Frontend Integration
-
-* Los snippets de código en los artículos MDX se envían al backend mediante **hooks o funciones utilitarias** en `code-execution/`
-* Resultados se muestran de forma **dinámica y segura**, con logs de errores visibles para el usuario
-
-### Ejemplo de uso en Frontend (TypeScript)
-
-```ts
-import { executeCode } from '@/src/code-execution/api';
-
-const result = await executeCode({
-  language: 'python',
-  code: 'print("Hola Mundo")'
-});
-
-console.log(result.stdout); // "Hola Mundo"
-```
-
----
-
-## 6. Limitations
-
-| Restricción             | Valor                                              |
-| ----------------------- | -------------------------------------------------- |
-| Timeout                 | 5 segundos por ejecución                           |
-| Máx. ejecuciones        | 20/minuto por IP                                   |
-| Tamaño máximo de imagen | 5 MB                                               |
-| Entorno                 | Local, sin acceso a internet ni archivos sensibles |
-| Lenguajes soportados    | Python 3.10+, JavaScript (Node.js 18+)             |
-
----
-
-## 7. Best Practices
-
-* Mantener el código **simple y conciso** para no exceder el timeout
-* Evitar loops infinitos o llamadas bloqueantes
-* Revisar errores devueltos en `stderr` para debugging
-* Usar **pequeños snippets de ejemplo** en MDX o notas
-
----
-
-Este documento complementa `ARCHITECTURE.md` y `DESCRIPTION_AND_SCOPE.md`, y asegura que los desarrolladores y usuarios comprendan **cómo ejecutar código de forma segura y eficiente en WikiDev**.
