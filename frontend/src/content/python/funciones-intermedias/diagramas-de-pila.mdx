@@ -51,17 +51,17 @@ La **pila de llamadas** (*call stack*) funciona como una pila de platos: el últ
 
 <CodeRunner language="python" title="Pila de llamadas en acción" initialCode={`def paso_3():
     print("      [3] Ejecutando paso_3")
-    print("      [3] Fin paso_3 → se elimina su marco")
+    print("      [3] Fin paso_3 -> se elimina su marco")
 
 def paso_2():
     print("    [2] Ejecutando paso_2")
     paso_3()   # se apila el marco de paso_3
-    print("    [2] Vuelve a paso_2 → se elimina su marco")
+    print("    [2] Vuelve a paso_2 -> se elimina su marco")
 
 def paso_1():
     print("  [1] Ejecutando paso_1")
     paso_2()   # se apila el marco de paso_2
-    print("  [1] Vuelve a paso_1 → se elimina su marco")
+    print("  [1] Vuelve a paso_1 -> se elimina su marco")
 
 print("[main] Inicio")
 paso_1()       # se apila el marco de paso_1
@@ -85,7 +85,7 @@ def funcion_c():
     for frame_info in inspect.stack():
         nombre = frame_info.function
         linea = frame_info.lineno
-        print(f"  → {nombre} (línea {linea})")
+        print(f"  -> {nombre} (línea {linea})")
 
 def funcion_b():
     funcion_c()
@@ -114,7 +114,7 @@ def procesar_datos(datos):
 # Con datos válidos
 print(procesar_datos([10, 20, 30]))   # 20.0
 
-# Con lista vacía → error en dividir()
+# Con lista vacía -> error en dividir()
 try:
     procesar_datos([])
 except ZeroDivisionError:

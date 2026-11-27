@@ -1,22 +1,36 @@
-from fastapi import APIRouter, HTTPException
-from .schemas import RunCodeRequest, RunCodeResponse
-from .service import execute_code
-import traceback
+import logging
+from fastapi import APIRouter, Depends, HTTPException
+from auth.dependencies import get_current_user, verify_csrf
+from auth.models import User
+from code_execution.schemas import RunCodeRequest, RunCodeResponse
+from code_execution.service import execute_code
+from shared.logging_utils import log_security_event
+from shared.rate_limit import code_execute_limiter
 
-# Crea un router específico para los endpoints relacionados con ejecución de código.
-# La etiqueta permite agruparlos en la documentación automática de FastAPI.
 router = APIRouter(tags=["code-execution"])
 
 
-# Endpoint POST que recibe código para ejecutar.
-# La respuesta estará validada automáticamente con el esquema RunCodeResponse.
-@router.post("/execute", response_model=RunCodeResponse)
-async def run_code(req: RunCodeRequest):
+@router.post(
+    "/execute",
+    response_model=RunCodeResponse,
+    dependencies=[Depends(code_execute_limiter), Depends(verify_csrf)],
+)
+async def run_code(
+    req: RunCodeRequest,
+    current_user: User = Depends(get_current_user),
+):
     try:
-        # Llama al servicio principal encargado de ejecutar el código.
-        return await execute_code(req)
-    except Exception as e:
-        # Registra el traceback completo en consola para facilitar depuración.
-        print("ERROR:", traceback.format_exc())
-        # Devuelve un error HTTP 500 al cliente.
-        raise HTTPException(status_code=500, detail=str(e))
+        return await execute_code(req, user_id=current_user.id)
+    except HTTPException:
+        raise
+    except Exception:
+        log_security_event(
+            "code_execution_internal_error",
+            level=logging.ERROR,
+            user_id=current_user.id,
+            language=req.language,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail="Error interno al ejecutar el código",
+        )

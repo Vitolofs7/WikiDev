@@ -11,7 +11,7 @@ Hasta ahora los programas han trabajado con valores definidos directamente en el
 nombre = input("¿Cómo te llamas? ")
 ```
 
-<CodeRunner language="python" title="Uso básico de input()" initialCode={`nombre = input("¿Cómo te llamas? ")
+<CodeRunner language="python" title="Uso básico de input()" stdin initialCode={`nombre = input("¿Cómo te llamas? ")
 print(f"Hola, {nombre}!")`} />
 
 El argumento de `input()` es el **prompt**: el texto que se muestra al usuario antes de que introduzca su respuesta. Es opcional, pero siempre recomendable para que el usuario sepa qué se espera.
@@ -24,12 +24,22 @@ El argumento de `input()` es el **prompt**: el texto que se muestra al usuario a
 
 Para trabajar con la entrada como número, es necesario convertirla explícitamente:
 
-<CodeRunner language="python" title="Convertir entrada a número" initialCode={`edad = int(input("¿Cuántos años tienes? "))
-print(f"En diez años tendrás {edad + 10} años.")`} />
+<CodeRunner
+  language="python"
+  title="Convertir entrada a número"
+  stdin
+  initialCode={`edad = int(input("¿Cuántos años tienes? "))
+print(f"En diez años tendrás {edad + 10} años.")`}
+/>
 
-<CodeRunner language="python" title="Convertir entrada a float" initialCode={`precio = float(input("Introduce el precio: "))
+<CodeRunner
+  language="python"
+  title="Convertir entrada a float"
+  stdin
+  initialCode={`precio = float(input("Introduce el precio: "))
 iva = precio * 0.21
-print(f"Precio con IVA: {precio + iva:.2f}€")`} />
+print(f"Precio con IVA: {precio + iva:.2f}€")`}
+/>
 
 Si el usuario introduce un valor que no puede convertirse al tipo esperado, Python lanza un `ValueError`:
 
@@ -44,20 +54,30 @@ except ValueError as e:
 
 Antes de usar un valor introducido por el usuario, conviene comprobar que cumple los requisitos esperados. Los métodos de cadenas vistos en 2.4 son útiles para esta tarea:
 
-<CodeRunner language="python" title="Validar que la entrada no está vacía" initialCode={`nombre = input("Introduce tu nombre: ").strip()
+<CodeRunner
+  language="python"
+  title="Validar que la entrada no está vacía"
+  stdin
+  initialCode={`nombre = input("Introduce tu nombre: ").strip()
 
 if nombre:
     print(f"Hola, {nombre}!")
 else:
-    print("El nombre no puede estar vacío.")`} />
+    print("El nombre no puede estar vacío.")`}
+/>
 
-<CodeRunner language="python" title="Validar que la entrada es numérica" initialCode={`entrada = input("Introduce un número entero: ")
+<CodeRunner
+  language="python"
+  title="Validar que la entrada es numérica"
+  stdin
+  initialCode={`entrada = input("Introduce un número entero: ")
 
 if entrada.isdigit():
     numero = int(entrada)
     print(f"Has introducido: {numero}")
 else:
-    print("La entrada no es un número entero válido.")`} />
+    print("La entrada no es un número entero válido.")`}
+/>
 
 > `isdigit()` devuelve `True` solo si todos los caracteres son dígitos. No acepta negativos ni decimales. Para validar números con signo o decimales, `try/except` es más robusto.
 
@@ -67,13 +87,18 @@ else:
 
 El mecanismo `try/except` permite intentar una operación y gestionar el error si falla, sin detener el programa. Es la forma más robusta de validar entradas numéricas:
 
-<CodeRunner language="python" title="Validación con try/except" initialCode={`entrada = input("Introduce un número: ")
+<CodeRunner
+  language="python"
+  title="Validación con try/except"
+  stdin
+  initialCode={`entrada = input("Introduce un número: ")
 
 try:
     numero = float(entrada)
     print(f"Número válido: {numero}")
 except ValueError:
-    print("La entrada no es un número válido.")`} />
+    print("La entrada no es un número válido.")`}
+/>
 
 Este patrón funciona correctamente con enteros, decimales y negativos, a diferencia de `isdigit()`:
 
@@ -94,7 +119,11 @@ for v in valores:
 
 Una vez convertida la entrada, se puede validar que esté dentro del rango esperado:
 
-<CodeRunner language="python" title="Validar rango numérico" initialCode={`entrada = input("Introduce una nota (0-10): ")
+<CodeRunner
+  language="python"
+  title="Validar rango numérico"
+  stdin
+  initialCode={`entrada = input("Introduce una nota (0-10): ")
 
 try:
     nota = float(entrada)
@@ -103,7 +132,8 @@ try:
     else:
         print("La nota debe estar entre 0 y 10.")
 except ValueError:
-    print("Introduce un número válido.")`} />
+    print("Introduce un número válido.")`}
+/>
 
 ---
 
@@ -111,7 +141,11 @@ except ValueError:
 
 En programas más complejos, es buena práctica separar la lectura de la entrada de su validación. Esto hace el código más legible y fácil de mantener:
 
-<CodeRunner language="python" title="Separar lectura y validación" initialCode={`# Lectura
+<CodeRunner
+  language="python"
+  title="Separar lectura y validación"
+  stdin
+  initialCode={`# Lectura
 entrada = input("Introduce tu edad: ").strip()
 
 # Validación de formato
@@ -126,7 +160,8 @@ if edad is not None:
     if 0 <= edad <= 120:
         print(f"Edad registrada: {edad}")
     else:
-        print("La edad debe estar entre 0 y 120.")`} />
+        print("La edad debe estar entre 0 y 120.")`}
+/>
 
 ---
 
@@ -136,38 +171,57 @@ if edad is not None:
 
 Cuando el usuario no introduce nada, se puede usar un valor por defecto:
 
-<CodeRunner language="python" title="Valor por defecto" initialCode={`entrada = input("Introduce tu nombre (o pulsa Enter para 'Anónimo'): ").strip()
+<CodeRunner
+  language="python"
+  title="Valor por defecto"
+  stdin
+  initialCode={`entrada = input("Introduce tu nombre (o pulsa Enter para 'Anónimo'): ").strip()
 nombre = entrada if entrada else "Anónimo"
-print(f"Hola, {nombre}!")`} />
+print(f"Hola, {nombre}!")`}
+/>
 
 ### Normalizar la entrada
 
 Es habitual eliminar espacios y convertir a minúsculas antes de comparar:
 
-<CodeRunner language="python" title="Normalizar entrada" initialCode={`respuesta = input("¿Confirmas? (sí/no): ").strip().lower()
+<CodeRunner
+  language="python"
+  title="Normalizar entrada"
+  stdin
+  initialCode={`respuesta = input("¿Confirmas? (sí/no): ").strip().lower()
 
 if respuesta in ("sí", "si", "s"):
     print("Confirmado.")
 elif respuesta in ("no", "n"):
     print("Cancelado.")
 else:
-    print("Respuesta no reconocida.")`} />
+    print("Respuesta no reconocida.")`}
+/>
 
 ### Solicitar varios datos
 
-<CodeRunner language="python" title="Varios datos de entrada" initialCode={`nombre   = input("Nombre: ").strip()
+<CodeRunner
+  language="python"
+  title="Varios datos de entrada"
+  stdin
+  initialCode={`nombre   = input("Nombre: ").strip()
 apellido = input("Apellidos: ").strip()
 ciudad   = input("Ciudad: ").strip()
 
-print(f"\nResumen:")
-print(f"  Nombre:  {nombre} {apellido}")
-print(f"  Ciudad:  {ciudad}")`} />
+print("Resumen:")
+print("  Nombre: " + nombre + " " + apellido)
+print("  Ciudad: " + ciudad)`}
+/>
 
 ---
 
 ## Errores comunes
 
-<CodeRunner language="python" title="Operar con la entrada sin convertir" initialCode={`entrada = input("Introduce un número: ")
+<CodeRunner
+  language="python"
+  title="Operar con la entrada sin convertir"
+  stdin
+  initialCode={`entrada = input("Introduce un número: ")
 
 try:
     print(entrada + 10)   # TypeError: str + int
@@ -176,9 +230,14 @@ except TypeError as e:
 
 # Correcto: convertir antes de operar
 numero = int(entrada)
-print(numero + 10)`} />
+print(numero + 10)`}
+/>
 
-<CodeRunner language="python" title="No gestionar la entrada inválida" initialCode={`# Sin validación: el programa se detiene si el usuario introduce texto
+<CodeRunner
+  language="python"
+  title="No gestionar la entrada inválida"
+  stdin
+  initialCode={`# Sin validación: el programa se detiene si el usuario introduce texto
 # numero = int(input("Introduce un número: "))  # ValueError si no es número
 
 # Con validación: el programa gestiona el error
@@ -187,9 +246,14 @@ try:
     numero = int(entrada)
     print(f"El doble es: {numero * 2}")
 except ValueError:
-    print("Eso no es un número entero válido.")`} />
+    print("Eso no es un número entero válido.")`}
+/>
 
-<CodeRunner language="python" title="Comparar sin normalizar" initialCode={`respuesta = input("¿Continuar? (s/n): ")
+<CodeRunner
+  language="python"
+  title="Comparar sin normalizar"
+  stdin
+  initialCode={`respuesta = input("¿Continuar? (s/n): ")
 
 # Sin normalizar: falla con espacios o mayúsculas
 if respuesta == "s":
@@ -197,7 +261,8 @@ if respuesta == "s":
 
 # Con normalización: más robusto
 if respuesta.strip().lower() == "s":
-    print("Continúa")`} />
+    print("Continúa")`}
+/>
 
 ---
 

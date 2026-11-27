@@ -1,64 +1,85 @@
-'use client'
-import { useState, useEffect, useCallback } from 'react'
-import { notesApi, Note } from '@/notes/services/notesApi.service'
+"use client";
+import { useState, useEffect, useCallback } from "react";
+import { notesApi, Note } from "@/notes/services/notes.service";
 
-export function useNotes() {
-  const [notes, setNotes] = useState<Note[]>([])
-  const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
+export function useNotes(enabled = true) {
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [loading, setLoading] = useState(enabled);
+  const [search, setSearch] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const fetchNotes = useCallback(async () => {
-    setLoading(true)
-    try {
-      const data = await notesApi.getAll(search)
-      setNotes(data)
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setLoading(false)
+    if (!enabled) {
+      setNotes([]);
+      setLoading(false);
+      return;
     }
-  }, [search])
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await notesApi.getAll(search);
+      setNotes(data);
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : "No se pudieron cargar las notas",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [search, enabled]);
 
   useEffect(() => {
-    const timer = setTimeout(fetchNotes, 300)
-    return () => clearTimeout(timer)
-  }, [fetchNotes])
+    if (!enabled) return;
+    const timer = setTimeout(fetchNotes, 300);
+    return () => clearTimeout(timer);
+  }, [fetchNotes, enabled]);
 
   const createNote = async (title: string) => {
-    const note = await notesApi.create(title)
-    setNotes(prev => [note, ...prev])
-    return note
-  }
+    setError(null);
+    const note = await notesApi.create(title);
+    setNotes((prev) => [note, ...prev]);
+    return note;
+  };
 
-  const updateNote = async (id: number, data: { title?: string; content?: string }) => {
-    const updated = await notesApi.update(id, data)
-    setNotes(prev => prev.map(n => n.id === id ? updated : n))
-    return updated
-  }
+  const updateNote = async (
+    id: number,
+    data: { title?: string; content?: string },
+  ) => {
+    setError(null);
+    const updated = await notesApi.update(id, data);
+    setNotes((prev) => prev.map((n) => (n.id === id ? updated : n)));
+    return updated;
+  };
 
   const deleteNote = async (id: number) => {
-    await notesApi.delete(id)
-    setNotes(prev => prev.filter(n => n.id !== id))
-  }
+    setError(null);
+    await notesApi.delete(id);
+    setNotes((prev) => prev.filter((n) => n.id !== id));
+  };
 
   const uploadImage = async (noteId: number, file: File) => {
-    const updated = await notesApi.uploadImage(noteId, file)
-    setNotes(prev => prev.map(n => n.id === noteId ? updated : n))
-    return updated
-  }
+    setError(null);
+    const updated = await notesApi.uploadImage(noteId, file);
+    setNotes((prev) => prev.map((n) => (n.id === noteId ? updated : n)));
+    return updated;
+  };
 
   const deleteImage = async (noteId: number, imageId: number) => {
-    await notesApi.deleteImage(noteId, imageId)
-    setNotes(prev => prev.map(n =>
-      n.id === noteId
-        ? { ...n, images: n.images.filter(img => img.id !== imageId) }
-        : n
-    ))
-  }
+    setError(null);
+    await notesApi.deleteImage(noteId, imageId);
+    setNotes((prev) =>
+      prev.map((n) =>
+        n.id === noteId
+          ? { ...n, images: n.images.filter((img) => img.id !== imageId) }
+          : n,
+      ),
+    );
+  };
 
   return {
-    notes,
-    loading,
+    notes: enabled ? notes : [],
+    loading: enabled ? loading : false,
+    error: enabled ? error : null,
     search,
     setSearch,
     createNote,
@@ -67,5 +88,5 @@ export function useNotes() {
     uploadImage,
     deleteImage,
     fetchNotes,
-  }
+  };
 }

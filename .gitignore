@@ -30,6 +30,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# generated documentation metadata
+/frontend/src/generated/docs.generated.ts
+
 # ————————————————————————————
 # Python / Backend
 # ————————————————————————————
@@ -79,3 +82,10 @@ htmlcov/
 
 # mypy
 .mypy_cache/
+
+# ————————————————————————————
+# Agent skills de terceros (reproducibles mediante skills-lock.json)
+# ————————————————————————————
+/.agents/skills/*
+!/.agents/skills/crear-articulo-mdx/
+!/.agents/skills/verificar-proyecto/

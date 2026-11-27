@@ -1,0 +1,104 @@
+@reference "../../app/globals.css";
+
+.prose-docs {
+  @apply text-(--text-secondary) leading-relaxed;
+}
+
+.prose-docs h1 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+  @apply text-3xl sm:text-4xl font-semibold text-(--text) mb-6 mt-0 tracking-[-0.03em] leading-[1.12];
+}
+
+.prose-docs h2 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+  scroll-margin-top: 5.5rem;
+  @apply text-xl sm:text-2xl font-semibold text-(--text) mb-4 mt-12 tracking-[-0.02em] pb-2.5 border-b border-(--border);
+}
+
+.prose-docs h3 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+  scroll-margin-top: 5.5rem;
+  @apply text-lg font-semibold text-(--text) mb-3 mt-9 tracking-[-0.015em];
+}
+
+.prose-docs p {
+  @apply max-w-[70ch] leading-7 mb-4 text-(--text-secondary) text-base sm:text-[17px];
+}
+
+.prose-docs ul {
+  @apply max-w-[70ch] list-disc list-inside space-y-2 mb-5 text-(--text-secondary) text-base sm:text-[17px];
+}
+
+.prose-docs ol {
+  @apply max-w-[70ch] list-decimal list-inside space-y-2 mb-5 text-(--text-secondary) text-base sm:text-[17px];
+}
+
+.prose-docs a {
+  @apply text-(--accent-light) hover:text-(--text) underline decoration-(--accent)/45 underline-offset-4 transition-colors;
+}
+
+.prose-docs strong {
+  @apply text-(--text) font-semibold;
+}
+
+.prose-docs code:not(pre code) {
+  font-family: var(--font-mono);
+  @apply text-[0.875em] bg-(--bg-3) text-(--text) px-1.5 py-0.5 rounded-md border border-(--border);
+}
+
+.prose-docs pre:not([data-code-highlight]):not([data-code-output]) {
+  font-family: var(--font-mono);
+  @apply bg-(--bg-code) border border-(--border) rounded-xl p-4 overflow-x-auto mb-6 text-sm leading-6 text-(--text-secondary);
+}
+
+.prose-docs blockquote {
+  @apply rounded-xl border border-(--border) bg-(--bg-2) px-5 py-4 my-6 text-(--text-secondary) text-base;
+}
+
+.prose-docs blockquote p:last-child {
+  @apply mb-0;
+}
+
+/* Tables */
+.prose-docs table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.75rem;
+  font-size: 0.9375rem;
+  font-family: var(--font-sans);
+}
+
+.prose-docs thead tr {
+  border-bottom: 1px solid var(--border-hover);
+}
+
+.prose-docs th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.875rem;
+  font-family: var(--font-sans);
+}
+
+.prose-docs td {
+  padding: 0.75rem 1rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.prose-docs tr:last-child td {
+  border-bottom: none;
+}
+
+.prose-docs tbody tr:hover td {
+  background: rgba(214, 226, 240, 0.03);
+  color: var(--text);
+}
+
+.prose-docs code {
+  font-family: var(--font-mono);
+}

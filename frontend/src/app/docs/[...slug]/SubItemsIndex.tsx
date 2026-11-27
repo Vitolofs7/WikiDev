@@ -1,128 +1,211 @@
 "use client";
-import { useState } from "react";
-import { Search } from "lucide-react";
 
-interface SubItem {
-  title: string;
+import { useState } from "react";
+import Link from "next/link";
+import { ArrowLeft, ArrowRight, Search } from "lucide-react";
+import { docPath } from "@/shared/utils/routes";
+import type { NavSubItem } from "@/navigation/config/nav.config";
+import { IndexCard } from "@/documentation/components/IndexCard";
+import { DocBreadcrumbs } from "@/documentation/components/DocBreadcrumbs";
+
+interface AdjacentChapter {
   slug: string;
+  title: string;
 }
 
 interface Props {
   title: string;
   category: string;
+  categoryTitle: string;
   page: string;
-  subItems: SubItem[];
+  subItems: NavSubItem[];
+  chapterNumber: number;
+  totalChapters: number;
+  prevChapter?: AdjacentChapter | null;
+  nextChapter?: AdjacentChapter | null;
 }
 
-export function SubItemsIndex({ title, category, page, subItems }: Props) {
+export function SubItemsIndex({
+  title,
+  category,
+  categoryTitle,
+  page,
+  subItems,
+  chapterNumber,
+  totalChapters,
+  prevChapter,
+  nextChapter,
+}: Props) {
   const [filter, setFilter] = useState("");
 
   const filtered = subItems.filter((sub) =>
     sub.title.toLowerCase().includes(filter.toLowerCase()),
   );
 
+  const firstLessonHref = subItems[0]
+    ? docPath(category, page, subItems[0].slug)
+    : null;
+  const estimatedMinutes = Math.max(5, subItems.length * 4);
+
   return (
-    <div className="w-full">
-      {/* Header */}
-      <div className="mb-8 pb-8 border-b border-white/5">
-        <h1
-          className="text-6xl font-extrabold text-white mb-4 tracking-tight"
-          style={{ fontFamily: "Outfit, sans-serif" }}
+    <div className="mx-auto w-full max-w-6xl">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
+        <Link
+          href={docPath(category)}
+          className="inline-flex h-9 items-center gap-2 rounded-lg border border-(--border) bg-(--bg-2) px-3 text-xs font-medium text-(--text-secondary) transition-colors hover:border-(--border-hover) hover:bg-(--bg-3) hover:text-(--text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)"
         >
-          {title}
-        </h1>
-        <div className="flex items-center gap-3">
-          <span
-            className="px-3 py-1.5 rounded-full text-sm font-medium"
-            style={{
-              background: "rgba(124,109,250,0.1)",
-              color: "#a89cf7",
-              border: "1px solid rgba(124,109,250,0.2)",
-              fontFamily: "Outfit, sans-serif",
-            }}
-          >
-            {subItems.length} apartados
-          </span>
-        </div>
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+          Volver a {categoryTitle}
+        </Link>
+
+        <DocBreadcrumbs
+          items={[
+            { label: "Documentación", href: docPath() },
+            { label: categoryTitle, href: docPath(category) },
+            { label: title },
+          ]}
+        />
       </div>
 
-      {/* Filter — solo si hay más de 6 */}
-      {subItems.length > 6 && (
-        <div className="relative mb-6">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
-          <input
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            placeholder="Filtrar apartados..."
-            className="w-full bg-white/5 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-base text-zinc-300 outline-none placeholder:text-zinc-600 focus:border-violet-500/30 transition-colors"
-            style={{ fontFamily: "Outfit, sans-serif" }}
-          />
-          {filter && (
-            <span
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-zinc-600"
-              style={{ fontFamily: "Outfit, sans-serif" }}
-            >
-              {filtered.length} resultado{filtered.length !== 1 ? "s" : ""}
-            </span>
-          )}
+      <header className="mb-8 flex flex-col justify-between gap-6 border-b border-(--border) pb-8 lg:flex-row lg:items-end">
+        <div className="max-w-2xl">
+          <h1 className="font-display text-3xl font-semibold tracking-[-0.03em] text-(--text) sm:text-4xl lg:text-[2.75rem]">
+            {title}
+          </h1>
+          <p className="mt-3 text-base leading-7 text-(--text-secondary)">
+            Unidad {chapterNumber} de {totalChapters} en {categoryTitle}. Recorre
+            las lecciones en orden o filtra el concepto que quieras repasar.
+          </p>
+          <p className="mt-3 text-sm tabular-nums text-(--text-muted)">
+            {subItems.length} {subItems.length === 1 ? "lección" : "lecciones"}
+            , lectura estimada de {estimatedMinutes} min.
+          </p>
         </div>
-      )}
 
-      {/* Grid 2 columnas */}
+        {firstLessonHref && (
+          <Link
+            href={firstLessonHref}
+            className="group inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-(--accent) px-4 text-sm font-semibold text-(--accent-fg) transition-colors hover:bg-(--accent-light) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light) sm:w-auto"
+          >
+            Empezar unidad
+            <ArrowRight
+              aria-hidden="true"
+              className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+            />
+          </Link>
+        )}
+      </header>
+
+      <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+        <h2 className="font-display text-lg font-semibold text-(--text)">
+          Lecciones de la unidad
+        </h2>
+
+        {subItems.length > 4 && (
+          <div className="relative w-full sm:max-w-xs">
+            <Search
+              aria-hidden="true"
+              className="absolute left-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-(--text-muted)"
+            />
+            <input
+              value={filter}
+              autoComplete="off"
+              onChange={(e) => setFilter(e.target.value)}
+              aria-label="Filtrar lecciones de esta unidad"
+              placeholder="Filtrar lecciones…"
+              className="w-full rounded-lg border border-(--border) bg-(--bg-2) py-2 pl-9 pr-16 text-sm text-(--text) outline-none transition-colors placeholder:text-(--text-muted) focus:border-(--accent)/60"
+            />
+            {filter && (
+              <span
+                aria-live="polite"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs tabular-nums text-(--text-muted)"
+              >
+                {filtered.length}/{subItems.length}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+
       {filtered.length > 0 ? (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
           {filtered.map((sub) => {
             const originalIndex = subItems.findIndex(
-              (s) => s.slug === sub.slug,
+              (item) => item.slug === sub.slug,
             );
+
             return (
-              <a
+              <IndexCard
                 key={sub.slug}
-                href={`/docs/${category}/${page}/${sub.slug}`}
-                className="flex items-center gap-4 p-5 rounded-2xl border border-white/5 hover:border-violet-500/30 transition-all group"
-                style={{ background: "rgba(255,255,255,0.02)" }}
-              >
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, rgba(124,109,250,0.15), rgba(6,214,160,0.1))",
-                    border: "1px solid rgba(124,109,250,0.2)",
-                    color: "#a89cf7",
-                    fontFamily: "JetBrains Mono, monospace",
-                  }}
-                >
-                  {String(originalIndex + 1).padStart(2, "0")}
-                </div>
-                <p
-                  className="flex-1 text-base text-zinc-300 group-hover:text-white transition-colors leading-snug"
-                  style={{ fontFamily: "Outfit, sans-serif" }}
-                >
-                  {sub.title}
-                </p>
-                <div
-                  className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0 text-sm"
-                  style={{
-                    background: "rgba(124,109,250,0.15)",
-                    color: "#a89cf7",
-                  }}
-                >
-                  →
-                </div>
-              </a>
+                href={docPath(category, page, sub.slug)}
+                index={originalIndex}
+                title={sub.title}
+                meta={`Lección ${originalIndex + 1} de ${subItems.length}`}
+              />
             );
           })}
         </div>
       ) : (
-        <div className="py-10 text-center">
-          <p
-            className="text-zinc-600 text-base"
-            style={{ fontFamily: "Outfit, sans-serif" }}
-          >
-            No se encontraron apartados para{" "}
-            <span className="text-zinc-400">"{filter}"</span>
+        <div
+          className="rounded-xl border border-(--border) bg-(--bg-2) py-12 text-center"
+          aria-live="polite"
+        >
+          <p className="text-sm text-(--text-muted)">
+            No se encontraron lecciones para{" "}
+            <span className="text-(--text)">{`“${filter}”`}</span>
           </p>
         </div>
+      )}
+
+      {(prevChapter || nextChapter) && (
+        <nav
+          aria-label="Navegación entre unidades"
+          className="mt-12 grid grid-cols-1 gap-3.5 border-t border-(--border) pt-8 sm:grid-cols-2"
+        >
+          {prevChapter ? (
+            <Link
+              href={docPath(category, prevChapter.slug)}
+              className="group flex items-center gap-3 rounded-xl border border-(--border) bg-(--bg-2) p-4 transition-colors hover:border-(--border-hover) hover:bg-(--bg-3) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)"
+            >
+              <ArrowLeft
+                aria-hidden="true"
+                className="h-4 w-4 shrink-0 text-(--text-muted) group-hover:text-(--accent-light)"
+              />
+              <span className="flex min-w-0 flex-col">
+                <span className="text-xs text-(--text-muted)">
+                  Unidad anterior
+                </span>
+                <span className="truncate text-sm font-medium text-(--text-secondary) group-hover:text-(--text)">
+                  {prevChapter.title}
+                </span>
+              </span>
+            </Link>
+          ) : (
+            <span />
+          )}
+
+          {nextChapter ? (
+            <Link
+              href={docPath(category, nextChapter.slug)}
+              className="group flex items-center justify-end gap-3 rounded-xl border border-(--border) bg-(--bg-2) p-4 text-right transition-colors hover:border-(--border-hover) hover:bg-(--bg-3) sm:col-start-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)"
+            >
+              <span className="flex min-w-0 flex-col">
+                <span className="text-xs text-(--text-muted)">
+                  Siguiente unidad
+                </span>
+                <span className="truncate text-sm font-medium text-(--text-secondary) group-hover:text-(--text)">
+                  {nextChapter.title}
+                </span>
+              </span>
+              <ArrowRight
+                aria-hidden="true"
+                className="h-4 w-4 shrink-0 text-(--text-muted) group-hover:text-(--accent-light)"
+              />
+            </Link>
+          ) : (
+            <span />
+          )}
+        </nav>
       )}
     </div>
   );

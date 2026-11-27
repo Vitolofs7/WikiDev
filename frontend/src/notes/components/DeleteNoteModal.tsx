@@ -1,69 +1,61 @@
-'use client'
-import { Trash2 } from 'lucide-react'
+"use client";
+
+import { Trash2 } from "lucide-react";
+import { ModalShell } from "@/shared/components/ModalShell";
 
 interface Props {
-  onConfirm: () => void
-  onCancel: () => void
+  onConfirm: () => void;
+  onCancel: () => void;
 }
 
 export function DeleteNoteModal({ onConfirm, onCancel }: Props) {
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
-      onClick={onCancel}
+    <ModalShell
+      open
+      onClose={onCancel}
+      labelledBy="delete-note-modal-title"
+      maxWidthClass="max-w-md"
     >
-      <div
-        className="w-full max-w-md mx-4 rounded-2xl overflow-hidden shadow-2xl"
-        style={{
-          background: '#0e0e1a',
-          border: '1px solid rgba(124,109,250,0.2)',
-        }}
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center gap-4 px-6 py-6 border-b border-white/5">
-          <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center flex-shrink-0">
-            <Trash2 className="w-5 h-5 text-red-400" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              Eliminar nota
-            </h2>
-            <p className="text-sm text-zinc-500 mt-0.5" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              Esta acción no se puede deshacer
-            </p>
-          </div>
+      <div className="flex items-center gap-3.5 border-b border-(--border) px-6 py-5">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-(--error)/25 bg-(--error)/10 text-(--error)">
+          <Trash2 className="h-5 w-5" aria-hidden="true" />
         </div>
-
-        {/* Body */}
-        <div className="px-6 py-5">
-          <p className="text-base text-zinc-400" style={{ fontFamily: 'Outfit, sans-serif' }}>
-            ¿Estás seguro de que quieres eliminar esta nota? Se perderá todo su contenido e imágenes.
+        <div>
+          <h2
+            id="delete-note-modal-title"
+            className="font-display text-lg font-semibold text-(--text)"
+          >
+            Eliminar nota
+          </h2>
+          <p className="mt-0.5 text-xs text-(--text-muted)">
+            Esta acción no se puede deshacer
           </p>
         </div>
-
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-white/5 flex items-center justify-end gap-3">
-          <button
-            onClick={onCancel}
-            className="px-5 py-2.5 rounded-xl text-base text-zinc-400 bg-white/5 hover:bg-white/10 transition-all"
-            style={{ fontFamily: 'Outfit, sans-serif' }}
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={onConfirm}
-            className="px-5 py-2.5 rounded-xl text-base text-white transition-all"
-            style={{
-              background: 'rgba(239,68,68,0.15)',
-              border: '1px solid rgba(239,68,68,0.3)',
-            }}
-          >
-            <span style={{ fontFamily: 'Outfit, sans-serif' }}>Eliminar nota</span>
-          </button>
-        </div>
       </div>
-    </div>
-  )
+
+      <div className="px-6 py-5">
+        <p className="text-sm leading-6 text-(--text-secondary)">
+          ¿Estás seguro de que quieres eliminar esta nota? Se perderá todo su
+          contenido y las imágenes adjuntas.
+        </p>
+      </div>
+
+      <div className="flex items-center justify-end gap-2.5 border-t border-(--border) px-6 py-4">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="inline-flex h-9 items-center rounded-lg border border-(--border) bg-(--bg) px-4 text-sm font-medium text-(--text-secondary) transition-colors hover:border-(--border-hover) hover:text-(--text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          onClick={onConfirm}
+          className="inline-flex h-9 items-center rounded-lg border border-(--error)/40 bg-(--error)/15 px-4 text-sm font-semibold text-(--error) transition-colors hover:bg-(--error)/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--error)"
+        >
+          Eliminar nota
+        </button>
+      </div>
+    </ModalShell>
+  );
 }

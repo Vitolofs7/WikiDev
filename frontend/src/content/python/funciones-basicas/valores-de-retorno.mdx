@@ -142,12 +142,12 @@ print(f"Total: {total}€")   # 181.5€`} />
 
 <CodeRunner language="python" title="Función nula" initialCode={`def mostrar_factura(producto, precio):
     precio_final = round(precio * 1.21, 2)
-    print(f"{'─' * 30}")
+    print(f"{'-' * 30}")
     print(f"  Producto: {producto}")
     print(f"  Precio:   {precio}€")
     print(f"  IVA 21%:  {round(precio * 0.21, 2)}€")
     print(f"  Total:    {precio_final}€")
-    print(f"{'─' * 30}")
+    print(f"{'-' * 30}")
 
 # La función produce un efecto (imprime) pero devuelve None
 resultado = mostrar_factura("Teclado", 45)

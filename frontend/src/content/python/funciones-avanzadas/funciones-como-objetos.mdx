@@ -107,10 +107,10 @@ print(saludo_fr("Ana"))       # Bonjour, Ana!`} />
     """Crea una función que valida si un valor está en rango."""
     def validar(valor):
         if valor < minimo:
-            return f"❌ {valor} es menor que {minimo}"
+            return f"[X] {valor} es menor que {minimo}"
         if valor > maximo:
-            return f"❌ {valor} es mayor que {maximo}"
-        return f"✅ {valor} está en rango [{minimo}, {maximo}]"
+            return f"[X] {valor} es mayor que {maximo}"
+        return f"[OK] {valor} está en rango [{minimo}, {maximo}]"
     return validar
 
 validar_edad = crear_validador(0, 120)

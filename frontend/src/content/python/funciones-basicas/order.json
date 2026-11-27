@@ -1,0 +1,42 @@
+{
+  "que-es-una-funcion": {
+    "order": 1,
+    "title": "¿Qué es una función?"
+  },
+  "sintaxis-y-estructura": {
+    "order": 2,
+    "title": "Sintaxis y estructura"
+  },
+  "llamadas-a-funciones": {
+    "order": 3,
+    "title": "Llamadas a funciones"
+  },
+  "parametros-y-argumentos": {
+    "order": 4,
+    "title": "Parámetros y argumentos"
+  },
+  "valores-de-retorno": {
+    "order": 5,
+    "title": "Valores de retorno"
+  },
+  "funciones-integradas-basicas": {
+    "order": 6,
+    "title": "Funciones integradas básicas"
+  },
+  "variables-y-ambito": {
+    "order": 7,
+    "title": "Variables y ámbito"
+  },
+  "funciones-matematicas": {
+    "order": 8,
+    "title": "Funciones matemáticas"
+  },
+  "documentacion": {
+    "order": 9,
+    "title": "Documentación"
+  },
+  "flujo-de-ejecucion": {
+    "order": 10,
+    "title": "Flujo de ejecución"
+  }
+}

@@ -1,21 +1,17 @@
-from pydantic import BaseModel
 from typing import Literal, Optional
+from pydantic import BaseModel, Field
+
+MAX_CODE_LENGTH = 10_000  # 10 KB
+MAX_STDIN_LENGTH = 10_000  # 10 KB
 
 
-# Modelo de entrada para solicitudes de ejecución de código.
 class RunCodeRequest(BaseModel):
-    # Solo se permiten los lenguajes definidos explícitamente.
     language: Literal["python", "javascript"]
-    # Código fuente que será ejecutado.
-    code: str
+    code: str = Field(..., min_length=1, max_length=MAX_CODE_LENGTH)
+    stdin: Optional[str] = Field(default="", max_length=MAX_STDIN_LENGTH)
 
 
-# Modelo de salida con el resultado de la ejecución.
 class RunCodeResponse(BaseModel):
-    # Salida estándar producida por el programa.
     stdout: str
-    # Salida de error producida por el programa.
     stderr: str
-    # Código de salida del proceso.
-    # 0 normalmente indica éxito.
     exit_code: Optional[int] = None

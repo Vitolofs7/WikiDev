@@ -50,9 +50,13 @@ Las secuencias de escape permiten incluir caracteres especiales dentro de una ca
   </tbody>
 </table>
 
-<CodeRunner language="python" title="Secuencias de escape" initialCode={`print("Primera línea\nSegunda línea")
-print("columna1\tcolumna2")
-print("Ruta: C:\\Users\\ana")`} />
+<CodeRunner
+  language="python"
+  title="Secuencias de escape"
+  initialCode={`print("Primera línea\\nSegunda línea")
+print("columna1\\tcolumna2")
+print("Ruta: C:\\\\Users\\\\ana")`}
+/>
 
 Las **cadenas raw** (`r"..."`) desactivan el procesamiento de secuencias de escape. Son útiles para rutas de archivos y expresiones regulares:
 

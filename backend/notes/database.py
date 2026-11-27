@@ -1,39 +1,55 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event, inspect, text
 from sqlalchemy.orm import sessionmaker
-from notes.models import Base
+from shared import config
+from shared.db_base import Base
 
-# URL de conexión a la base de datos.
-# En este caso se utiliza SQLite almacenando el archivo localmente.
-DATABASE_URL = "sqlite:///./wikidev.db"
+DATABASE_URL = config.DATABASE_URL
 
-# Crea el motor de conexión de SQLAlchemy.
-# check_same_thread=False permite compartir la conexión entre distintos hilos,
-# algo necesario cuando se trabaja con FastAPI y SQLite.
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+_connect_args = (
+    {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+)
 
-# Fábrica de sesiones para interactuar con la base de datos.
-# autocommit=False obliga a confirmar cambios manualmente.
-# autoflush=False evita enviar cambios automáticamente antes de consultas.
+engine = create_engine(DATABASE_URL, connect_args=_connect_args, pool_pre_ping=True)
+
+if DATABASE_URL.startswith("sqlite"):
+    @event.listens_for(engine, "connect")
+    def _set_sqlite_pragma(dbapi_connection, _connection_record):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def init_db():
+def _ensure_legacy_notes_user_id_column() -> None:
     """
-    Crea todas las tablas definidas en los modelos si aún no existen.
+    Actualización no destructiva para bases de datos SQLite existentes creadas antes
+    del soporte multiusuario: añade la columna user_id a notes si todavía no existe.
     """
+    inspector = inspect(engine)
+    if "notes" not in inspector.get_table_names():
+        return
+    columns = {col["name"] for col in inspector.get_columns("notes")}
+    if "user_id" not in columns:
+        with engine.begin() as conn:
+            conn.execute(text("ALTER TABLE notes ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE CASCADE"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_notes_user_id ON notes (user_id)"))
+
+
+def init_db() -> None:
+    """Crea todas las tablas definidas en los modelos y aplica ajustes seguros de esquema."""
+    # Importar modelos para garantizar que estén registrados en Base.metadata.
+    import auth.models  # noqa: F401
+    import notes.models  # noqa: F401
+
     Base.metadata.create_all(bind=engine)
+    _ensure_legacy_notes_user_id_column()
 
 
 def get_db():
-    """
-    Generador de dependencias para obtener una sesión de base de datos.
-
-    Yields:
-        Session: Sesión activa de SQLAlchemy.
-    """
+    """Generador de dependencias para obtener una sesión de base de datos."""
     db = SessionLocal()
     try:
         yield db
     finally:
-        # Garantiza el cierre de la sesión al finalizar la petición.
         db.close()

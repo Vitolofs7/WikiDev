@@ -1,0 +1,58 @@
+{
+  "funciones-como-objetos": {
+    "order": 1,
+    "title": "Funciones como objetos"
+  },
+  "funciones-anidadas-y-closures": {
+    "order": 2,
+    "title": "Funciones anidadas y closures"
+  },
+  "funciones-integradas-avanzadas": {
+    "order": 3,
+    "title": "Funciones integradas avanzadas"
+  },
+  "evaluacion-dinamica": {
+    "order": 4,
+    "title": "Evaluación dinámica"
+  },
+  "depuracion": {
+    "order": 5,
+    "title": "Depuración"
+  },
+  "lambda-introduccion": {
+    "order": 6,
+    "title": "Funciones Lambda: Introducción"
+  },
+  "lambda-uso-basico": {
+    "order": 7,
+    "title": "Funciones Lambda: Uso básico"
+  },
+  "lambda-funciones-integradas": {
+    "order": 8,
+    "title": "Funciones Lambda: Funciones integradas"
+  },
+  "lambda-con-estructuras": {
+    "order": 9,
+    "title": "Funciones Lambda: Con estructuras"
+  },
+  "lambda-avanzada": {
+    "order": 10,
+    "title": "Funciones Lambda: Avanzada"
+  },
+  "lambda-programacion-funcional": {
+    "order": 11,
+    "title": "Funciones Lambda: Programación funcional"
+  },
+  "lambda-casos-reales": {
+    "order": 12,
+    "title": "Funciones Lambda: Casos reales"
+  },
+  "lambda-buenas-practicas": {
+    "order": 13,
+    "title": "Funciones Lambda: Buenas prácticas"
+  },
+  "lambda-trucos-avanzados": {
+    "order": 14,
+    "title": "Funciones Lambda: Trucos avanzados"
+  }
+}

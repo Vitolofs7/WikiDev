@@ -1,9 +1,8 @@
-from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
+from pydantic import BaseModel, ConfigDict, Field
 
 
-# Esquema de salida para imágenes asociadas a notas.
 class NoteImageOut(BaseModel):
     id: int
     note_id: int
@@ -11,34 +10,25 @@ class NoteImageOut(BaseModel):
     original_name: str
     created_at: datetime
 
-    class Config:
-        # Permite crear el esquema directamente desde objetos ORM.
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
-# Esquema para crear una nota.
 class NoteCreate(BaseModel):
-    title: str
-    content: str = ""
+    title: str = Field(..., min_length=1, max_length=200)
+    content: str = Field(default="", max_length=100_000)
 
 
-# Esquema para actualizar una nota.
-# Todos los campos son opcionales para permitir modificaciones parciales.
 class NoteUpdate(BaseModel):
-    title: Optional[str] = None
-    content: Optional[str] = None
+    title: Optional[str] = Field(default=None, min_length=1, max_length=200)
+    content: Optional[str] = Field(default=None, max_length=100_000)
 
 
-# Esquema de salida completo de una nota.
 class NoteOut(BaseModel):
     id: int
     title: str
     content: str
     created_at: datetime
     updated_at: datetime
-    # Lista de imágenes asociadas a la nota.
     images: list[NoteImageOut] = []
 
-    class Config:
-        # Permite convertir automáticamente modelos ORM a respuestas Pydantic.
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

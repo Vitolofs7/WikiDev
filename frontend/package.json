@@ -3,35 +3,40 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "docs:generate": "node scripts/generate-docs.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "predev": "npm run docs:generate",
+    "prebuild": "npm run docs:generate",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
-    "@next/mdx": "^16.1.6",
+    "@next/mdx": "^16.4.6",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/mdx": "^2.0.13",
     "clsx": "^2.1.1",
     "fuse.js": "^7.1.0",
     "html2pdf.js": "^0.14.0",
     "lucide-react": "^0.575.0",
-    "next": "^16.1.6",
-    "next-themes": "^0.4.6",
-    "react": "^18",
-    "react-dom": "^18",
+    "motion": "^14.0.0",
+    "next": "^16.4.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
     "@types/html2pdf.js": "^0.10.0",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^10.2.0",
-    "eslint-config-next": "^16.1.6",
+    "@types/react": "^19.3.3",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.6",
     "postcss": "^8",
-    "tailwindcss": "^3.4.1",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5"
   }
 }

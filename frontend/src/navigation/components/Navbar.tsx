@@ -1,60 +1,185 @@
 "use client";
+
+import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { docPath } from "@/shared/utils/routes";
 import Link from "next/link";
-import { Code2, Search, StickyNote } from "lucide-react";
+import { Logo } from "@/shared/components/Logo";
+import {
+  Search,
+  StickyNote,
+  BookOpen,
+  LogOut,
+  User,
+  Menu,
+  X,
+} from "lucide-react";
+import { useSearchModal } from "@/search/components/SearchProvider";
+import { useAuth } from "@/auth/context/AuthProvider";
 
-export function Navbar() {
+type NavbarProps = {
+  compact?: boolean;
+};
+
+const FOCUS =
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)";
+
+export function Navbar({ compact = false }: NavbarProps) {
+  const pathname = usePathname();
+  const { open } = useSearchModal();
+  const { user, loading, openAuthModal, logout } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const isDocsActive = pathname.startsWith("/docs");
+  const isNotesActive = pathname.startsWith("/notes");
+
   return (
-    <header className="sticky top-0 z-50 bg-[#0e0e1a] border-b border-[rgba(124,109,250,0.15)]">
-      <div className="flex items-center justify-center gap-8 h-20 px-8">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 flex-shrink-0">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#7c6dfa] to-[#06d6a0]">
-            <Code2 className="w-5 h-5 text-white" />
-          </div>
-          <span
-            className="font-extrabold text-2xl text-white tracking-tight"
-            style={{ fontFamily: "Outfit, sans-serif" }}
+    <header className="sticky top-0 z-50 border-b border-(--border) bg-(--bg)/92 backdrop-blur-md">
+      <div
+        className={`mx-auto flex max-w-6xl items-center gap-3 px-5 sm:px-8 ${
+          compact ? "h-(--navbar-h)" : "h-16"
+        }`}
+      >
+        <Logo compact />
+
+        <div className="hidden h-5 w-px bg-(--border) md:block" />
+
+        <nav
+          aria-label="Navegación principal"
+          className="hidden items-center gap-1 md:flex"
+        >
+          <Link
+            href={docPath()}
+            aria-current={isDocsActive ? "page" : undefined}
+            className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-[15px] font-medium transition-colors ${FOCUS} ${
+              isDocsActive
+                ? "bg-(--accent-soft) text-(--text)"
+                : "text-(--text-muted) hover:bg-(--bg-2) hover:text-(--text)"
+            }`}
           >
-            Wiki
-            <span className="bg-gradient-to-r from-[#7c6dfa] to-[#06d6a0] bg-clip-text text-transparent">
-              Dev
+            <BookOpen
+              aria-hidden="true"
+              className={`h-4 w-4 ${isDocsActive ? "text-(--accent-light)" : ""}`}
+            />
+            Documentación
+          </Link>
+
+          <Link
+            href="/notes"
+            aria-current={isNotesActive ? "page" : undefined}
+            className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-[15px] font-medium transition-colors ${FOCUS} ${
+              isNotesActive
+                ? "bg-(--accent-soft) text-(--text)"
+                : "text-(--text-muted) hover:bg-(--bg-2) hover:text-(--text)"
+            }`}
+          >
+            <StickyNote
+              aria-hidden="true"
+              className={`h-4 w-4 ${isNotesActive ? "text-(--accent-light)" : ""}`}
+            />
+            Notas
+          </Link>
+        </nav>
+
+        <div className="ml-auto sm:w-64 md:w-72">
+          <button
+            type="button"
+            onClick={open}
+            className={`group flex h-9 w-full items-center gap-2.5 rounded-lg border border-(--border) bg-(--bg-2) px-3 text-left transition-colors hover:border-(--border-hover) hover:bg-(--bg-3) ${FOCUS}`}
+            aria-label="Buscar documentación"
+          >
+            <Search
+              aria-hidden="true"
+              className="h-3.5 w-3.5 shrink-0 text-(--text-muted) group-hover:text-(--text)"
+            />
+            <span className="hidden min-w-0 flex-1 truncate text-sm text-(--text-muted) sm:inline">
+              Buscar…
             </span>
-          </span>
-        </Link>
+            <kbd
+              translate="no"
+              className="hidden shrink-0 rounded border border-(--border) bg-(--bg) px-1.5 py-0.5 font-mono text-[10px] text-(--text-muted) sm:inline"
+            >
+              Ctrl&nbsp;K
+            </kbd>
+          </button>
+        </div>
 
-        {/* Divider */}
-        <div className="w-px h-8 bg-white/10" />
+        {!loading && (
+          <div className="flex items-center gap-2">
+            {user ? (
+              <>
+                <span className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-(--border) bg-(--bg-2) px-2.5 py-1.5 text-xs font-medium text-(--text-secondary)">
+                  <User
+                    aria-hidden="true"
+                    className="h-3.5 w-3.5 text-(--accent-light)"
+                  />
+                  <span className="max-w-28 truncate">{user.username}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => void logout()}
+                  title="Cerrar sesión"
+                  aria-label="Cerrar sesión"
+                  className={`inline-flex h-9 items-center gap-1.5 rounded-lg border border-(--border) bg-(--bg-2) px-3 text-xs font-medium text-(--text-secondary) transition-colors hover:border-(--error)/40 hover:text-(--error) ${FOCUS}`}
+                >
+                  <LogOut aria-hidden="true" className="h-3.5 w-3.5" />
+                  <span className="hidden md:inline">Salir</span>
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => openAuthModal("login")}
+                className={`inline-flex h-9 items-center rounded-lg bg-(--accent) px-4 text-sm font-semibold text-(--accent-fg) transition-colors hover:bg-(--accent-light) ${FOCUS}`}
+              >
+                Acceder
+              </button>
+            )}
+          </div>
+        )}
 
-        {/* Notes link */}
-        <Link
-          href="/notes"
-          className="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-[#14141f] border border-white/10 hover:border-[#7c6dfa]/50 transition-all"
-          style={{ fontFamily: "Outfit, sans-serif" }}
-        >
-          <StickyNote className="w-5 h-5 flex-shrink-0 text-[#7c6dfa]" />
-          <span className="text-base text-[#52526e]">Notas</span>
-        </Link>
-
-        {/* Search */}
         <button
-          className="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-[#14141f] border border-white/10 hover:border-[#7c6dfa]/50 transition-all w-[440px]"
-          aria-label="Buscar documentación"
+          type="button"
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-main-nav"
+          aria-label={mobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+          className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border border-(--border) bg-(--bg-2) text-(--text-secondary) md:hidden ${FOCUS}`}
         >
-          <Search className="w-5 h-5 flex-shrink-0 text-[#7c6dfa]" />
-          <span
-            className="flex-1 text-left text-base text-[#52526e]"
-            style={{ fontFamily: "Outfit, sans-serif" }}
-          >
-            Buscar documentación...
-          </span>
-          <kbd
-            className="px-2 py-0.5 rounded text-xs bg-[rgba(124,109,250,0.1)] text-[#7c6dfa] border border-[rgba(124,109,250,0.2)]"
-            style={{ fontFamily: "JetBrains Mono, monospace" }}
-          >
-            Ctrl+K
-          </kbd>
+          {mobileMenuOpen ? (
+            <X className="h-4 w-4" aria-hidden="true" />
+          ) : (
+            <Menu className="h-4 w-4" aria-hidden="true" />
+          )}
         </button>
       </div>
+
+      {mobileMenuOpen && (
+        <nav
+          id="mobile-main-nav"
+          aria-label="Navegación móvil"
+          className="border-t border-(--border) bg-(--bg-2) px-5 py-3 md:hidden"
+        >
+          <div className="flex flex-col gap-1">
+            <Link
+              href={docPath()}
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] font-medium text-(--text-secondary) hover:bg-(--bg-3) hover:text-(--text) ${FOCUS}`}
+            >
+              <BookOpen aria-hidden="true" className="h-4 w-4" />
+              Documentación
+            </Link>
+            <Link
+              href="/notes"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] font-medium text-(--text-secondary) hover:bg-(--bg-3) hover:text-(--text) ${FOCUS}`}
+            >
+              <StickyNote aria-hidden="true" className="h-4 w-4" />
+              Notas
+            </Link>
+          </div>
+        </nav>
+      )}
     </header>
   );
 }

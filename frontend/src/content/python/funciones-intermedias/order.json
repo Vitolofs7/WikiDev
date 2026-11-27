@@ -1,0 +1,38 @@
+{
+  "composicion-de-funciones": {
+    "order": 1,
+    "title": "Composición de funciones"
+  },
+  "argumentos-avanzados": {
+    "order": 2,
+    "title": "Argumentos avanzados"
+  },
+  "funciones-integradas-intermedias": {
+    "order": 3,
+    "title": "Funciones integradas intermedias"
+  },
+  "logica-booleana-any-all": {
+    "order": 4,
+    "title": "Lógica booleana: any y all"
+  },
+  "iteracion-y-control": {
+    "order": 5,
+    "title": "Iteración y control"
+  },
+  "iteracion-inversa-reversed": {
+    "order": 6,
+    "title": "Iteración inversa: reversed"
+  },
+  "funciones-texto-y-numeros": {
+    "order": 7,
+    "title": "Funciones de texto y números"
+  },
+  "funciones-adicionales": {
+    "order": 8,
+    "title": "Funciones adicionales"
+  },
+  "diagramas-de-pila": {
+    "order": 9,
+    "title": "Diagramas de pila"
+  }
+}

@@ -41,7 +41,7 @@ normalizar = lambda d: {
 
 normalizados = list(map(normalizar, datos_crudos))
 for item in normalizados:
-    estado = "✅" if item["disponible"] else "❌"
+    estado = "[OK]" if item["disponible"] else "[X]"
     print(f"  {estado} {item['nombre']}: {item['precio']}€ ({item['stock']} uds)")`} />
 
 ---
@@ -88,15 +88,15 @@ productos = [
 ]
 
 # Más vendidos
-print("🏆 Más vendidos:")
+print("Más vendidos:")
 for p in sorted(productos, key=lambda p: p["ventas"], reverse=True)[:3]:
     print(f"  {p['nombre']}: {p['ventas']} ventas")
 
 # Mejor relación calidad/precio (rating / precio normalizado)
-print("\\n💎 Mejor relación calidad/precio:")
+print("\\nMejor relación calidad/precio:")
 for p in sorted(productos, key=lambda p: p["rating"] / p["precio"], reverse=True)[:3]:
     ratio = round(p["rating"] / p["precio"] * 100, 2)
-    print(f"  {p['nombre']}: ★{p['rating']} / {p['precio']}€ (ratio: {ratio})")`} />
+    print(f"  {p['nombre']}: {p['rating']} / {p['precio']}€ (ratio: {ratio})")`} />
 
 ---
 
@@ -126,7 +126,7 @@ transformadas = list(map(
 # Agregar indicador de rendimiento
 media = sum(v[1] for v in ventas_raw) / len(ventas_raw)
 for v in transformadas:
-    icono = "📈" if v["ventas"] >= media else "📉"
+    icono = "[ASCENDENTE]" if v["ventas"] >= media else "[DESCENDENTE]"
     print(f"  {icono} {v['mes']}: {v['formateado']}")
 
 print(f"\\n  Media: {round(media):,}€".replace(",", "."))`} />

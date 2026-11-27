@@ -101,7 +101,7 @@ formateadores = {
     float: lambda v: f"{v:,.2f}€".replace(",", "X").replace(".", ",").replace("X", "."),
     str: lambda v: f'"{v}"',
     bool: lambda v: "Sí" if v else "No",
-    type(None): lambda v: "—",
+    type(None): lambda v: "-",
 }
 
 def formatear(valor):
@@ -110,7 +110,7 @@ def formatear(valor):
 
 datos = [1500000, 3.14159, "Python", True, None, [1, 2]]
 for d in datos:
-    print(f"  {str(d):15} → {formatear(d)}")`} />
+    print(f"  {str(d):15} -> {formatear(d)}")`} />
 
 ---
 
@@ -138,7 +138,7 @@ compras = [
 
 for c in compras:
     desc, razon = calcular_descuento(c)
-    print(f"  {c['total']}€ → {desc}% ({razon})")`} />
+    print(f"  {c['total']}€ -> {desc}% ({razon})")`} />
 
 <CodeRunner language="python" title="Pipeline configurable" initialCode={`# Definir un pipeline de transformaciones configurable
 def crear_pipeline(*pasos):

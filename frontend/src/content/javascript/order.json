@@ -1,0 +1,10 @@
+{
+  "arrays": {
+    "order": 1,
+    "title": "Arrays y métodos"
+  },
+  "promises": {
+    "order": 2,
+    "title": "Promesas y async/await"
+  }
+}

@@ -42,15 +42,15 @@ except NameError as e:
     def peor_venta():
         return min(ventas)
     
-    print("═" * 30)
+    print("=" * 30)
     print("  INFORME DE VENTAS")
-    print("═" * 30)
+    print("=" * 30)
     print(f"  Ventas:   {len(ventas)}")
     print(f"  Total:    {calcular_total()}€")
     print(f"  Promedio: {calcular_promedio()}€")
     print(f"  Mejor:    {mejor_venta()}€")
     print(f"  Peor:     {peor_venta()}€")
-    print("═" * 30)
+    print("=" * 30)
 
 generar_informe([150, 230, 80, 340, 190])`} />
 
@@ -170,8 +170,8 @@ print(f"Notas válidas (0-10): {notas_validas}")`} />
 
 negrita = crear_decorador("**", "**")
 cursiva = crear_decorador("_", "_")
-alerta = crear_decorador("⚠️ ", " ⚠️")
-exito = crear_decorador("✅ ", "")
+alerta = crear_decorador("[WARN] ", " [WARN]")
+exito = crear_decorador("[OK] ", "")
 
 print(negrita("importante"))
 print(cursiva("énfasis"))

@@ -84,7 +84,7 @@ obtener_pi = lambda: 3.14159
 print(obtener_pi())   # 3.14159
 
 # Mensaje fijo
-alerta = lambda: "⚠️ Acción no permitida"
+alerta = lambda: "[WARN] Acción no permitida"
 print(alerta())
 
 # Generador de timestamp
@@ -100,7 +100,7 @@ acciones = {
 }
 
 for nombre, accion in acciones.items():
-    print(f"[{nombre}]", end=" → ")
+    print(f"[{nombre}]", end=" -> ")
     accion()`} />
 
 ---

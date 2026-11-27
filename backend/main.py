@@ -1,130 +1,114 @@
+from contextlib import asynccontextmanager
+import logging
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.middleware.trustedhost import TrustedHostMiddleware
+from auth.router import router as auth_router
 from code_execution.router import router as execution_router
-from notes.router import router as notes_router
 from notes.database import init_db
-from collections import defaultdict
-import time
+from notes.router import router as notes_router
+from shared import config
+from shared.logging_utils import log_security_event
 
-# Crea la instancia principal de FastAPI con metadatos de la API.
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    """Inicializa la base de datos y recursos al arrancar la aplicación."""
+    init_db()
+    yield
+
+
 app = FastAPI(
     title="WikiDev API",
     description="Backend para ejecución de código y notas",
-    version="0.2.0",
+    version="0.3.0",
+    lifespan=lifespan,
+    docs_url=None if config.IS_PRODUCTION else "/docs",
+    redoc_url=None if config.IS_PRODUCTION else "/redoc",
+    openapi_url=None if config.IS_PRODUCTION else "/openapi.json",
 )
 
-# Configura CORS para permitir peticiones desde el frontend local.
-# Esto permite que una aplicación en otro dominio o puerto
-# pueda comunicarse con esta API.
+# Protección frente a ataques de cabecera Host (incluyendo defensa en profundidad frente a BadHost).
+if config.TRUSTED_HOSTS:
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=config.TRUSTED_HOSTS)
+
+# CORS restrictivo basado en configuración centralizada.
 app.add_middleware(
     CORSMiddleware,
-    # Lista de orígenes permitidos.
-    allow_origins=["http://localhost:3000"],
-    # Permite enviar cookies, cabeceras de autenticación, etc.
+    allow_origins=config.CORS_ORIGINS,
     allow_credentials=True,
-    # Permite todos los métodos HTTP.
-    allow_methods=["*"],
-    # Permite todas las cabeceras HTTP.
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "X-CSRF-Token"],
 )
-
-# -----------------------------
-# Configuración de rate limiting
-# -----------------------------
-#
-# Se limita únicamente el endpoint /api/execute
-# para evitar abuso de la ejecución de código.
-#
-# Máximo:
-# - 20 peticiones
-# - cada 60 segundos
-# - por dirección IP
-RATE_LIMIT = 20
-RATE_WINDOW = 60
-
-# Diccionario que almacena timestamps de peticiones por IP.
-#
-# Ejemplo:
-# {
-#     "192.168.1.10": [1712660000.0, 1712660025.0],
-#     "192.168.1.11": [1712660010.0]
-# }
-_rate_store: dict[str, list[float]] = defaultdict(list)
 
 
 @app.middleware("http")
-async def rate_limit_execute(request: Request, call_next):
+async def security_headers_and_limits(request: Request, call_next):
     """
-    Middleware para limitar el número de peticiones al endpoint de ejecución.
-
-    Args:
-        request: Petición HTTP entrante.
-        call_next: Función que continúa el flujo hacia el siguiente middleware o endpoint.
-
-    Returns:
-        Response: Respuesta HTTP generada.
+    Aplica límites de tamaño de petición y añade cabeceras HTTP de seguridad
+    a todas las respuestas de la API.
     """
-
-    # Solo aplica rate limiting al endpoint de ejecución de código.
-    if request.url.path == "/api/execute":
-
-        # Obtiene la IP del cliente que realiza la petición.
-        ip = request.client.host
-
-        # Timestamp actual en segundos.
-        now = time.time()
-
-        # Obtiene las marcas de tiempo previas de esa IP.
-        timestamps = _rate_store[ip]
-
-        # Elimina peticiones antiguas fuera de la ventana configurada.
-        _rate_store[ip] = [t for t in timestamps if now - t < RATE_WINDOW]
-
-        # Verifica si ya alcanzó el límite permitido.
-        if len(_rate_store[ip]) >= RATE_LIMIT:
+    content_length = request.headers.get("content-length")
+    if content_length is not None:
+        try:
+            length_int = int(content_length)
+        except ValueError:
             return JSONResponse(
-                status_code=429,
-                content={
-                    "detail": (
-                        f"Demasiadas peticiones. "
-                        f"Límite: {RATE_LIMIT} ejecuciones por minuto."
-                    )
-                },
+                status_code=400,
+                content={"detail": "Cabecera Content-Length inválida"},
+            )
+        if length_int < 0:
+            return JSONResponse(
+                status_code=400,
+                content={"detail": "Cabecera Content-Length inválida"},
+            )
+        if length_int > config.MAX_REQUEST_BODY_BYTES:
+            return JSONResponse(
+                status_code=413,
+                content={"detail": "La petición supera el tamaño máximo permitido"},
             )
 
-        # Registra la petición actual.
-        _rate_store[ip].append(now)
+    response = await call_next(request)
 
-    # Continúa con la ejecución normal de la petición.
-    return await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault(
+        "Permissions-Policy",
+        "camera=(), microphone=(), geolocation=()",
+    )
+    if request.url.path.startswith("/api/auth"):
+        response.headers["Cache-Control"] = "no-store"
+    if config.IS_PRODUCTION:
+        response.headers.setdefault(
+            "Strict-Transport-Security",
+            "max-age=31536000; includeSubDomains",
+        )
+    return response
 
 
-# Registra el router de ejecución de código bajo el prefijo /api.
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    """Evita filtrar trazas o mensajes internos ante excepciones no controladas."""
+    log_security_event(
+        "unhandled_exception",
+        level=logging.ERROR,
+        path=request.url.path,
+        error_type=type(exc).__name__,
+    )
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Error interno del servidor"},
+    )
+
+
+app.include_router(auth_router, prefix="/api")
 app.include_router(execution_router, prefix="/api")
-
-# Registra el router de notas bajo el prefijo /api.
 app.include_router(notes_router, prefix="/api")
-
-
-@app.on_event("startup")
-def startup():
-    """
-    Evento ejecutado al iniciar la aplicación.
-
-    Inicializa la base de datos y crea las tablas necesarias.
-    """
-
-    init_db()
 
 
 @app.get("/health")
 def health():
-    """
-    Endpoint simple de verificación de estado.
-
-    Returns:
-        dict: Estado básico de disponibilidad de la API.
-    """
-
+    """Endpoint simple de verificación de estado."""
     return {"status": "ok"}

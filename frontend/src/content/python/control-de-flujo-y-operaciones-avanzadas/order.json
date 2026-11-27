@@ -1,0 +1,38 @@
+{
+  "sentencias-de-asignacion": {
+    "order": 1,
+    "title": "Sentencias de asignación"
+  },
+  "como-python-evalua-el-codigo": {
+    "order": 2,
+    "title": "Cómo Python evalúa el código"
+  },
+  "condicionales": {
+    "order": 3,
+    "title": "Condicionales"
+  },
+  "operaciones-con-cadenas-de-texto": {
+    "order": 4,
+    "title": "Operaciones con cadenas de texto"
+  },
+  "entrada-de-datos-y-validacion": {
+    "order": 5,
+    "title": "Entrada de datos y validación"
+  },
+  "estructuras-de-datos-basicas": {
+    "order": 6,
+    "title": "Estructuras de datos básicas"
+  },
+  "bucles": {
+    "order": 7,
+    "title": "Bucles"
+  },
+  "compresion-en-python": {
+    "order": 8,
+    "title": "Compresión en Python"
+  },
+  "depuracion-aplicada": {
+    "order": 9,
+    "title": "Depuración aplicada"
+  }
+}

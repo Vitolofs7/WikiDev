@@ -1,5 +1,16 @@
+/**
+* Proporciona un hook personalizado para gestionar el ciclo de ejecución de código,
+* centralizando el estado de los resultados, la ejecución en curso y los posibles errores.
+* Coordina las llamadas al servicio `runCode`, actualiza el estado según el resultado
+* obtenido y gestiona las excepciones durante la ejecución. También expone una función
+* para restablecer el estado inicial, facilitando la reutilización de esta lógica
+* en los componentes que necesitan ejecutar código de forma asíncrona.
+
+*/
+
+
 import { useState, useCallback } from 'react'
-import { runCode, type ExecutionResult, type RunCodeParams } from '../services/pistonApi.service'
+import { runCode, type ExecutionResult, type RunCodeParams } from '../services/execution.service'
 
 interface UseCodeExecutionState {
   result: ExecutionResult | null

@@ -1,13 +1,11 @@
-'use client'
-import { DocSidebar } from '@/documentation/components/DocSidebar'
+import type { ReactNode } from "react";
+import { DocsBackground } from "@/documentation/components/DocsBackground";
 
-export default function DocsLayout({ children }: { children: React.ReactNode }) {
+export default function DocsLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen">
-      <DocSidebar />
-      <div className="flex-1 min-w-0 py-10 px-20 text-lg">
-        {children}
-      </div>
+    <div className="relative min-h-screen">
+      <DocsBackground />
+      <div className="relative">{children}</div>
     </div>
-  )
+  );
 }
