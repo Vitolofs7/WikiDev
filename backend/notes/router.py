@@ -91,6 +91,7 @@ def _escape_like(term: str) -> str:
 )
 def get_notes(
     search: str = Query(default="", max_length=200),
+    doc_slug: str | None = Query(default=None, max_length=255),
     limit: int = Query(default=100, ge=1, le=200),
     offset: int = Query(default=0, ge=0),
     current_user: User = Depends(get_current_user),
@@ -102,6 +103,8 @@ def get_notes(
         .options(selectinload(Note.images))
         .filter(Note.user_id == current_user.id)
     )
+    if doc_slug:
+        query = query.filter(Note.doc_slug == doc_slug.strip())
     if search:
         escaped = _escape_like(search)
         pattern = f"%{escaped}%"
@@ -132,6 +135,7 @@ def create_note(
         user_id=current_user.id,
         title=note.title,
         content=note.content,
+        doc_slug=note.doc_slug,
     )
     db.add(db_note)
     db.commit()
@@ -164,6 +168,8 @@ def update_note(
         db_note.title = note.title
     if note.content is not None:
         db_note.content = note.content
+    if "doc_slug" in note.model_fields_set:
+        db_note.doc_slug = note.doc_slug
     db_note.updated_at = datetime.now(timezone.utc)
     db.commit()
     db.refresh(db_note)

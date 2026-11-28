@@ -21,19 +21,22 @@ if DATABASE_URL.startswith("sqlite"):
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def _ensure_legacy_notes_user_id_column() -> None:
+def _ensure_legacy_notes_columns() -> None:
     """
-    Actualización no destructiva para bases de datos SQLite existentes creadas antes
-    del soporte multiusuario: añade la columna user_id a notes si todavía no existe.
+    Actualización no destructiva para bases de datos SQLite existentes:
+    añade user_id y doc_slug a notes si todavía no existen.
     """
     inspector = inspect(engine)
     if "notes" not in inspector.get_table_names():
         return
     columns = {col["name"] for col in inspector.get_columns("notes")}
-    if "user_id" not in columns:
-        with engine.begin() as conn:
+    with engine.begin() as conn:
+        if "user_id" not in columns:
             conn.execute(text("ALTER TABLE notes ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE CASCADE"))
             conn.execute(text("CREATE INDEX IF NOT EXISTS ix_notes_user_id ON notes (user_id)"))
+        if "doc_slug" not in columns:
+            conn.execute(text("ALTER TABLE notes ADD COLUMN doc_slug VARCHAR(255)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_notes_doc_slug ON notes (doc_slug)"))
 
 
 def init_db() -> None:
@@ -43,7 +46,7 @@ def init_db() -> None:
     import notes.models  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
-    _ensure_legacy_notes_user_id_column()
+    _ensure_legacy_notes_columns()
 
 
 def get_db():

@@ -2,7 +2,13 @@
 
 import { Note } from "@/notes/services/notes.service";
 import { cn } from "@/shared/utils/cn";
-import { FileText, ImageIcon } from "lucide-react";
+import { BookOpen, FileText, ImageIcon } from "lucide-react";
+
+function formatSlugLabel(slug: string) {
+  const parts = slug.split("/");
+  const last = parts[parts.length - 1] ?? slug;
+  return last.replace(/-/g, " ");
+}
 
 interface Props {
   notes: Note[];
@@ -67,9 +73,19 @@ export function NotesList({ notes, selectedId, onSelect }: Props) {
                     (note.content.length > 60 ? "…" : "")
                   : "Sin contenido"}
               </p>
-              <p className="mt-1.5 text-[11px] tabular-nums text-(--text-muted)">
-                {formatDate(note.updated_at)}
-              </p>
+              <div className="mt-1.5 flex items-center justify-between gap-2">
+                <p className="text-[11px] tabular-nums text-(--text-muted)">
+                  {formatDate(note.updated_at)}
+                </p>
+                {note.doc_slug && (
+                  <span className="inline-flex max-w-[10.5rem] items-center gap-1 truncate rounded-md bg-(--accent-soft) px-1.5 py-0.5 text-[11px] text-(--accent-light)">
+                    <BookOpen className="h-3 w-3 shrink-0" aria-hidden="true" />
+                    <span className="truncate capitalize">
+                      {formatSlugLabel(note.doc_slug)}
+                    </span>
+                  </span>
+                )}
+              </div>
             </button>
           </li>
         );

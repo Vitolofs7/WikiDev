@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { Note, type NoteImage, notesApi } from "@/notes/services/notes.service";
-import { Trash2, ImagePlus, X } from "lucide-react";
+import { ArrowUpRight, BookOpen, Trash2, ImagePlus, X } from "lucide-react";
 import { DeleteNoteModal } from "@/notes/components/DeleteNoteModal";
 import { ModalShell } from "@/shared/components/ModalShell";
+import { docPath } from "@/shared/utils/routes";
 import Image from "next/image";
 
 interface Props {
@@ -131,9 +133,21 @@ export function NoteEditor({
   return (
     <div className="flex h-full flex-col">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-(--border) px-6 py-4">
-        <span className="text-xs tabular-nums text-(--text-muted)">
-          Actualizada el {formatDate(note.updated_at)}
-        </span>
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-xs tabular-nums text-(--text-muted)">
+            Actualizada el {formatDate(note.updated_at)}
+          </span>
+          {note.doc_slug && (
+            <Link
+              href={docPath(...note.doc_slug.split("/"))}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-(--accent)/30 bg-(--accent-soft) px-2.5 py-1 text-xs font-medium text-(--accent-light) transition-colors hover:border-(--accent)/60 hover:text-(--text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)"
+            >
+              <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
+              Ir a la lección
+              <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+            </Link>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <span aria-live="polite" className="mr-1 text-xs">
             {saving && <span className="text-(--text-muted)">Guardando…</span>}

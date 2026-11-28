@@ -18,6 +18,7 @@ export interface Note {
   id: number;
   title: string;
   content: string;
+  doc_slug?: string | null;
   created_at: string;
   updated_at: string;
   images: NoteImage[];
@@ -32,11 +33,13 @@ function csrfHeaders(extra?: Record<string, string>): Record<string, string> {
 }
 
 export const notesApi = {
-  getAll: async (search = ""): Promise<Note[]> => {
+  getAll: async (search = "", docSlug?: string): Promise<Note[]> => {
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
+    if (docSlug) params.set("doc_slug", docSlug);
+    const qs = params.toString();
     const base = notesBase();
-    const url = search
-      ? `${base}/?search=${encodeURIComponent(search)}`
-      : `${base}/`;
+    const url = qs ? `${base}/?${qs}` : `${base}/`;
     const res = await fetch(url, { credentials: "include" });
     if (!res.ok) {
       throw await extractApiError(res, "Error al cargar las notas");
@@ -44,12 +47,20 @@ export const notesApi = {
     return res.json();
   },
 
-  create: async (title: string, content = ""): Promise<Note> => {
+  create: async (
+    title: string,
+    content = "",
+    docSlug?: string | null,
+  ): Promise<Note> => {
     const res = await fetch(`${notesBase()}/`, {
       method: "POST",
       credentials: "include",
       headers: csrfHeaders({ "Content-Type": "application/json" }),
-      body: JSON.stringify({ title, content }),
+      body: JSON.stringify({
+        title,
+        content,
+        doc_slug: docSlug ?? null,
+      }),
     });
     if (!res.ok) {
       throw await extractApiError(res, "Error al crear la nota");
@@ -59,7 +70,7 @@ export const notesApi = {
 
   update: async (
     id: number,
-    data: { title?: string; content?: string },
+    data: { title?: string; content?: string; doc_slug?: string | null },
   ): Promise<Note> => {
     const res = await fetch(
       `${notesBase()}/${encodeURIComponent(String(id))}`,
