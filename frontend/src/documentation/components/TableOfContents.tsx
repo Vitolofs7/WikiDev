@@ -50,6 +50,15 @@ function useDocumentHeadings(docKey: string) {
     setHeadings(items);
     setActiveId(elements[0]?.id ?? "");
 
+    // Si se navegó directamente a una sección (#id) desde Ctrl+K, desplaza suavemente al ancla
+    const hashId = window.location.hash.slice(1);
+    if (hashId) {
+      const target = document.getElementById(decodeURIComponent(hashId));
+      if (target) {
+        requestAnimationFrame(() => target.scrollIntoView({ behavior: "smooth" }));
+      }
+    }
+
     let ticking = false;
     let animationFrameId: number | null = null;
 
