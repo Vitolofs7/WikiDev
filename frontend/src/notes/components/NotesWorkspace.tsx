@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/auth/context/AuthProvider";
 import { useNotes } from "@/notes/hooks/useNotes";
 import { NotesList } from "@/notes/components/NotesList";
@@ -26,6 +26,20 @@ export function NotesWorkspace() {
 
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+
+  // Permite abrir una nota concreta desde la paleta Ctrl+K (/notes?note=<id>)
+  useEffect(() => {
+    if (notes.length === 0 || selectedNote) return;
+    const rawId = new URLSearchParams(window.location.search).get("note");
+    if (!rawId) return;
+    const targetId = Number(rawId);
+    if (!Number.isInteger(targetId)) return;
+    const match = notes.find((n) => n.id === targetId);
+    if (match) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSelectedNote(match);
+    }
+  }, [notes, selectedNote]);
 
   if (authLoading) {
     return (

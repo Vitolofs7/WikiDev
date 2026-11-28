@@ -145,6 +145,37 @@ if (files.length === 0) {
   throw new Error(`No MDX documents found in "${contentDir}".`);
 }
 
+function extractHeadings(file) {
+  const raw = fs.readFileSync(file, "utf8");
+  // Elimina bloques de código cercados para no confundir comentarios `#` con encabezados
+  const withoutCode = raw.replace(/```[\s\S]*?```/g, "");
+  const headings = [];
+  const lines = withoutCode.split(/\r?\n/);
+
+  for (const line of lines) {
+    const match = line.match(/^(#{2,3})\s+(.+?)\s*#*$/);
+    if (!match) continue;
+    const level = match[1].length;
+    const text = match[2]
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+      .replace(/[`*_~]/g, "")
+      .trim();
+    if (!text) continue;
+    const index = headings.length;
+    const id =
+      text
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .trim() +
+      "-" +
+      index;
+    headings.push({ id, text, level });
+  }
+
+  return headings;
+}
+
 const entries = files.map((file) => {
   const relativePath = path
     .relative(contentDir, file)
@@ -155,6 +186,7 @@ const entries = files.map((file) => {
   const importPath = `@/content/${relativePath}`;
   const unit = path.posix.dirname(slug);
   const metadata = getMetadata(file);
+  const headings = extractHeadings(file);
 
   return {
     slug,
@@ -162,6 +194,7 @@ const entries = files.map((file) => {
     unit,
     order: metadata.order,
     title: metadata.title,
+    headings,
   };
 });
 
@@ -192,13 +225,14 @@ const imports = entries
 
 const metadata = entries
   .map(
-    ({ slug, unit, order, title }) =>
+    ({ slug, unit, order, title, headings }) =>
       `  {
     slug: ${JSON.stringify(slug)},
     unit: ${JSON.stringify(unit)},
     unitTitle: ${JSON.stringify(getUnitTitle(unit))},
     order: ${order},
     title: ${JSON.stringify(title)},
+    headings: ${JSON.stringify(headings)},
   },`,
   )
   .join("\n");
@@ -208,12 +242,19 @@ import type { ComponentType } from "react";
 
 type DocComponent = ComponentType<any>;
 
+export interface DocHeading {
+  id: string;
+  text: string;
+  level: 2 | 3;
+}
+
 export interface DocMetadata {
   slug: string;
   unit: string;
   unitTitle: string;
   order: number;
   title: string;
+  headings: DocHeading[];
 }
 
 const docs: Record<string, DocComponent> = {

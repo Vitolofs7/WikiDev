@@ -1,13 +1,3 @@
-
-/**
- * Proporciona un contexto global para controlar el modal de búsqueda.
- * Centraliza el estado de apertura, el atajo Ctrl+K / Cmd+K y el
- * renderizado de SearchModal.
- *
- * Expone useSearchModal() para que cualquier componente descendiente
- * pueda abrir o cerrar el buscador sin gestionar estados independientes.
- */
-
 "use client";
 
 import {
@@ -32,7 +22,7 @@ export function useSearchModal() {
 
   if (!context) {
     throw new Error(
-      "useSearchModal debe utilizarse dentro de SearchProvider."
+      "useSearchModal debe utilizarse dentro de SearchProvider.",
     );
   }
 
@@ -58,7 +48,7 @@ export function SearchProvider({
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        open();
+        setIsOpen((prev) => !prev);
       }
     };
 
@@ -67,12 +57,9 @@ export function SearchProvider({
     return () => {
       window.removeEventListener("keydown", handler);
     };
-  }, [open]);
+  }, []);
 
-  const value = useMemo(
-    () => ({ open, close }),
-    [open, close]
-  );
+  const value = useMemo(() => ({ open, close }), [open, close]);
 
   return (
     <SearchModalContext.Provider value={value}>
