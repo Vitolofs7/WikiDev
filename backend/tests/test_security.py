@@ -572,3 +572,65 @@ def test_change_password_and_logout_all_revoke_sessions(test_env):
     )
     assert client_1.get("/api/auth/me").status_code == 401
     assert client_3.get("/api/auth/me").status_code == 401
+
+
+def test_contextual_notes_doc_slug_filtering_validation_and_isolation(test_env):
+    slug = "python/funciones-basicas/que-es-una-funcion"
+    client_a = _new_client()
+    auth_a = _register_user(client_a, "ctx_alice", "ctx_alice@example.com")
+    csrf_a = auth_a["csrf_token"]
+
+    client_b = _new_client()
+    auth_b = _register_user(client_b, "ctx_bob", "ctx_bob@example.com")
+    csrf_b = auth_b["csrf_token"]
+
+    # Slugs inválidos (path traversal, esquemas peligrosos, XSS) son rechazados con 422
+    for bad_slug in ("../etc/passwd", "javascript:alert(1)", "python/<script>", "/leading/slash"):
+        bad = client_a.post(
+            "/api/notes/",
+            headers={"X-CSRF-Token": csrf_a},
+            json={"title": "Mala", "content": "", "doc_slug": bad_slug},
+        )
+        assert bad.status_code == 422, f"Esperado 422 para {bad_slug}"
+
+    # Alice crea una nota vinculada a la lección y otra general
+    n_linked = client_a.post(
+        "/api/notes/",
+        headers={"X-CSRF-Token": csrf_a},
+        json={"title": "Apunte de función", "content": "def f(): pass", "doc_slug": slug},
+    )
+    assert n_linked.status_code == 200
+    assert n_linked.json()["doc_slug"] == slug
+
+    n_general = client_a.post(
+        "/api/notes/",
+        headers={"X-CSRF-Token": csrf_a},
+        json={"title": "Nota general", "content": "Sin lección"},
+    )
+    assert n_general.status_code == 200
+    assert n_general.json()["doc_slug"] is None
+
+    # Bob crea una nota en el mismo doc_slug (debe mantenerse aislada)
+    n_bob = client_b.post(
+        "/api/notes/",
+        headers={"X-CSRF-Token": csrf_b},
+        json={"title": "Nota de Bob", "content": "Privada", "doc_slug": slug},
+    )
+    assert n_bob.status_code == 200
+
+    # Filtrar por doc_slug devuelve solo la nota de esa lección del usuario autenticado
+    filtered_a = client_a.get("/api/notes/", params={"doc_slug": slug})
+    assert filtered_a.status_code == 200
+    data_a = filtered_a.json()
+    assert len(data_a) == 1
+    assert data_a[0]["title"] == "Apunte de función"
+
+    # Desvincular doc_slug mediante PUT con null
+    unlinked = client_a.put(
+        f"/api/notes/{n_linked.json()['id']}",
+        headers={"X-CSRF-Token": csrf_a},
+        json={"doc_slug": None},
+    )
+    assert unlinked.status_code == 200
+    assert unlinked.json()["doc_slug"] is None
+    assert client_a.get("/api/notes/", params={"doc_slug": slug}).json() == []

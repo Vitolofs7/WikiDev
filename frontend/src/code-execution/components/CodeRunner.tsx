@@ -1,12 +1,21 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { Play, RotateCcw, Copy, Check, Terminal } from "lucide-react";
+import {
+  Play,
+  RotateCcw,
+  Copy,
+  Check,
+  Terminal,
+  BookmarkPlus,
+} from "lucide-react";
 import { useCodeExecution } from "../hooks/useCodeExecution";
 import { CodeOutput } from "./CodeOutput";
 import { TOKEN_CLASSES, tokenizeCode } from "../utils/syntax-highlight";
 import { cn } from "@/shared/utils/cn";
 import { useAuth } from "@/auth/context/AuthProvider";
+import { notesApi } from "@/notes/services/notes.service";
+import { useDocContext } from "@/documentation/context/DocContext";
 
 interface CodeRunnerProps {
   initialCode: string;
@@ -32,8 +41,12 @@ export function CodeRunner({
   const [code, setCode] = useState(initialCode.trim());
   const [stdinValue, setStdinValue] = useState("");
   const [copied, setCopied] = useState(false);
+  const [savingNote, setSavingNote] = useState(false);
+  const [savedNote, setSavedNote] = useState(false);
+  const [saveNoteError, setSaveNoteError] = useState<string | null>(null);
   const { result, isRunning, error, execute, reset } = useCodeExecution();
   const { user, openAuthModal } = useAuth();
+  const docCtx = useDocContext();
   const preRef = useRef<HTMLPreElement>(null);
   const gutterRef = useRef<HTMLDivElement>(null);
 
@@ -53,6 +66,7 @@ export function CodeRunner({
   const handleReset = () => {
     setCode(initialCode.trim());
     setStdinValue("");
+    setSaveNoteError(null);
     reset();
   };
 
@@ -60,6 +74,49 @@ export function CodeRunner({
     await navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleSaveToNotes = async () => {
+    if (!user) {
+      openAuthModal("login");
+      return;
+    }
+    if (!code.trim() || savingNote) return;
+
+    setSavingNote(true);
+    setSaveNoteError(null);
+    try {
+      const noteTitle = (
+        title
+          ? `${title} (${lang.label})`
+          : docCtx?.lessonTitle
+            ? `${docCtx.lessonTitle} — ${lang.label}`
+            : `Código ${lang.label}`
+      ).slice(0, 200);
+
+      const sections = [`\`\`\`${language}\n${code.trim()}\n\`\`\``];
+      if (result?.stdout?.trim()) {
+        sections.push(`Salida:\n\`\`\`\n${result.stdout.trim()}\n\`\`\``);
+      }
+      if (result?.stderr?.trim()) {
+        sections.push(`Error:\n\`\`\`\n${result.stderr.trim()}\n\`\`\``);
+      }
+
+      await notesApi.create(
+        noteTitle,
+        sections.join("\n\n"),
+        docCtx?.docKey ?? null,
+      );
+      docCtx?.notifyNotesChanged();
+      setSavedNote(true);
+      setTimeout(() => setSavedNote(false), 3500);
+    } catch (e) {
+      setSaveNoteError(
+        e instanceof Error ? e.message : "No se pudo guardar en notas",
+      );
+    } finally {
+      setSavingNote(false);
+    }
   };
 
   const handleEditorScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
@@ -198,7 +255,42 @@ export function CodeRunner({
           <kbd translate="no" className="font-mono text-[11px] text-(--text-secondary)">Esc</kbd> sale,{" "}
           <kbd translate="no" className="font-mono text-[11px] text-(--text-secondary)">Ctrl+Enter</kbd> ejecuta
         </span>
-        <div className="flex items-center gap-2">
+
+        <div className="flex flex-wrap items-center gap-2">
+          {savedNote && docCtx && (
+            <button
+              type="button"
+              onClick={docCtx.openNotesDrawer}
+              className="rounded px-2 py-1 text-xs font-medium text-(--accent-light) transition-colors hover:text-(--text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)"
+            >
+              Ver en apuntes
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={() => void handleSaveToNotes()}
+            disabled={savingNote || !code.trim()}
+            title="Guardar este código y su salida en tus apuntes privados"
+            className={cn(
+              "inline-flex h-8 items-center gap-1.5 rounded-lg border px-3 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-light)",
+              savedNote
+                ? "border-(--success)/40 bg-(--success)/10 text-(--success)"
+                : "border-(--border) bg-(--bg) text-(--text-secondary) hover:border-(--border-hover) hover:text-(--text) disabled:cursor-not-allowed disabled:opacity-50",
+            )}
+          >
+            {savedNote ? (
+              <Check className="h-3.5 w-3.5" aria-hidden="true" />
+            ) : (
+              <BookmarkPlus className="h-3.5 w-3.5" aria-hidden="true" />
+            )}
+            {savingNote
+              ? "Guardando…"
+              : savedNote
+                ? "Guardado"
+                : "Guardar en notas"}
+          </button>
+
           <button
             type="button"
             onClick={handleReset}
@@ -207,6 +299,7 @@ export function CodeRunner({
             <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
             Restablecer
           </button>
+
           <button
             type="button"
             onClick={handleRun}
@@ -223,6 +316,15 @@ export function CodeRunner({
           </button>
         </div>
       </div>
+
+      {saveNoteError && (
+        <div
+          role="alert"
+          className="border-t border-(--error)/30 bg-(--error)/10 px-4 py-2 text-xs text-(--error)"
+        >
+          {saveNoteError}
+        </div>
+      )}
 
       <div
         aria-live="polite"

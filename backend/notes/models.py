@@ -16,6 +16,7 @@ class Note(Base):
     )
     title = Column(String(200), nullable=False)
     content = Column(Text, default="", nullable=False)
+    doc_slug = Column(String(255), nullable=True, index=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at = Column(
         DateTime(timezone=True),
